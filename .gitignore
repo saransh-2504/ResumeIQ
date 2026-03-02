@@ -1,0 +1,12 @@
+# node
+node_modules
+dist
+build
+.env
+.env.*
+*.log
+
+# OS/IDE
+.DS_Store
+.vscode
+.idea
