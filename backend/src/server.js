@@ -2,16 +2,17 @@ import app from "./app.js";
 import { env } from "./config/env.js";
 import { connectDB } from "./config/db.js";
 
-async function start() {
+async function startServer() {
   try {
-    await connectDB();
+    await connectDB(); // 🔥 DB wiring here
+
     app.listen(env.PORT, () => {
-      console.log(`🚀 Backend running on http://localhost:${env.PORT}`);
+      console.log(`🚀 Server running on port ${env.PORT}`);
     });
   } catch (err) {
-    console.error("❌ Server failed to start:", err.message);
+    console.error("❌ Server startup failed:", err.message);
     process.exit(1);
   }
 }
 
-start();
+startServer();
