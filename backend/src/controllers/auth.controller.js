@@ -41,8 +41,14 @@ export async function signup(req, res) {
       isApproved: role === "recruiter" ? false : true,
     });
 
-    // Send verification email
-    await sendVerificationEmail(email, verificationToken);
+    // Send verification email (don't crash if email fails in dev)
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (emailErr) {
+      console.error("Email send failed:", emailErr.message);
+      // In dev: log the verify link so you can test without email
+      console.log(`\n🔗 VERIFY LINK (use this in browser):\n${process.env.CLIENT_URL}/verify-email?token=${verificationToken}\n`);
+    }
 
     res.status(201).json({
       message: "Account created. Please check your email to verify your account.",

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -10,6 +10,14 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Check if redirected back from OAuth with error
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("error") === "oauth_failed") {
+      setError("OAuth login failed. Recruiters must use email/password login.");
+    }
+  }, []);
 
   // Update form field on change
   function handleChange(e) {
@@ -102,7 +110,7 @@ export default function LoginPage() {
           <div className="flex-1 h-px bg-gray-100" />
         </div>
 
-        {/* OAuth buttons — these will redirect to backend OAuth flow */}
+        {/* OAuth buttons */}
         <div className="space-y-3">
           <button
             onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
