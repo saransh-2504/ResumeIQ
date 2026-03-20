@@ -28,22 +28,6 @@ router.get(
   }
 );
 
-// ---- MICROSOFT ----
-router.get(
-  "/microsoft",
-  passport.authenticate("microsoft", { session: false })
-);
-
-router.get(
-  "/microsoft/callback",
-  passport.authenticate("microsoft", { session: false, failureRedirect: `${env.CLIENT_URL}/login?error=oauth_failed` }),
-  (req, res) => {
-    const token = generateToken(req.user._id, req.user.role);
-    res.cookie("token", token, cookieOptions);
-
-    const redirect = req.user.role === "recruiter" ? "/recruiter" : "/dashboard";
-    res.redirect(`${env.CLIENT_URL}${redirect}`);
-  }
-);
+// Microsoft OAuth — not configured yet (coming soon)
 
 export default router;
