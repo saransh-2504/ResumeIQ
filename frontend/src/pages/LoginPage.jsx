@@ -119,16 +119,7 @@ export default function LoginPage() {
             <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
             Continue with Google
           </button>
-          {/* Microsoft OAuth — coming soon */}
-          <button
-            disabled
-            title="Coming soon"
-            className="w-full flex items-center justify-center gap-3 border border-gray-100 rounded-xl py-2.5 text-sm font-medium text-gray-400 bg-gray-50 cursor-not-allowed"
-          >
-            <span className="text-gray-400 font-bold text-base">M</span>
-            Continue with Microsoft
-            <span className="text-xs bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full ml-1">Soon</span>
-          </button>
+
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">

@@ -26,8 +26,4 @@ export const env = {
   // Google OAuth
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || "",
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET || "",
-
-  // Microsoft OAuth
-  MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID || "",
-  MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET || "",
 };
