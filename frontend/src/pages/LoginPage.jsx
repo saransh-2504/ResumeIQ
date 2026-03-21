@@ -88,10 +88,14 @@ export default function LoginPage() {
               onChange={handleChange}
               placeholder="••••••••"
               required
-              // autocomplete="current-password" — browser handles this, we don't autofill manually
               autoComplete="current-password"
               className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
+            <div className="text-right mt-1">
+              <Link to="/forgot-password" className="text-xs text-indigo-500 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
           <button

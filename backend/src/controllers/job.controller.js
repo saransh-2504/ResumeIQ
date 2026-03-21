@@ -147,14 +147,14 @@ export async function adminSuggestChanges(req, res) {
 
     const { title, company, location, type, description, skillsRequired } = req.body;
 
-    // Store the suggestion — recruiter will see this and can approve or reject
+    // Store suggestion with prefixed field names to avoid mongoose reserved keyword conflicts
     job.adminSuggestion = {
-      title: title || job.title,
-      company: company || job.company,
-      location: location || job.location,
-      type: type || job.type,
-      description: description || job.description,
-      skillsRequired: skillsRequired
+      suggestedTitle: title || job.title,
+      suggestedCompany: company || job.company,
+      suggestedLocation: location || job.location,
+      suggestedType: type || job.type,
+      suggestedDescription: description || job.description,
+      suggestedSkills: skillsRequired
         ? Array.isArray(skillsRequired)
           ? skillsRequired
           : skillsRequired.split(",").map((s) => s.trim())
@@ -177,7 +177,6 @@ export async function approveAdminSuggestion(req, res) {
     const job = await Job.findById(req.params.id);
     if (!job) return res.status(404).json({ message: "Job not found." });
 
-    // Only the recruiter who owns the job
     if (job.postedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not authorized." });
     }
@@ -186,14 +185,14 @@ export async function approveAdminSuggestion(req, res) {
       return res.status(400).json({ message: "No pending suggestion found." });
     }
 
-    // Apply the suggested changes to the actual job
+    // Apply the suggested changes
     const s = job.adminSuggestion;
-    job.title = s.title;
-    job.company = s.company;
-    job.location = s.location;
-    job.type = s.type;
-    job.description = s.description;
-    job.skillsRequired = s.skillsRequired;
+    job.title = s.suggestedTitle;
+    job.company = s.suggestedCompany;
+    job.location = s.suggestedLocation;
+    job.type = s.suggestedType;
+    job.description = s.suggestedDescription;
+    job.skillsRequired = s.suggestedSkills;
     job.adminSuggestion.status = "approved";
 
     await job.save();

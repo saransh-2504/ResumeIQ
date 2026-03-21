@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import User from "../models/User.js";
 import { generateToken } from "../utils/jwt.js";
-import { sendVerificationEmail } from "../utils/sendEmail.js";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/sendEmail.js";
 import { cookieOptions } from "../utils/cookieOptions.js";
 
 // ---- SIGNUP ----
@@ -176,8 +176,79 @@ export async function getMe(req, res) {
   });
 }
 
+// ---- FORGOT PASSWORD ----
+// User submits their email — we send a reset link
+export async function forgotPassword(req, res) {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required." });
+
+    const user = await User.findOne({ email });
+
+    // Always return success — don't reveal if email exists (security)
+    if (!user || user.oauthProvider) {
+      return res.status(200).json({ message: "If this email exists, a reset link has been sent." });
+    }
+
+    // Generate a secure random token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    // Store hashed version in DB (never store plain token)
+    user.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save();
+
+    // Send email with plain token (user clicks link, we hash and compare)
+    await sendPasswordResetEmail(email, resetToken);
+
+    res.status(200).json({ message: "If this email exists, a reset link has been sent." });
+  } catch (err) {
+    console.error("Forgot password error:", err.message);
+    res.status(500).json({ message: "Failed to send reset email." });
+  }
+}
+
+// ---- RESET PASSWORD ----
+// User clicks link in email, submits new password
+export async function resetPassword(req, res) {
+  try {
+    const { token } = req.query;
+    const { password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ message: "Token and new password are required." });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters." });
+    }
+
+    // Hash the token from URL and compare with stored hash
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() }, // not expired
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Reset link is invalid or has expired." });
+    }
+
+    // Set new password — pre-save hook will hash it
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful. You can now login." });
+  } catch (err) {
+    console.error("Reset password error:", err.message);
+    res.status(500).json({ message: "Failed to reset password." });
+  }
+}
+
 // ---- OAUTH LOGIN/SIGNUP ----
-// Called after OAuth provider returns user info
 export async function oauthLogin(req, res) {
   try {
     const { name, email, oauthProvider, oauthId } = req.body;

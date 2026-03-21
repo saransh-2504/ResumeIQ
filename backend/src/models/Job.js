@@ -43,20 +43,18 @@ const jobSchema = new mongoose.Schema(
 
     // Admin can suggest edits to a job — stored here until recruiter approves/rejects
     adminSuggestion: {
-      // The suggested updated fields
-      title: String,
-      company: String,
-      location: String,
-      type: String,
-      description: String,
-      skillsRequired: [String],
-      // Status of the suggestion
+      suggestedTitle: String,
+      suggestedCompany: String,
+      suggestedLocation: String,
+      suggestedType: String,
+      suggestedDescription: String,
+      suggestedSkills: [String],
+      // Status: pending = waiting for recruiter, approved/rejected = done
       status: {
         type: String,
         enum: ["pending", "approved", "rejected"],
         default: "pending",
       },
-      // When the suggestion was made
       suggestedAt: Date,
     },
   },

@@ -1,12 +1,16 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-// Wraps routes that need authentication
-// allowedRoles: array of roles that can access this route
+// Each role has a home route — wrong role gets redirected here
+const roleHome = {
+  candidate: "/dashboard",
+  recruiter: "/recruiter",
+  admin: "/admin",
+};
+
 export default function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
 
-  // Still checking cookie — show nothing
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
@@ -15,14 +19,14 @@ export default function ProtectedRoute({ children, allowedRoles }) {
     );
   }
 
-  // Not logged in
+  // Not logged in → go to login
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // Wrong role
+  // Wrong role → redirect to their own dashboard, not "/"
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={roleHome[user.role] || "/"} replace />;
   }
 
   return children;

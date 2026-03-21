@@ -123,10 +123,10 @@ function JobModal({ job, onClose, onUpdated }) {
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
             <p className="text-sm font-semibold text-yellow-700 mb-2">📝 Admin suggested changes to this job</p>
             <div className="text-xs text-yellow-600 space-y-1 mb-3">
-              {job.adminSuggestion.title !== job.title && <p><span className="font-medium">Title:</span> {job.adminSuggestion.title}</p>}
-              {job.adminSuggestion.description !== job.description && <p><span className="font-medium">Description:</span> {job.adminSuggestion.description}</p>}
-              {job.adminSuggestion.location !== job.location && <p><span className="font-medium">Location:</span> {job.adminSuggestion.location}</p>}
-              {job.adminSuggestion.type !== job.type && <p><span className="font-medium">Type:</span> {job.adminSuggestion.type}</p>}
+              {job.adminSuggestion.suggestedTitle !== job.title && <p><span className="font-medium">Title:</span> {job.adminSuggestion.suggestedTitle}</p>}
+              {job.adminSuggestion.suggestedDescription !== job.description && <p><span className="font-medium">Description:</span> {job.adminSuggestion.suggestedDescription}</p>}
+              {job.adminSuggestion.suggestedLocation !== job.location && <p><span className="font-medium">Location:</span> {job.adminSuggestion.suggestedLocation}</p>}
+              {job.adminSuggestion.suggestedType !== job.type && <p><span className="font-medium">Type:</span> {job.adminSuggestion.suggestedType}</p>}
             </div>
             <div className="flex gap-2">
               <button onClick={handleApproveSuggestion}

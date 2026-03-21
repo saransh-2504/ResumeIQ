@@ -97,17 +97,17 @@ function ScoreCircle({ score }) {
 function JobAnalysisPanel({ job, onClose }) {
   const [uploaded, setUploaded] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [applied, setApplied] = useState(false);
+  const [showUpload, setShowUpload] = useState(false); // toggle between details and upload
 
-  // Mock ATS analysis — in real app this calls an AI API
+  // Mock ATS analysis — will be replaced with real AI API
   const mockScore = 78;
   const mockMissing = ["Docker", "TypeScript"];
   const mockMatched = job.skillsRequired?.slice(0, 2) || [];
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 overflow-y-auto">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 overflow-y-auto max-h-[calc(100vh-120px)]">
       {/* Job header */}
-      <div className="flex items-start justify-between mb-4">
+      <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">
             {job.company[0]}
@@ -132,87 +132,99 @@ function JobAnalysisPanel({ job, onClose }) {
         </div>
       </div>
 
-      {/* Resume upload */}
-      <div className="mt-5 bg-indigo-50 rounded-2xl p-4">
-        <p className="text-sm font-semibold text-indigo-700 mb-1">Analyze for this Job</p>
-        <p className="text-xs text-indigo-400 mb-3">Upload your resume to see your match score</p>
-
-        {!uploaded ? (
-          <>
-            <div
-              onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-              onDragLeave={() => setDragging(false)}
-              onDrop={() => { setDragging(false); setUploaded(true); }}
-              className={`border-2 border-dashed rounded-xl p-5 text-center transition
-                ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-white"}`}
-            >
-              <p className="text-xl mb-1">📄</p>
-              <p className="text-xs text-gray-400">Drag & drop or click to upload</p>
-            </div>
-            <button
-              onClick={() => setUploaded(true)}
-              className="mt-3 w-full bg-indigo-600 text-white py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
-            >
-              Analyze for this Job
-            </button>
-          </>
-        ) : (
-          <div className="bg-white rounded-xl p-4 border border-indigo-100">
-            <div className="flex items-center gap-4 mb-3">
-              <ScoreCircle score={mockScore} />
-              <div>
-                <p className="text-sm font-semibold text-gray-700">Match Score: {mockScore}%</p>
-                <p className="text-xs text-gray-400 mt-0.5">Good match — a few gaps</p>
-              </div>
-            </div>
-
-            <div className="mb-3">
-              <p className="text-xs font-semibold text-red-500 mb-1">Missing Keywords</p>
-              <div className="flex flex-wrap gap-1">
-                {mockMissing.map((k) => (
-                  <span key={k} className="text-xs bg-red-50 text-red-500 px-2 py-0.5 rounded-lg">{k}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-3">
-              <p className="text-xs font-semibold text-green-600 mb-1">Matching Skills</p>
-              <div className="flex flex-wrap gap-1">
-                {mockMatched.map((k) => (
-                  <span key={k} className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-lg">{k}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="mb-3">
-              <p className="text-xs font-semibold text-gray-600 mb-1">Suggestions</p>
-              <ul className="space-y-1">
-                <li className="text-xs text-gray-500 flex gap-1"><span>💡</span> Add Docker to your skills section</li>
-                <li className="text-xs text-gray-500 flex gap-1"><span>⚠️</span> Add measurable results in experience</li>
-                <li className="text-xs text-gray-500 flex gap-1"><span>✅</span> Education section looks good</li>
-              </ul>
-            </div>
-
-            <button
-              onClick={() => setUploaded(false)}
-              className="w-full border border-indigo-300 text-indigo-600 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-50 transition"
-            >
-              Upload Improved Resume
-            </button>
-          </div>
-        )}
+      {/* Job description */}
+      <div className="mt-4">
+        <p className="text-xs font-semibold text-gray-600 mb-2">Job Description</p>
+        <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.description}</p>
       </div>
 
-      <button
-        onClick={() => setApplied(!applied)}
-        className={`mt-4 w-full py-2.5 rounded-xl text-sm font-semibold transition
-          ${applied
-            ? "bg-green-100 text-green-700 border border-green-200"
-            : "bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:opacity-90"
-          }`}
-      >
-        {applied ? "✅ Applied" : "Apply Now"}
-      </button>
+      {/* Posted by */}
+      <div className="mt-3 text-xs text-gray-400">
+        Posted by {job.postedBy?.name || "Recruiter"}
+      </div>
+
+      <hr className="my-4 border-gray-100" />
+
+      {/* Toggle: show upload section */}
+      {!showUpload ? (
+        <button
+          onClick={() => setShowUpload(true)}
+          className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-2.5 rounded-xl text-sm font-semibold hover:opacity-90 transition"
+        >
+          Analyze My Resume for this Job
+        </button>
+      ) : (
+        /* Resume upload + ATS section */
+        <div className="bg-indigo-50 rounded-2xl p-4">
+          <p className="text-sm font-semibold text-indigo-700 mb-1">Analyze for this Job</p>
+          <p className="text-xs text-indigo-400 mb-3">Upload your resume to see your match score</p>
+
+          {!uploaded ? (
+            <>
+              <div
+                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={() => { setDragging(false); setUploaded(true); }}
+                className={`border-2 border-dashed rounded-xl p-5 text-center transition
+                  ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-white"}`}
+              >
+                <p className="text-xl mb-1">📄</p>
+                <p className="text-xs text-gray-400">Drag & drop or click to upload</p>
+              </div>
+              <button
+                onClick={() => setUploaded(true)}
+                className="mt-3 w-full bg-indigo-600 text-white py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
+              >
+                Upload & Analyze
+              </button>
+            </>
+          ) : (
+            <div className="bg-white rounded-xl p-4 border border-indigo-100">
+              <div className="flex items-center gap-4 mb-3">
+                <ScoreCircle score={mockScore} />
+                <div>
+                  <p className="text-sm font-semibold text-gray-700">Match Score: {mockScore}%</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Good match — a few gaps</p>
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <p className="text-xs font-semibold text-red-500 mb-1">Missing Keywords</p>
+                <div className="flex flex-wrap gap-1">
+                  {mockMissing.map((k) => (
+                    <span key={k} className="text-xs bg-red-50 text-red-500 px-2 py-0.5 rounded-lg">{k}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <p className="text-xs font-semibold text-green-600 mb-1">Matching Skills</p>
+                <div className="flex flex-wrap gap-1">
+                  {mockMatched.map((k) => (
+                    <span key={k} className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-lg">{k}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-3">
+                <p className="text-xs font-semibold text-gray-600 mb-1">Suggestions</p>
+                <ul className="space-y-1">
+                  <li className="text-xs text-gray-500 flex gap-1"><span>💡</span> Add Docker to your skills section</li>
+                  <li className="text-xs text-gray-500 flex gap-1"><span>⚠️</span> Add measurable results in experience</li>
+                  <li className="text-xs text-gray-500 flex gap-1"><span>✅</span> Education section looks good</li>
+                </ul>
+              </div>
+
+              <button
+                onClick={() => setUploaded(false)}
+                className="w-full border border-indigo-300 text-indigo-600 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-50 transition"
+              >
+                Upload Improved Resume
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -276,6 +288,10 @@ function JobsFeed({ onSelect, selectedId }) {
               <span key={t} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-lg">{t}</span>
             ))}
           </div>
+          {/* Short description preview */}
+          {job.description && (
+            <p className="text-xs text-gray-400 mt-2 line-clamp-2">{job.description}</p>
+          )}
         </div>
       ))}
     </div>
