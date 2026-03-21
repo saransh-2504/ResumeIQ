@@ -105,3 +105,124 @@ export async function deleteJob(req, res) {
     res.status(500).json({ message: "Failed to delete job." });
   }
 }
+
+// ---- EDIT JOB (recruiter who posted it) ----
+export async function editJob(req, res) {
+  try {
+    const job = await Job.findById(req.params.id);
+
+    if (!job) return res.status(404).json({ message: "Job not found." });
+
+    // Only the recruiter who posted it can edit
+    if (job.postedBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized to edit this job." });
+    }
+
+    const { title, company, location, type, description, skillsRequired } = req.body;
+
+    if (title) job.title = title;
+    if (company) job.company = company;
+    if (location) job.location = location;
+    if (type) job.type = type;
+    if (description) job.description = description;
+    if (skillsRequired) {
+      job.skillsRequired = Array.isArray(skillsRequired)
+        ? skillsRequired
+        : skillsRequired.split(",").map((s) => s.trim());
+    }
+
+    await job.save();
+    res.status(200).json({ message: "Job updated successfully.", job });
+  } catch (err) {
+    console.error("Edit job error:", err.message);
+    res.status(500).json({ message: "Failed to update job." });
+  }
+}
+
+// ---- ADMIN: SUGGEST CHANGES TO A JOB ----
+export async function adminSuggestChanges(req, res) {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "Job not found." });
+
+    const { title, company, location, type, description, skillsRequired } = req.body;
+
+    // Store the suggestion — recruiter will see this and can approve or reject
+    job.adminSuggestion = {
+      title: title || job.title,
+      company: company || job.company,
+      location: location || job.location,
+      type: type || job.type,
+      description: description || job.description,
+      skillsRequired: skillsRequired
+        ? Array.isArray(skillsRequired)
+          ? skillsRequired
+          : skillsRequired.split(",").map((s) => s.trim())
+        : job.skillsRequired,
+      status: "pending",
+      suggestedAt: new Date(),
+    };
+
+    await job.save();
+    res.status(200).json({ message: "Suggestion sent to recruiter.", job });
+  } catch (err) {
+    console.error("Admin suggest error:", err.message);
+    res.status(500).json({ message: "Failed to send suggestion." });
+  }
+}
+
+// ---- RECRUITER: APPROVE ADMIN SUGGESTION ----
+export async function approveAdminSuggestion(req, res) {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "Job not found." });
+
+    // Only the recruiter who owns the job
+    if (job.postedBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized." });
+    }
+
+    if (!job.adminSuggestion || job.adminSuggestion.status !== "pending") {
+      return res.status(400).json({ message: "No pending suggestion found." });
+    }
+
+    // Apply the suggested changes to the actual job
+    const s = job.adminSuggestion;
+    job.title = s.title;
+    job.company = s.company;
+    job.location = s.location;
+    job.type = s.type;
+    job.description = s.description;
+    job.skillsRequired = s.skillsRequired;
+    job.adminSuggestion.status = "approved";
+
+    await job.save();
+    res.status(200).json({ message: "Changes approved and applied.", job });
+  } catch (err) {
+    console.error("Approve suggestion error:", err.message);
+    res.status(500).json({ message: "Failed to approve suggestion." });
+  }
+}
+
+// ---- RECRUITER: REJECT ADMIN SUGGESTION ----
+export async function rejectAdminSuggestion(req, res) {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "Job not found." });
+
+    if (job.postedBy.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized." });
+    }
+
+    if (!job.adminSuggestion || job.adminSuggestion.status !== "pending") {
+      return res.status(400).json({ message: "No pending suggestion found." });
+    }
+
+    job.adminSuggestion.status = "rejected";
+    await job.save();
+    res.status(200).json({ message: "Suggestion rejected." });
+  } catch (err) {
+    console.error("Reject suggestion error:", err.message);
+    res.status(500).json({ message: "Failed to reject suggestion." });
+  }
+}

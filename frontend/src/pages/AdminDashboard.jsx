@@ -3,30 +3,182 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 
+// ---- Job Detail + Suggest Changes Modal (Admin) ----
+function AdminJobModal({ job, onClose, onSuggested }) {
+  const [suggesting, setSuggesting] = useState(false);
+  const [form, setForm] = useState({
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    type: job.type,
+    description: job.description,
+    skillsRequired: Array.isArray(job.skillsRequired) ? job.skillsRequired.join(", ") : "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  async function handleSuggest() {
+    setLoading(true);
+    try {
+      await api.post(`/jobs/${job._id}/suggest`, form);
+      setMsg("Suggestion sent to recruiter.");
+      setSuggesting(false);
+      onSuggested();
+    } catch (err) {
+      setMsg(err.response?.data?.message || "Failed to send suggestion.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const hasPendingSuggestion = job.adminSuggestion?.status === "pending";
+
+  return (
+    <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center px-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
+        onClick={(e) => e.stopPropagation()}>
+
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h2 className="text-lg font-bold text-gray-800">{job.title}</h2>
+            <p className="text-sm text-gray-400">{job.company} · {job.location}</p>
+            <p className="text-xs text-gray-300 mt-0.5">Posted by: {job.postedBy?.name} ({job.postedBy?.email})</p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+        </div>
+
+        {msg && <div className="bg-indigo-50 text-indigo-700 text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
+
+        {/* Pending suggestion status */}
+        {hasPendingSuggestion && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mb-4 text-xs text-yellow-700">
+            ⏳ You already have a pending suggestion waiting for recruiter response.
+          </div>
+        )}
+
+        {/* View mode */}
+        {!suggesting ? (
+          <div className="space-y-4">
+            <div className="flex gap-2 flex-wrap">
+              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">{job.type}</span>
+              {job.skillsRequired?.map((s) => (
+                <span key={s} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">{s}</span>
+              ))}
+            </div>
+            <div>
+              <p className="text-xs text-gray-400 mb-1">Description</p>
+              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{job.description}</p>
+            </div>
+            {!hasPendingSuggestion && (
+              <button onClick={() => setSuggesting(true)}
+                className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition">
+                Suggest Changes
+              </button>
+            )}
+          </div>
+        ) : (
+          /* Suggest changes form */
+          <div className="space-y-3">
+            <p className="text-xs text-gray-500 mb-2">Edit the fields you want to suggest changes for. Recruiter will review and approve or reject.</p>
+            {[
+              { label: "Job Title", key: "title" },
+              { label: "Company", key: "company" },
+              { label: "Location", key: "location" },
+            ].map(({ label, key }) => (
+              <div key={key}>
+                <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+                <input type="text" value={form[key]}
+                  onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+              </div>
+            ))}
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block">Job Type</label>
+              <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 bg-white">
+                <option>Full-time</option>
+                <option>Internship</option>
+                <option>Part-time</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block">Description</label>
+              <textarea rows={4} value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
+            </div>
+            <div>
+              <label className="text-xs text-gray-500 mb-1 block">Skills (comma separated)</label>
+              <input type="text" value={form.skillsRequired}
+                onChange={(e) => setForm({ ...form, skillsRequired: e.target.value })}
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button onClick={handleSuggest} disabled={loading}
+                className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition disabled:opacity-60">
+                {loading ? "Sending..." : "Send Suggestion"}
+              </button>
+              <button onClick={() => setSuggesting(false)}
+                className="text-sm text-gray-500 px-4 py-2 rounded-xl hover:bg-gray-100 transition">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---- Recruiter Card ----
+function RecruiterCard({ recruiter, onApprove, onReject, showActions }) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex items-center justify-between">
+      <div>
+        <p className="font-medium text-gray-800 text-sm">{recruiter.name}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{recruiter.email}</p>
+        <p className="text-xs text-gray-300 mt-0.5">Joined {new Date(recruiter.createdAt).toLocaleDateString()}</p>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium
+          ${recruiter.isApproved ? "bg-green-50 text-green-600" : "bg-yellow-50 text-yellow-600"}`}>
+          {recruiter.isApproved ? "Approved" : "Pending"}
+        </span>
+        {showActions && !recruiter.isApproved && (
+          <button onClick={onApprove}
+            className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition">
+            Approve
+          </button>
+        )}
+        <button onClick={onReject}
+          className="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition">
+          Remove
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ---- Main Admin Dashboard ----
 export default function AdminDashboard() {
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
 
-  // Which tab is active: "pending" | "recruiters" | "users" | "jobs"
   const [tab, setTab] = useState("pending");
-
   const [pendingRecruiters, setPendingRecruiters] = useState([]);
   const [allRecruiters, setAllRecruiters] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [allJobs, setAllJobs] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [toast, setToast] = useState(""); // success/error message
+  const [toast, setToast] = useState("");
+  const [selectedJob, setSelectedJob] = useState(null); // job modal
 
-  // Show a toast message for 3 seconds
   function showToast(msg) {
     setToast(msg);
     setTimeout(() => setToast(""), 3000);
   }
 
-  // Fetch data based on active tab
-  useEffect(() => {
-    fetchTabData(tab);
-  }, [tab]);
+  useEffect(() => { fetchTabData(tab); }, [tab]);
 
   async function fetchTabData(activeTab) {
     setLoading(true);
@@ -51,33 +203,25 @@ export default function AdminDashboard() {
     }
   }
 
-  // Approve a recruiter
   async function handleApprove(id) {
     try {
       const res = await api.patch(`/admin/recruiters/${id}/approve`);
       showToast(res.data.message);
-      // Refresh both pending and all recruiters lists
       fetchTabData("pending");
-    } catch (err) {
+    } catch {
       showToast("Failed to approve recruiter.");
     }
   }
 
-  // Reject (delete) a recruiter
   async function handleReject(id) {
-    if (!confirm("Are you sure you want to reject and remove this recruiter?")) return;
+    if (!confirm("Remove this recruiter?")) return;
     try {
       const res = await api.delete(`/admin/recruiters/${id}`);
       showToast(res.data.message);
       fetchTabData(tab);
-    } catch (err) {
-      showToast("Failed to reject recruiter.");
+    } catch {
+      showToast("Failed to remove recruiter.");
     }
-  }
-
-  async function handleLogout() {
-    await logoutUser();
-    navigate("/login");
   }
 
   const tabs = [
@@ -89,11 +233,20 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Toast notification */}
+      {/* Toast */}
       {toast && (
         <div className="fixed top-4 right-4 z-50 bg-gray-800 text-white text-sm px-4 py-3 rounded-xl shadow-lg">
           {toast}
         </div>
+      )}
+
+      {/* Job modal */}
+      {selectedJob && (
+        <AdminJobModal
+          job={selectedJob}
+          onClose={() => setSelectedJob(null)}
+          onSuggested={() => { showToast("Suggestion sent to recruiter."); fetchTabData("jobs"); setSelectedJob(null); }}
+        />
       )}
 
       {/* Navbar */}
@@ -104,10 +257,8 @@ export default function AdminDashboard() {
         </span>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-500">{user?.name}</span>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-red-500 hover:text-red-600 transition"
-          >
+          <button onClick={async () => { await logoutUser(); navigate("/login"); }}
+            className="text-sm text-red-500 hover:text-red-600 transition">
             Logout
           </button>
         </div>
@@ -117,20 +268,13 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-bold text-gray-800 mb-1">Admin Dashboard</h1>
         <p className="text-sm text-gray-400 mb-6">Manage recruiters, candidates, and jobs</p>
 
-        {/* Tab bar */}
+        {/* Tabs */}
         <div className="flex gap-2 mb-6 border-b border-gray-100">
           {tabs.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
+            <button key={t.key} onClick={() => setTab(t.key)}
               className={`px-4 py-2.5 text-sm font-medium transition border-b-2 -mb-px
-                ${tab === t.key
-                  ? "border-indigo-600 text-indigo-600"
-                  : "border-transparent text-gray-500 hover:text-gray-700"
-                }`}
-            >
+                ${tab === t.key ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
               {t.label}
-              {/* Show count badge on pending tab */}
               {t.key === "pending" && pendingRecruiters.length > 0 && (
                 <span className="ml-2 bg-red-100 text-red-600 text-xs px-1.5 py-0.5 rounded-full">
                   {pendingRecruiters.length}
@@ -140,35 +284,29 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {/* Loading state */}
         {loading ? (
           <div className="text-center py-16 text-gray-400 text-sm">Loading...</div>
         ) : (
           <>
-            {/* PENDING APPROVALS TAB */}
+            {/* PENDING */}
             {tab === "pending" && (
               <div>
                 {pendingRecruiters.length === 0 ? (
-                  <div className="text-center py-16 text-gray-400 text-sm">
-                    No pending recruiter approvals
-                  </div>
+                  <div className="text-center py-16 text-gray-400 text-sm">No pending approvals</div>
                 ) : (
                   <div className="space-y-3">
                     {pendingRecruiters.map((r) => (
-                      <RecruiterCard
-                        key={r._id}
-                        recruiter={r}
+                      <RecruiterCard key={r._id} recruiter={r}
                         onApprove={() => handleApprove(r._id)}
                         onReject={() => handleReject(r._id)}
-                        showActions
-                      />
+                        showActions />
                     ))}
                   </div>
                 )}
               </div>
             )}
 
-            {/* ALL RECRUITERS TAB */}
+            {/* ALL RECRUITERS */}
             {tab === "recruiters" && (
               <div>
                 {allRecruiters.length === 0 ? (
@@ -176,19 +314,16 @@ export default function AdminDashboard() {
                 ) : (
                   <div className="space-y-3">
                     {allRecruiters.map((r) => (
-                      <RecruiterCard
-                        key={r._id}
-                        recruiter={r}
+                      <RecruiterCard key={r._id} recruiter={r}
                         onReject={() => handleReject(r._id)}
-                        showActions={false}
-                      />
+                        showActions={false} />
                     ))}
                   </div>
                 )}
               </div>
             )}
 
-            {/* CANDIDATES TAB */}
+            {/* CANDIDATES */}
             {tab === "users" && (
               <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                 {allUsers.length === 0 ? (
@@ -208,15 +343,10 @@ export default function AdminDashboard() {
                         <tr key={u._id} className="hover:bg-gray-50 transition">
                           <td className="px-5 py-3 font-medium text-gray-800">{u.name}</td>
                           <td className="px-5 py-3 text-gray-500">{u.email}</td>
-                          <td className="px-5 py-3 text-gray-400">
-                            {new Date(u.createdAt).toLocaleDateString()}
-                          </td>
+                          <td className="px-5 py-3 text-gray-400">{new Date(u.createdAt).toLocaleDateString()}</td>
                           <td className="px-5 py-3">
                             <span className={`text-xs px-2 py-0.5 rounded-full font-medium
-                              ${u.oauthProvider
-                                ? "bg-blue-50 text-blue-600"
-                                : "bg-gray-100 text-gray-500"
-                              }`}>
+                              ${u.oauthProvider ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-500"}`}>
                               {u.oauthProvider || "email"}
                             </span>
                           </td>
@@ -228,7 +358,7 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* JOBS TAB */}
+            {/* JOBS */}
             {tab === "jobs" && (
               <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                 {allJobs.length === 0 ? (
@@ -241,7 +371,8 @@ export default function AdminDashboard() {
                         <th className="px-5 py-3 text-left">Company</th>
                         <th className="px-5 py-3 text-left">Posted By</th>
                         <th className="px-5 py-3 text-left">Type</th>
-                        <th className="px-5 py-3 text-left">Date</th>
+                        <th className="px-5 py-3 text-left">Status</th>
+                        <th className="px-5 py-3 text-left">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -249,16 +380,24 @@ export default function AdminDashboard() {
                         <tr key={j._id} className="hover:bg-gray-50 transition">
                           <td className="px-5 py-3 font-medium text-gray-800">{j.title}</td>
                           <td className="px-5 py-3 text-gray-500">{j.company}</td>
-                          <td className="px-5 py-3 text-gray-500">
-                            {j.postedBy?.name || "—"}
-                          </td>
+                          <td className="px-5 py-3 text-gray-500">{j.postedBy?.name || "—"}</td>
                           <td className="px-5 py-3">
                             <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full capitalize">
                               {j.type}
                             </span>
                           </td>
-                          <td className="px-5 py-3 text-gray-400">
-                            {new Date(j.createdAt).toLocaleDateString()}
+                          <td className="px-5 py-3">
+                            {j.adminSuggestion?.status === "pending" ? (
+                              <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">Suggestion pending</span>
+                            ) : (
+                              <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full">Active</span>
+                            )}
+                          </td>
+                          <td className="px-5 py-3">
+                            <button onClick={() => setSelectedJob(j)}
+                              className="text-xs text-indigo-600 hover:underline">
+                              View / Edit
+                            </button>
                           </td>
                         </tr>
                       ))}
@@ -269,49 +408,6 @@ export default function AdminDashboard() {
             )}
           </>
         )}
-      </div>
-    </div>
-  );
-}
-
-// Reusable recruiter card component
-function RecruiterCard({ recruiter, onApprove, onReject, showActions }) {
-  return (
-    <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex items-center justify-between">
-      <div>
-        <p className="font-medium text-gray-800 text-sm">{recruiter.name}</p>
-        <p className="text-xs text-gray-400 mt-0.5">{recruiter.email}</p>
-        <p className="text-xs text-gray-300 mt-0.5">
-          Joined {new Date(recruiter.createdAt).toLocaleDateString()}
-        </p>
-      </div>
-      <div className="flex items-center gap-2">
-        {/* Approval status badge */}
-        <span className={`text-xs px-2 py-0.5 rounded-full font-medium
-          ${recruiter.isApproved
-            ? "bg-green-50 text-green-600"
-            : "bg-yellow-50 text-yellow-600"
-          }`}>
-          {recruiter.isApproved ? "Approved" : "Pending"}
-        </span>
-
-        {/* Show approve button only on pending tab */}
-        {showActions && !recruiter.isApproved && (
-          <button
-            onClick={onApprove}
-            className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition"
-          >
-            Approve
-          </button>
-        )}
-
-        {/* Reject/remove button always visible */}
-        <button
-          onClick={onReject}
-          className="text-xs bg-red-50 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-100 transition"
-        >
-          Remove
-        </button>
       </div>
     </div>
   );
