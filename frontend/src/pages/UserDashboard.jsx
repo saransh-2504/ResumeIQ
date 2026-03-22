@@ -95,14 +95,52 @@ function ScoreCircle({ score }) {
 
 // ---- Job Analysis Panel (right side) ----
 function JobAnalysisPanel({ job, onClose }) {
-  const [uploaded, setUploaded] = useState(false);
+  const [file, setFile] = useState(null);
   const [dragging, setDragging] = useState(false);
-  const [showUpload, setShowUpload] = useState(false); // toggle between details and upload
+  const [uploading, setUploading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState("");
+  const [showUpload, setShowUpload] = useState(false);
 
-  // Mock ATS analysis — will be replaced with real AI API
-  const mockScore = 78;
-  const mockMissing = ["Docker", "TypeScript"];
-  const mockMatched = job.skillsRequired?.slice(0, 2) || [];
+  function handleFile(picked) {
+    const allowed = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
+    if (!allowed.includes(picked.type)) {
+      setError("Only PDF or DOCX files allowed.");
+      return;
+    }
+    if (picked.size > 5 * 1024 * 1024) {
+      setError("File must be under 5MB.");
+      return;
+    }
+    setError("");
+    setFile(picked);
+  }
+
+  async function handleUpload() {
+    if (!file) return;
+    setUploading(true);
+    setError("");
+    try {
+      const formData = new FormData();
+      formData.append("resume", file);
+      await api.post("/resume", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      // Mock ATS result — real AI analysis coming later
+      setResult({
+        score: 78,
+        missing: ["Docker", "TypeScript"],
+        matched: job.skillsRequired?.slice(0, 2) || [],
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "Upload failed. Try again.");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 overflow-y-auto max-h-[calc(100vh-120px)]">
@@ -122,7 +160,6 @@ function JobAnalysisPanel({ job, onClose }) {
 
       <TypeBadge type={job.type} />
 
-      {/* Required skills */}
       <div className="mt-4">
         <p className="text-xs font-semibold text-gray-600 mb-2">Required Skills</p>
         <div className="flex flex-wrap gap-1">
@@ -132,20 +169,17 @@ function JobAnalysisPanel({ job, onClose }) {
         </div>
       </div>
 
-      {/* Job description */}
       <div className="mt-4">
         <p className="text-xs font-semibold text-gray-600 mb-2">Job Description</p>
         <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.description}</p>
       </div>
 
-      {/* Posted by */}
       <div className="mt-3 text-xs text-gray-400">
         Posted by {job.postedBy?.name || "Recruiter"}
       </div>
 
       <hr className="my-4 border-gray-100" />
 
-      {/* Toggle: show upload section */}
       {!showUpload ? (
         <button
           onClick={() => setShowUpload(true)}
@@ -153,81 +187,92 @@ function JobAnalysisPanel({ job, onClose }) {
         >
           Analyze My Resume for this Job
         </button>
-      ) : (
-        /* Resume upload + ATS section */
+      ) : !result ? (
         <div className="bg-indigo-50 rounded-2xl p-4">
-          <p className="text-sm font-semibold text-indigo-700 mb-1">Analyze for this Job</p>
-          <p className="text-xs text-indigo-400 mb-3">Upload your resume to see your match score</p>
+          <p className="text-sm font-semibold text-indigo-700 mb-1">Upload Resume</p>
+          <p className="text-xs text-indigo-400 mb-3">PDF or DOCX · Max 5MB</p>
 
-          {!uploaded ? (
-            <>
-              <div
-                onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
-                onDragLeave={() => setDragging(false)}
-                onDrop={() => { setDragging(false); setUploaded(true); }}
-                className={`border-2 border-dashed rounded-xl p-5 text-center transition
-                  ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-white"}`}
-              >
-                <p className="text-xl mb-1">📄</p>
-                <p className="text-xs text-gray-400">Drag & drop or click to upload</p>
-              </div>
-              <button
-                onClick={() => setUploaded(true)}
-                className="mt-3 w-full bg-indigo-600 text-white py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
-              >
-                Upload & Analyze
-              </button>
-            </>
-          ) : (
-            <div className="bg-white rounded-xl p-4 border border-indigo-100">
-              <div className="flex items-center gap-4 mb-3">
-                <ScoreCircle score={mockScore} />
-                <div>
-                  <p className="text-sm font-semibold text-gray-700">Match Score: {mockScore}%</p>
-                  <p className="text-xs text-gray-400 mt-0.5">Good match — a few gaps</p>
-                </div>
-              </div>
+          {error && <p className="text-xs text-red-500 mb-2">{error}</p>}
 
-              <div className="mb-3">
-                <p className="text-xs font-semibold text-red-500 mb-1">Missing Keywords</p>
-                <div className="flex flex-wrap gap-1">
-                  {mockMissing.map((k) => (
-                    <span key={k} className="text-xs bg-red-50 text-red-500 px-2 py-0.5 rounded-lg">{k}</span>
-                  ))}
-                </div>
-              </div>
+          {/* Drag & drop zone — clicking opens file picker */}
+          <div
+            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}
+            onClick={() => document.getElementById("resume-input").click()}
+            className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition
+              ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-white hover:bg-indigo-50"}`}
+          >
+            <p className="text-xl mb-1">📄</p>
+            {file ? (
+              <p className="text-xs text-indigo-600 font-medium">{file.name}</p>
+            ) : (
+              <p className="text-xs text-gray-400">Drag & drop or click to select file</p>
+            )}
+          </div>
 
-              <div className="mb-3">
-                <p className="text-xs font-semibold text-green-600 mb-1">Matching Skills</p>
-                <div className="flex flex-wrap gap-1">
-                  {mockMatched.map((k) => (
-                    <span key={k} className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-lg">{k}</span>
-                  ))}
-                </div>
-              </div>
+          {/* Hidden real file input */}
+          <input
+            id="resume-input"
+            type="file"
+            accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            className="hidden"
+            onChange={(e) => { if (e.target.files[0]) handleFile(e.target.files[0]); }}
+          />
 
-              <div className="mb-3">
-                <p className="text-xs font-semibold text-gray-600 mb-1">Suggestions</p>
-                <ul className="space-y-1">
-                  <li className="text-xs text-gray-500 flex gap-1"><span>💡</span> Add Docker to your skills section</li>
-                  <li className="text-xs text-gray-500 flex gap-1"><span>⚠️</span> Add measurable results in experience</li>
-                  <li className="text-xs text-gray-500 flex gap-1"><span>✅</span> Education section looks good</li>
-                </ul>
-              </div>
-
-              <button
-                onClick={() => setUploaded(false)}
-                className="w-full border border-indigo-300 text-indigo-600 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-50 transition"
-              >
-                Upload Improved Resume
-              </button>
+          <button
+            onClick={handleUpload}
+            disabled={!file || uploading}
+            className="mt-3 w-full bg-indigo-600 text-white py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition disabled:opacity-50"
+          >
+            {uploading ? "Uploading..." : "Upload & Analyze"}
+          </button>
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl p-4 border border-indigo-100">
+          <div className="flex items-center gap-4 mb-3">
+            <ScoreCircle score={result.score} />
+            <div>
+              <p className="text-sm font-semibold text-gray-700">Match Score: {result.score}%</p>
+              <p className="text-xs text-gray-400 mt-0.5">Good match — a few gaps</p>
             </div>
-          )}
+          </div>
+          <div className="mb-3">
+            <p className="text-xs font-semibold text-red-500 mb-1">Missing Keywords</p>
+            <div className="flex flex-wrap gap-1">
+              {result.missing.map((k) => (
+                <span key={k} className="text-xs bg-red-50 text-red-500 px-2 py-0.5 rounded-lg">{k}</span>
+              ))}
+            </div>
+          </div>
+          <div className="mb-3">
+            <p className="text-xs font-semibold text-green-600 mb-1">Matching Skills</p>
+            <div className="flex flex-wrap gap-1">
+              {result.matched.map((k) => (
+                <span key={k} className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-lg">{k}</span>
+              ))}
+            </div>
+          </div>
+          <div className="mb-3">
+            <p className="text-xs font-semibold text-gray-600 mb-1">Suggestions</p>
+            <ul className="space-y-1">
+              <li className="text-xs text-gray-500 flex gap-1"><span>💡</span> Add missing keywords to your skills section</li>
+              <li className="text-xs text-gray-500 flex gap-1"><span>⚠️</span> Add measurable results in experience</li>
+              <li className="text-xs text-gray-500 flex gap-1"><span>✅</span> Education section looks good</li>
+            </ul>
+          </div>
+          <button
+            onClick={() => { setResult(null); setFile(null); }}
+            className="w-full border border-indigo-300 text-indigo-600 py-2 rounded-xl text-xs font-semibold hover:bg-indigo-50 transition"
+          >
+            Upload Improved Resume
+          </button>
         </div>
       )}
     </div>
   );
 }
+
 
 // ---- Jobs Feed ----
 function JobsFeed({ onSelect, selectedId }) {
