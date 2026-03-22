@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 
 const resumeSchema = new mongoose.Schema(
   {
-    // One resume per user — userId is unique
+    // One resume per user
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
       unique: true,
     },
-    // Full S3 URL to the file
+    // Cloudinary HTTPS URL — this is what we store and show
     fileUrl: {
       type: String,
       required: true,
@@ -19,8 +19,8 @@ const resumeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // S3 key — needed to delete old file when user re-uploads
-    s3Key: {
+    // Cloudinary public_id — needed to delete the file later
+    cloudinaryId: {
       type: String,
       required: true,
     },
