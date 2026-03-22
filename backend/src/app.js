@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.routes.js";
 import oauthRoutes from "./routes/oauth.routes.js";
 import jobRoutes from "./routes/job.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
+import resumeRoutes from "./routes/resume.routes.js";
 import healthRouter from "./routes/health.routes.js";
 
 const app = express();
@@ -22,8 +23,9 @@ app.use(passport.initialize());
 // Routes
 app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/auth", oauthRoutes); // Google + Microsoft OAuth
+app.use("/api/v1/auth", oauthRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/resume", resumeRoutes);
 
 export default app;
