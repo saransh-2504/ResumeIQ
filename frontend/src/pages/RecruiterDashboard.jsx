@@ -49,9 +49,86 @@ function TopBar() {
   );
 }
 
+// ---- Applicants list inside job modal ----
+function ApplicantsList({ jobId }) {
+  const [applicants, setApplicants] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get(`/jobs/${jobId}/applications`)
+      .then((res) => setApplicants(res.data.applicants))
+      .catch(() => setApplicants([]))
+      .finally(() => setLoading(false));
+  }, [jobId]);
+
+  const statusColors = {
+    applied: "bg-blue-50 text-blue-600",
+    reviewed: "bg-yellow-50 text-yellow-600",
+    shortlisted: "bg-green-50 text-green-600",
+    rejected: "bg-red-50 text-red-500",
+  };
+
+  async function handleStatusChange(appId, status) {
+    try {
+      await api.patch(`/applications/${appId}/status`, { status });
+      setApplicants((prev) =>
+        prev.map((a) => (a._id === appId ? { ...a, status } : a))
+      );
+    } catch {
+      // silent fail — status didn't change
+    }
+  }
+
+  if (loading) return <div className="text-xs text-gray-400 py-2">Loading applicants...</div>;
+  if (applicants.length === 0) return <div className="text-xs text-gray-400 py-2">No applicants yet.</div>;
+
+  return (
+    <div className="space-y-3">
+      {applicants.map((app) => (
+        <div key={app._id} className="bg-gray-50 rounded-xl p-3">
+          <div className="flex items-center justify-between mb-1">
+            <div>
+              <p className="text-sm font-medium text-gray-700">{app.candidate.name}</p>
+              <p className="text-xs text-gray-400">{app.candidate.email}</p>
+            </div>
+            {/* Status dropdown */}
+            <select
+              value={app.status}
+              onChange={(e) => handleStatusChange(app._id, e.target.value)}
+              className={`text-xs px-2 py-1 rounded-lg border-0 font-medium cursor-pointer ${statusColors[app.status]}`}
+            >
+              <option value="applied">Applied</option>
+              <option value="reviewed">Reviewed</option>
+              <option value="shortlisted">Shortlisted</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center gap-1 text-xs text-gray-400">
+              <span>📄</span>
+              <span className="truncate max-w-[160px]">{app.resumeFileName}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-gray-400">
+                {new Date(app.appliedAt).toLocaleDateString()}
+              </span>
+              {/* View resume — opens signed URL in new tab */}
+              <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer"
+                className="text-xs text-indigo-600 hover:underline">
+                View Resume
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // ---- Job Detail + Edit Modal ----
 function JobModal({ job, onClose, onUpdated }) {
   const [editing, setEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState("details"); // "details" | "applicants"
   const [form, setForm] = useState({
     title: job.title,
     company: job.company,
@@ -118,8 +195,20 @@ function JobModal({ job, onClose, onUpdated }) {
 
         {msg && <div className="bg-indigo-50 text-indigo-700 text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
 
+        {/* Tabs */}
+        <div className="flex gap-1 mb-4 bg-gray-50 rounded-xl p-1">
+          <button onClick={() => setActiveTab("details")}
+            className={`flex-1 text-xs font-medium py-1.5 rounded-lg transition ${activeTab === "details" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500"}`}>
+            Job Details
+          </button>
+          <button onClick={() => setActiveTab("applicants")}
+            className={`flex-1 text-xs font-medium py-1.5 rounded-lg transition ${activeTab === "applicants" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500"}`}>
+            Applicants
+          </button>
+        </div>
+
         {/* Admin suggestion banner */}
-        {hasPendingSuggestion && (
+        {hasPendingSuggestion && activeTab === "details" && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
             <p className="text-sm font-semibold text-yellow-700 mb-2">📝 Admin suggested changes to this job</p>
             <div className="text-xs text-yellow-600 space-y-1 mb-3">
@@ -141,8 +230,10 @@ function JobModal({ job, onClose, onUpdated }) {
           </div>
         )}
 
-        {/* View mode */}
-        {!editing ? (
+        {/* Tab content */}
+        {activeTab === "applicants" ? (
+          <ApplicantsList jobId={job._id} />
+        ) : !editing ? (
           <div className="space-y-4">
             <div className="flex gap-2 flex-wrap">
               <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">{job.type}</span>

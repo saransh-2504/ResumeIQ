@@ -31,4 +31,10 @@ export const env = {
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME || "",
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY || "",
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET || "",
+
+  // Groq — resume parsing (free: 14,400 req/day, no credit card)
+  GROQ_API_KEY: process.env.GROQ_API_KEY || "",
+
+  // Redis — OTP storage
+  REDIS_URL: process.env.REDIS_URL || "redis://127.0.0.1:6379",
 };

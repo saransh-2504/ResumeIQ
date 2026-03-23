@@ -9,6 +9,7 @@ import oauthRoutes from "./routes/oauth.routes.js";
 import jobRoutes from "./routes/job.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import resumeRoutes from "./routes/resume.routes.js";
+import applicationRoutes from "./routes/application.routes.js";
 import healthRouter from "./routes/health.routes.js";
 
 const app = express();
@@ -27,5 +28,6 @@ app.use("/api/v1/auth", oauthRoutes);
 app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/resume", resumeRoutes);
+app.use("/api/v1/applications", applicationRoutes);
 
 export default app;

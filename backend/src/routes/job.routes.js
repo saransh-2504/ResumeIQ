@@ -10,6 +10,8 @@ import {
   approveAdminSuggestion,
   rejectAdminSuggestion,
 } from "../controllers/job.controller.js";
+import { applyToJob, getJobApplicants } from "../controllers/application.controller.js";
+import { getATSScore } from "../controllers/job.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { roleMiddleware } from "../middlewares/role.middleware.js";
 import { recruiterApprovalMiddleware } from "../middlewares/recruiterApproval.middleware.js";
@@ -34,5 +36,14 @@ router.post("/:id/suggestion/reject", authMiddleware, roleMiddleware("recruiter"
 
 // Admin — suggest changes to a job
 router.post("/:id/suggest", authMiddleware, roleMiddleware("admin"), adminSuggestChanges);
+
+// Candidate — apply to a job (uses resume already on file)
+router.post("/:id/apply", authMiddleware, roleMiddleware("candidate"), applyToJob);
+
+// Candidate — get ATS score for a job against their resume
+router.get("/:id/ats-score", authMiddleware, roleMiddleware("candidate"), getATSScore);
+
+// Recruiter — view applicants for a job
+router.get("/:id/applications", authMiddleware, roleMiddleware("recruiter"), getJobApplicants);
 
 export default router;

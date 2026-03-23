@@ -1,6 +1,9 @@
 /**
- * Run this script once to create an admin user in the database.
- * Usage: node src/scripts/createAdmin.js
+ * Creates or resets the admin user in the database.
+ * Run once: node src/scripts/createAdmin.js
+ *
+ * Password must NOT contain # or @ — dotenv treats them as special characters.
+ * Set ADMIN_EMAIL and ADMIN_PASSWORD in .env before running.
  */
 
 import mongoose from "mongoose";
@@ -8,43 +11,47 @@ import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Connect to MongoDB
 await mongoose.connect(process.env.MONGO_URI);
-console.log("✅ Connected to MongoDB");
+console.log("✅ Connected to DB:", mongoose.connection.name);
 
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-  role: String,
-  isVerified: Boolean,
-  isApproved: Boolean,
-}, { timestamps: true });
+const email = process.env.ADMIN_EMAIL || "admin@resumeiq.com";
+const password = process.env.ADMIN_PASSWORD;
 
-const User = mongoose.models.User || mongoose.model("User", UserSchema);
-
-// ---- CHANGE THESE VALUES ----
-const ADMIN_NAME = "Admin";
-const ADMIN_EMAIL = "admin@resumeiq.com";   // change this
-const ADMIN_PASSWORD = "admin123";           // change this
-// -----------------------------
-
-const existing = await User.findOne({ email: ADMIN_EMAIL });
-if (existing) {
-  console.log("⚠️  Admin already exists with this email.");
-  process.exit(0);
+if (!password) {
+  console.error("❌ ADMIN_PASSWORD not set in .env");
+  process.exit(1);
 }
 
-const hashed = await bcrypt.hash(ADMIN_PASSWORD, 10);
+// Hash manually — bypass mongoose pre-save hook to avoid double-hashing
+const hashed = await bcrypt.hash(password, 10);
 
-await User.create({
-  name: ADMIN_NAME,
-  email: ADMIN_EMAIL,
-  password: hashed,
-  role: "admin",
-  isVerified: true,
-  isApproved: true,
-});
+// Verify hash before saving
+const check = await bcrypt.compare(password, hashed);
+if (!check) {
+  console.error("❌ Hash verification failed — aborting");
+  process.exit(1);
+}
 
-console.log(`✅ Admin created: ${ADMIN_EMAIL} / ${ADMIN_PASSWORD}`);
+// Raw collection update — no mongoose middleware involved
+await mongoose.connection.collection("users").updateOne(
+  { email },
+  {
+    $set: {
+      name: "Admin",
+      password: hashed,
+      role: "admin",
+      isVerified: true,
+      isApproved: true,
+      updatedAt: new Date(),
+    },
+    $setOnInsert: { createdAt: new Date() },
+  },
+  { upsert: true }
+);
+
+// Confirm it saved correctly
+const saved = await mongoose.connection.collection("users").findOne({ email });
+const finalCheck = await bcrypt.compare(password, saved.password);
+console.log(finalCheck ? `✅ Admin ready — login with: ${email} / ${password}` : "❌ Something went wrong");
+
 process.exit(0);

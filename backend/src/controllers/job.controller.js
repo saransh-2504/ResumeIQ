@@ -1,4 +1,6 @@
 import Job from "../models/Job.js";
+import Resume from "../models/Resume.js";
+import { calculateATS } from "../utils/atsScore.js";
 
 // ---- GET ALL JOBS (public) ----
 // Supports filters: type, location, skills (comma-separated)
@@ -223,5 +225,29 @@ export async function rejectAdminSuggestion(req, res) {
   } catch (err) {
     console.error("Reject suggestion error:", err.message);
     res.status(500).json({ message: "Failed to reject suggestion." });
+  }
+}
+
+// ---- CANDIDATE: GET ATS SCORE FOR A JOB ----
+// GET /api/v1/jobs/:id/ats-score
+export async function getATSScore(req, res) {
+  try {
+    const job = await Job.findById(req.params.id);
+    if (!job) return res.status(404).json({ message: "Job not found." });
+
+    const resume = await Resume.findOne({ userId: req.user._id });
+    if (!resume) {
+      return res.status(404).json({ message: "No resume found. Please upload your resume first." });
+    }
+    if (!resume.parsedData) {
+      return res.status(400).json({ message: "Resume is still being parsed. Please try again in a moment." });
+    }
+
+    const ats = calculateATS(resume.parsedData, job);
+
+    res.status(200).json({ ats });
+  } catch (err) {
+    console.error("ATS score error:", err.message);
+    res.status(500).json({ message: "Failed to calculate ATS score." });
   }
 }
