@@ -1055,10 +1055,223 @@ function MyApplications() {
   );
 }
 
+// ---- Resume Analysis Tab ----
+function ResumeAnalysis() {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    api.get("/resume/analysis")
+      .then((res) => setData(res.data.analysis))
+      .catch((err) => setError(err.response?.data?.message || "Could not load analysis."))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return (
+    <div className="space-y-4">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="bg-white border border-gray-100 rounded-2xl p-5 animate-pulse">
+          <div className="h-4 w-40 bg-gray-100 rounded mb-3" />
+          <div className="h-3 w-full bg-gray-100 rounded mb-2" />
+          <div className="h-3 w-3/4 bg-gray-100 rounded" />
+        </div>
+      ))}
+    </div>
+  );
+
+  if (error) return (
+    <div className="bg-white border border-gray-100 rounded-2xl p-10 text-center">
+      <p className="text-2xl mb-2">📄</p>
+      <p className="text-sm font-medium text-gray-600 mb-1">{error}</p>
+      <p className="text-xs text-gray-400">Upload a resume first to see your analysis.</p>
+    </div>
+  );
+
+  if (!data) return null;
+
+  const { completenessScore, sections, skills, experience, education, contact, suggestions } = data;
+
+  // Color helpers
+  const scoreColor = completenessScore >= 80 ? "text-green-600" : completenessScore >= 60 ? "text-yellow-600" : "text-red-500";
+  const scoreBg = completenessScore >= 80 ? "bg-green-50 border-green-200" : completenessScore >= 60 ? "bg-yellow-50 border-yellow-200" : "bg-red-50 border-red-200";
+  const suggestionColors = { success: "bg-green-50 text-green-700 border-green-200", info: "bg-blue-50 text-blue-700 border-blue-200", warning: "bg-yellow-50 text-yellow-700 border-yellow-200", error: "bg-red-50 text-red-600 border-red-200" };
+  const suggestionIcons = { success: "✅", info: "💡", warning: "⚠️", error: "❌" };
+
+  const categoryColors = {
+    "Frontend": "bg-blue-50 text-blue-700",
+    "Backend": "bg-purple-50 text-purple-700",
+    "Database": "bg-orange-50 text-orange-700",
+    "DevOps": "bg-gray-100 text-gray-700",
+    "Mobile": "bg-pink-50 text-pink-700",
+    "AI/ML": "bg-green-50 text-green-700",
+    "Other": "bg-indigo-50 text-indigo-700",
+  };
+
+  return (
+    <div className="space-y-4 max-w-3xl">
+      <p className="text-xs font-semibold text-indigo-500 uppercase tracking-wide">Resume Health Report</p>
+
+      {/* ---- Completeness Score ---- */}
+      <div className={`rounded-2xl border p-5 ${scoreBg}`}>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <p className="text-sm font-bold text-gray-800">Profile Completeness</p>
+            <p className={`text-3xl font-extrabold mt-1 ${scoreColor}`}>{completenessScore}%</p>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {completenessScore >= 90 ? "Excellent — fully optimized" :
+               completenessScore >= 70 ? "Good — a few sections missing" :
+               "Needs work — fill in missing sections"}
+            </p>
+          </div>
+          {/* Circular progress */}
+          <div className="relative w-20 h-20 shrink-0">
+            <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+              <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e5e7eb" strokeWidth="3" />
+              <circle cx="18" cy="18" r="15.9" fill="none"
+                stroke={completenessScore >= 80 ? "#16a34a" : completenessScore >= 60 ? "#ca8a04" : "#dc2626"}
+                strokeWidth="3" strokeDasharray={`${completenessScore} 100`} strokeLinecap="round" />
+            </svg>
+            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-gray-800">{completenessScore}</span>
+          </div>
+        </div>
+
+        {/* Section checklist */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {Object.entries(sections).map(([key, s]) => (
+            <div key={key} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium ${s.present ? "bg-white text-gray-700" : "bg-white/60 text-gray-400"}`}>
+              <span>{s.present ? "✅" : "⬜"}</span>
+              <span>{s.label}</span>
+              <span className="ml-auto text-gray-400">{s.weight}%</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ---- Contact Info ---- */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-5">
+        <p className="text-sm font-semibold text-gray-800 mb-3">👤 Contact Information</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          {[
+            { label: "Name", value: contact.name, icon: "👤" },
+            { label: "Email", value: contact.email, icon: "✉️" },
+            { label: "Phone", value: contact.phone, icon: "📞" },
+          ].map(({ label, value, icon }) => (
+            <div key={label} className={`rounded-xl px-4 py-3 ${value ? "bg-gray-50" : "bg-red-50 border border-red-100"}`}>
+              <p className="text-xs text-gray-400 mb-0.5">{icon} {label}</p>
+              <p className={`text-sm font-medium truncate ${value ? "text-gray-800" : "text-red-400"}`}>
+                {value || "Not found"}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ---- Skills Breakdown ---- */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-gray-800">🛠 Skills ({skills.total})</p>
+          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+            skills.total >= 10 ? "bg-green-100 text-green-700" :
+            skills.total >= 5 ? "bg-yellow-100 text-yellow-700" :
+            "bg-red-100 text-red-600"
+          }`}>
+            {skills.total >= 10 ? "Strong" : skills.total >= 5 ? "Average" : "Weak"}
+          </span>
+        </div>
+
+        {Object.keys(skills.categorized).length > 0 ? (
+          <div className="space-y-3">
+            {Object.entries(skills.categorized).map(([cat, catSkills]) => (
+              <div key={cat}>
+                <p className="text-xs text-gray-400 font-medium mb-1.5">{cat}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {catSkills.map((s) => (
+                    <span key={s} className={`text-xs px-2.5 py-1 rounded-lg font-medium ${categoryColors[cat] || "bg-gray-100 text-gray-600"}`}>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-gray-400">No skills detected. Add skills to your resume.</p>
+        )}
+      </div>
+
+      {/* ---- Experience ---- */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-sm font-semibold text-gray-800">💼 Work Experience</p>
+          {experience.count > 0 && (
+            <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-medium">
+              ~{experience.totalYears} yr{experience.totalYears !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+        {experience.count === 0 ? (
+          <p className="text-xs text-gray-400">No work experience found. Add internships or projects.</p>
+        ) : (
+          <div className="space-y-3">
+            {experience.items.map((exp, i) => (
+              <div key={i} className="border-l-2 border-indigo-100 pl-4">
+                <p className="text-sm font-semibold text-gray-800">{exp.jobTitle || "Role"}</p>
+                {exp.organization && <p className="text-xs text-indigo-600 font-medium">{exp.organization}</p>}
+                {(exp.startDate || exp.endDate) && (
+                  <p className="text-xs text-gray-400 mt-0.5">{exp.startDate} — {exp.endDate || "Present"}</p>
+                )}
+                {exp.description && <p className="text-xs text-gray-500 mt-1 leading-relaxed">{exp.description}</p>}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ---- Education ---- */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-5">
+        <p className="text-sm font-semibold text-gray-800 mb-3">🎓 Education</p>
+        {education.count === 0 ? (
+          <p className="text-xs text-gray-400">No education details found.</p>
+        ) : (
+          <div className="space-y-3">
+            {education.items.map((edu, i) => (
+              <div key={i} className="border-l-2 border-purple-100 pl-4">
+                <p className="text-sm font-semibold text-gray-800">{edu.degree || edu.field || "Degree"}</p>
+                {edu.institution && <p className="text-xs text-purple-600 font-medium">{edu.institution}</p>}
+                {edu.field && edu.degree && <p className="text-xs text-gray-500">{edu.field}</p>}
+                {(edu.startDate || edu.endDate) && (
+                  <p className="text-xs text-gray-400 mt-0.5">{edu.startDate} — {edu.endDate}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ---- Suggestions ---- */}
+      {suggestions.length > 0 && (
+        <div className="bg-white border border-gray-100 rounded-2xl p-5">
+          <p className="text-sm font-semibold text-gray-800 mb-3">📋 Improvement Suggestions</p>
+          <div className="space-y-2">
+            {suggestions.map((s, i) => (
+              <div key={i} className={`flex items-start gap-2.5 px-3 py-2.5 rounded-xl border text-xs ${suggestionColors[s.type]}`}>
+                <span className="shrink-0">{suggestionIcons[s.type]}</span>
+                <span>{s.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function MainContent({ active }) {
   const [selectedJob, setSelectedJob] = useState(null);
   if (active === "applications") return <MyApplications />;
-  if (active === "settings" || active === "analysis") return (
+  if (active === "analysis") return <ResumeAnalysis />;
+  if (active === "settings") return (
     <div className="bg-white rounded-2xl border border-gray-100 p-6 text-sm text-gray-400 text-center">Coming soon...</div>
   );
   return (

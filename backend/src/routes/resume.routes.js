@@ -7,6 +7,7 @@ import {
   sendContactOTP,
   verifyContactOTP,
   reparseResume,
+  getResumeAnalysis,
 } from "../controllers/resume.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { upload } from "../config/multer.js";
@@ -43,5 +44,8 @@ router.post("/verify-otp", verifyContactOTP);
 
 // Re-parse resume (if parsing failed on upload)
 router.post("/reparse", reparseResume);
+
+// Detailed resume health analysis
+router.get("/analysis", getResumeAnalysis);
 
 export default router;
