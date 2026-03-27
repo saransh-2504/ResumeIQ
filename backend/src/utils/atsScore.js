@@ -2,10 +2,36 @@
 // Compares resume parsed data against job requirements
 // Returns a score 0-100 + matched/missing skills + suggestions
 
+// Skill expansion map — if resume has a "bundle" skill, expand it to its components
+// e.g. MERN → MongoDB, Express.js, React, Node.js
+const SKILL_EXPANSIONS = {
+  "mern": ["mongodb", "express", "express.js", "react", "react.js", "node", "node.js"],
+  "mean": ["mongodb", "express", "express.js", "angular", "node", "node.js"],
+  "mevn": ["mongodb", "express", "express.js", "vue", "vue.js", "node", "node.js"],
+  "lamp": ["linux", "apache", "mysql", "php"],
+  "full stack": ["html", "css", "javascript", "node", "node.js", "react"],
+  "fullstack": ["html", "css", "javascript", "node", "node.js", "react"],
+  "data science": ["python", "pandas", "numpy", "machine learning"],
+  "devops": ["docker", "kubernetes", "ci/cd", "linux", "git"],
+  "android": ["java", "kotlin", "android"],
+  "ios": ["swift", "objective-c", "ios"],
+};
+
+// Expand resume skills — if a bundle skill is found, add its components too
+function expandSkills(skills) {
+  const expanded = new Set(skills.map((s) => s.toLowerCase().trim()));
+  for (const skill of expanded) {
+    const components = SKILL_EXPANSIONS[skill];
+    if (components) components.forEach((c) => expanded.add(c));
+  }
+  return [...expanded];
+}
+
 export function calculateATS(parsedData, job) {
   if (!parsedData || !job) return null;
 
-  const resumeSkills = (parsedData.skills || []).map((s) => s.toLowerCase().trim());
+  // Expand resume skills — MERN → MongoDB, Express, React, Node etc.
+  const resumeSkills = expandSkills(parsedData.skills || []);
   const jobSkills = (job.skillsRequired || []).map((s) => s.toLowerCase().trim());
 
   // ---- Skill matching ----

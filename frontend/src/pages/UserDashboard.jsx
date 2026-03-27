@@ -544,16 +544,22 @@ function JobAnalysisPanel({ job, onClose }) {
             <p className="text-xs text-gray-400 mb-3">Uploaded {new Date(existingResume.uploadedAt).toLocaleDateString()}</p>
 
             <div className="flex gap-2 mb-2">
-              <button onClick={handleAnalyze} disabled={atsLoading || !existingResume?.parsedData}
-                className="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-semibold hover:bg-indigo-700 transition disabled:opacity-60">
-                {atsLoading ? "Analyzing..." : "Analyze Resume"}
-              </button>
+              {/* Analyze button — only after OTP verification */}
+              {isVerified && (
+                <button onClick={handleAnalyze} disabled={atsLoading || !existingResume?.parsedData}
+                  className="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-semibold hover:bg-indigo-700 transition disabled:opacity-60">
+                  {atsLoading ? "Analyzing..." : "Analyze Resume"}
+                </button>
+              )}
               <button onClick={() => setReplacing(true)}
-                className="flex-1 border border-gray-200 text-gray-600 py-2 rounded-xl text-xs font-semibold hover:bg-gray-50 transition">
+                className={`border border-gray-200 text-gray-600 py-2 rounded-xl text-xs font-semibold hover:bg-gray-50 transition ${isVerified ? "flex-1" : "w-full"}`}>
                 Replace
               </button>
             </div>
-            {!existingResume?.parsedData && (
+            {!isVerified && (
+              <p className="text-xs text-yellow-600 mb-2">🔐 Verify your contact to unlock Resume Analysis & Apply.</p>
+            )}
+            {!existingResume?.parsedData && isVerified && (
               <p className="text-xs text-yellow-600 mb-2">⚠️ Resume not parsed — scroll down to re-parse before analyzing.</p>
             )}
             {atsError && <p className="text-xs text-red-500 bg-red-50 rounded-lg px-3 py-2 mb-2">{atsError}</p>}
@@ -618,21 +624,114 @@ function JobAnalysisPanel({ job, onClose }) {
   );
 }
 
+// ---- Indian cities with aliases (bengaluru/bangalore etc.) ----
+const INDIAN_CITIES = [
+  { name: "Mumbai", aliases: ["bombay"] },
+  { name: "Delhi", aliases: ["new delhi", "nd"] },
+  { name: "Bengaluru", aliases: ["bangalore", "bengalore", "blr"] },
+  { name: "Hyderabad", aliases: ["hyd", "cyberabad"] },
+  { name: "Chennai", aliases: ["madras"] },
+  { name: "Kolkata", aliases: ["calcutta"] },
+  { name: "Pune", aliases: [] },
+  { name: "Ahmedabad", aliases: ["amd"] },
+  { name: "Jaipur", aliases: [] },
+  { name: "Surat", aliases: [] },
+  { name: "Lucknow", aliases: [] },
+  { name: "Kanpur", aliases: [] },
+  { name: "Nagpur", aliases: [] },
+  { name: "Indore", aliases: [] },
+  { name: "Bhopal", aliases: [] },
+  { name: "Visakhapatnam", aliases: ["vizag"] },
+  { name: "Patna", aliases: [] },
+  { name: "Vadodara", aliases: ["baroda"] },
+  { name: "Ghaziabad", aliases: [] },
+  { name: "Ludhiana", aliases: [] },
+  { name: "Agra", aliases: [] },
+  { name: "Nashik", aliases: [] },
+  { name: "Faridabad", aliases: [] },
+  { name: "Meerut", aliases: [] },
+  { name: "Rajkot", aliases: [] },
+  { name: "Varanasi", aliases: ["banaras", "kashi"] },
+  { name: "Srinagar", aliases: [] },
+  { name: "Aurangabad", aliases: [] },
+  { name: "Dhanbad", aliases: [] },
+  { name: "Amritsar", aliases: [] },
+  { name: "Allahabad", aliases: ["prayagraj"] },
+  { name: "Ranchi", aliases: [] },
+  { name: "Howrah", aliases: [] },
+  { name: "Coimbatore", aliases: ["kovai"] },
+  { name: "Jabalpur", aliases: [] },
+  { name: "Gwalior", aliases: [] },
+  { name: "Vijayawada", aliases: [] },
+  { name: "Jodhpur", aliases: [] },
+  { name: "Madurai", aliases: [] },
+  { name: "Raipur", aliases: [] },
+  { name: "Kochi", aliases: ["cochin", "ernakulam"] },
+  { name: "Chandigarh", aliases: [] },
+  { name: "Gurgaon", aliases: ["gurugram"] },
+  { name: "Noida", aliases: [] },
+  { name: "Thiruvananthapuram", aliases: ["trivandrum"] },
+  { name: "Bhubaneswar", aliases: [] },
+  { name: "Dehradun", aliases: [] },
+  { name: "Mysuru", aliases: ["mysore"] },
+  { name: "Mangaluru", aliases: ["mangalore"] },
+  { name: "Tiruchirappalli", aliases: ["trichy"] },
+  { name: "Remote", aliases: ["work from home", "wfh"] },
+  { name: "Pan India", aliases: ["all india", "anywhere"] },
+];
+
+// Common tech skills for autocomplete
+const COMMON_SKILLS = [
+  "JavaScript", "TypeScript", "React", "React.js", "Next.js", "Vue.js", "Angular",
+  "Node.js", "Express.js", "Python", "Django", "Flask", "FastAPI",
+  "Java", "Spring Boot", "Kotlin", "Swift", "Objective-C",
+  "C", "C++", "C#", ".NET", "ASP.NET",
+  "PHP", "Laravel", "Ruby", "Ruby on Rails",
+  "Go", "Rust", "Scala",
+  "SQL", "MySQL", "PostgreSQL", "MongoDB", "Redis", "Firebase",
+  "GraphQL", "REST API", "gRPC",
+  "AWS", "Azure", "GCP", "Docker", "Kubernetes", "CI/CD",
+  "Git", "GitHub", "Linux", "Bash",
+  "Machine Learning", "Deep Learning", "TensorFlow", "PyTorch", "NLP",
+  "Data Science", "Data Analysis", "Pandas", "NumPy", "Scikit-learn",
+  "HTML", "CSS", "Tailwind CSS", "Bootstrap", "SASS",
+  "React Native", "Flutter", "Android", "iOS",
+  "Figma", "UI/UX", "Photoshop",
+  "DevOps", "Terraform", "Ansible", "Jenkins",
+  "Cybersecurity", "Networking", "Blockchain", "Solidity",
+];
+
+// Fuzzy match helper — checks if query matches city name or any alias
+function cityMatches(city, query) {
+  const q = query.toLowerCase().trim();
+  if (!q) return false;
+  if (city.name.toLowerCase().includes(q)) return true;
+  return city.aliases.some((a) => a.includes(q) || q.includes(a));
+}
+
 // ---- Jobs Feed ----
 function JobsFeed({ onSelect, selectedId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [resumeSkills, setResumeSkills] = useState([]);
-  const [resumeData, setResumeData] = useState(null); // full parsedData for exp/edu scoring
+  const [resumeData, setResumeData] = useState(null);
+
+  // Search/filter state
+  const [titleQuery, setTitleQuery] = useState("");
+  const [locationQuery, setLocationQuery] = useState("");
+  const [skillQuery, setSkillQuery] = useState("");
+  const [selectedSkills, setSelectedSkills] = useState([]);
+
+  // Autocomplete suggestions
+  const [citySuggestions, setCitySuggestions] = useState([]);
+  const [skillSuggestions, setSkillSuggestions] = useState([]);
 
   useEffect(() => {
-    // Fetch jobs
     api.get("/jobs")
       .then((res) => setJobs(res.data.jobs))
       .catch(() => setJobs([]))
       .finally(() => setLoading(false));
 
-    // Fetch resume for recommendation scoring
     api.get("/resume")
       .then((res) => {
         const parsed = res.data.resume?.parsedData;
@@ -643,30 +742,116 @@ function JobsFeed({ onSelect, selectedId }) {
       .catch(() => {});
   }, []);
 
-  // Calculate match % using same weights as backend ATS:
-  // Skills 60% + Experience 25% + Education 15%
+  // City autocomplete
+  function handleLocationChange(val) {
+    setLocationQuery(val);
+    if (val.trim().length < 1) { setCitySuggestions([]); return; }
+    const matches = INDIAN_CITIES.filter((c) => cityMatches(c, val)).slice(0, 6);
+    setCitySuggestions(matches);
+  }
+
+  // Skill autocomplete — suggest from COMMON_SKILLS + existing job skills
+  function handleSkillChange(val) {
+    setSkillQuery(val);
+    if (val.trim().length < 1) { setSkillSuggestions([]); return; }
+    const q = val.toLowerCase();
+    // Combine common skills + skills from all jobs
+    const allSkills = [...new Set([
+      ...COMMON_SKILLS,
+      ...jobs.flatMap((j) => j.skillsRequired || []),
+    ])];
+    const matches = allSkills
+      .filter((s) => s.toLowerCase().includes(q) && !selectedSkills.includes(s))
+      .slice(0, 6);
+    setSkillSuggestions(matches);
+  }
+
+  function addSkill(skill) {
+    setSelectedSkills((prev) => [...new Set([...prev, skill])]);
+    setSkillQuery("");
+    setSkillSuggestions([]);
+  }
+
+  function removeSkill(skill) {
+    setSelectedSkills((prev) => prev.filter((s) => s !== skill));
+  }
+
+  // Skill expansion — same as backend (MERN → React, Node, etc.)
+  const SKILL_EXPANSIONS = {
+    "mern": ["mongodb", "express", "express.js", "react", "react.js", "node", "node.js"],
+    "mean": ["mongodb", "express", "express.js", "angular", "node", "node.js"],
+    "mevn": ["mongodb", "express", "express.js", "vue", "vue.js", "node", "node.js"],
+    "lamp": ["linux", "apache", "mysql", "php"],
+    "full stack": ["html", "css", "javascript", "node", "node.js", "react"],
+    "fullstack": ["html", "css", "javascript", "node", "node.js", "react"],
+    "data science": ["python", "pandas", "numpy", "machine learning"],
+    "devops": ["docker", "kubernetes", "ci/cd", "linux", "git"],
+  };
+  const expandedResumeSkills = (() => {
+    const expanded = new Set(resumeSkills);
+    for (const skill of resumeSkills) {
+      const components = SKILL_EXPANSIONS[skill];
+      if (components) components.forEach((c) => expanded.add(c));
+    }
+    return [...expanded];
+  })();
+
+  // ---- Match score (same weights as ATS backend) ----
   function matchScore(job) {
     if (!job.skillsRequired?.length) return 0;
-
     const jobSkills = job.skillsRequired.map((s) => s.toLowerCase());
-
-    // Skills score (60% weight) — same partial match logic as atsScore.js
-    const exactMatched = jobSkills.filter((s) => resumeSkills.includes(s));
+    const exactMatched = jobSkills.filter((s) => expandedResumeSkills.includes(s));
     const partialMatched = jobSkills.filter(
-      (s) => !resumeSkills.includes(s) && resumeSkills.some((rs) => rs.includes(s) || s.includes(rs))
+      (s) => !expandedResumeSkills.includes(s) && expandedResumeSkills.some((rs) => rs.includes(s) || s.includes(rs))
     );
-    const skillScore = resumeSkills.length === 0 ? 0 :
+    const skillScore = expandedResumeSkills.length === 0 ? 0 :
       Math.round(((exactMatched.length + partialMatched.length * 0.5) / jobSkills.length) * 60);
-
-    // Experience (25%) + Education (15%) — use cached resume data
     const expScore = resumeData?.experience?.length > 0 ? 25 : 0;
     const eduScore = resumeData?.education?.length > 0 ? 15 : 0;
-
     return Math.min(100, skillScore + expScore + eduScore);
   }
 
-  // Sort jobs by match score descending
-  const sortedJobs = [...jobs].sort((a, b) => matchScore(b) - matchScore(a));
+  // ---- Smart filter logic ----
+  const filteredJobs = jobs.filter((job) => {
+    // Title filter — fuzzy: any word in query matches title or company
+    if (titleQuery.trim()) {
+      const q = titleQuery.toLowerCase();
+      const inTitle = job.title?.toLowerCase().includes(q);
+      const inCompany = job.company?.toLowerCase().includes(q);
+      if (!inTitle && !inCompany) return false;
+    }
+
+    // Location filter — match canonical city name
+    if (locationQuery.trim()) {
+      const matched = INDIAN_CITIES.find((c) => cityMatches(c, locationQuery));
+      const canonical = matched ? matched.name.toLowerCase() : locationQuery.toLowerCase();
+      const jobLoc = job.location?.toLowerCase() || "";
+      // Also check aliases in job location
+      const aliasMatch = matched?.aliases.some((a) => jobLoc.includes(a));
+      if (!jobLoc.includes(canonical) && !aliasMatch) return false;
+    }
+
+    // Skills filter — job must have ALL selected skills (partial match allowed)
+    if (selectedSkills.length > 0) {
+      const jobSkills = (job.skillsRequired || []).map((s) => s.toLowerCase());
+      const allMatch = selectedSkills.every((sel) => {
+        const s = sel.toLowerCase();
+        return jobSkills.some((js) => js.includes(s) || s.includes(js));
+      });
+      if (!allMatch) return false;
+    }
+
+    return true;
+  });
+
+  // Sort by match score — if no resume, sort by newest
+  const sortedJobs = [...filteredJobs].sort((a, b) => {
+    const scoreDiff = matchScore(b) - matchScore(a);
+    if (scoreDiff !== 0) return scoreDiff;
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
+  const isFiltering = titleQuery.trim() || locationQuery.trim() || selectedSkills.length > 0;
 
   if (loading) return (
     <div className="space-y-3">
@@ -678,13 +863,104 @@ function JobsFeed({ onSelect, selectedId }) {
     </div>
   );
 
-  if (jobs.length === 0) return <div className="text-center py-16 text-gray-400 text-sm">No jobs available right now.</div>;
-
   return (
     <div className="space-y-3">
+      {/* ---- Search & Filter Bar ---- */}
+      <div className="bg-white border border-gray-100 rounded-2xl p-4 space-y-3">
+        {/* Title search */}
+        <input
+          type="text"
+          value={titleQuery}
+          onChange={(e) => setTitleQuery(e.target.value)}
+          placeholder="🔍 Search by job title or company..."
+          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+        />
+
+        <div className="flex gap-2">
+          {/* Location with autocomplete */}
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={locationQuery}
+              onChange={(e) => handleLocationChange(e.target.value)}
+              placeholder="📍 City (e.g. Bangalore)"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+            />
+            {citySuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
+                {citySuggestions.map((city) => (
+                  <button key={city.name} onMouseDown={() => { setLocationQuery(city.name); setCitySuggestions([]); }}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    📍 {city.name}
+                    {city.aliases.length > 0 && <span className="text-xs text-gray-400 ml-1">({city.aliases[0]})</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Skill search with autocomplete */}
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={skillQuery}
+              onChange={(e) => handleSkillChange(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && skillQuery.trim()) addSkill(skillQuery.trim()); }}
+              placeholder="🛠 Add skill filter..."
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+            />
+            {skillSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
+                {skillSuggestions.map((skill) => (
+                  <button key={skill} onMouseDown={() => addSkill(skill)}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    🛠 {skill}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Selected skill tags */}
+        {selectedSkills.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {selectedSkills.map((s) => (
+              <span key={s} className="flex items-center gap-1 text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded-lg">
+                {s}
+                <button onClick={() => removeSkill(s)} className="text-indigo-400 hover:text-indigo-700 ml-0.5">×</button>
+              </span>
+            ))}
+            <button onClick={() => setSelectedSkills([])} className="text-xs text-gray-400 hover:text-red-400 transition">Clear all</button>
+          </div>
+        )}
+      </div>
+
+      {/* Results label */}
       <p className="text-xs font-semibold text-indigo-500 uppercase tracking-wide">
-        {resumeSkills.length > 0 ? "Recommended for you" : "All Jobs"}
+        {isFiltering
+          ? `${sortedJobs.length} result${sortedJobs.length !== 1 ? "s" : ""} found`
+          : resumeSkills.length > 0 ? "Recommended for you" : "All Jobs"}
       </p>
+
+      {/* No results */}
+      {sortedJobs.length === 0 && (
+        <div className="bg-white border border-gray-100 rounded-2xl p-10 text-center">
+          <p className="text-2xl mb-2">🔍</p>
+          <p className="text-sm font-medium text-gray-600 mb-1">No jobs found</p>
+          <p className="text-xs text-gray-400">
+            {isFiltering ? "Try different keywords, city, or skills." : "No jobs available right now."}
+          </p>
+          {isFiltering && (
+            <button onClick={() => { setTitleQuery(""); setLocationQuery(""); setSelectedSkills([]); setSkillQuery(""); }}
+              className="mt-3 text-xs text-indigo-500 hover:underline">
+              Clear all filters
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Job cards */}
       {sortedJobs.map((job) => {
         const score = matchScore(job);
         return (
@@ -710,7 +986,12 @@ function JobsFeed({ onSelect, selectedId }) {
               </div>
             </div>
             <div className="flex flex-wrap gap-1 mt-2">
-              {job.skillsRequired?.map((t) => <span key={t} className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-lg">{t}</span>)}
+              {job.skillsRequired?.map((t) => (
+                <span key={t} className={`text-xs px-2 py-0.5 rounded-lg ${
+                  selectedSkills.some((s) => s.toLowerCase() === t.toLowerCase() || t.toLowerCase().includes(s.toLowerCase()))
+                    ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-500"
+                }`}>{t}</span>
+              ))}
             </div>
             {job.description && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{job.description}</p>}
           </div>

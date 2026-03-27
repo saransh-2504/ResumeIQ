@@ -2,18 +2,60 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 
+// ---- Inline Terms Modal ----
+function TermsModal({ onAccept, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backdropFilter: "blur(4px)", backgroundColor: "rgba(0,0,0,0.3)" }}
+      onClick={onClose}>
+      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto shadow-2xl"
+        onClick={(e) => e.stopPropagation()}>
+        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+          <h2 className="text-base font-bold text-gray-800">Terms & Conditions</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+        </div>
+        <div className="px-6 py-4 space-y-4 text-sm text-gray-600">
+          <p className="text-xs text-gray-400">Last updated: March 2026</p>
+          {[
+            ["1. Acceptance", "By using ResumeIQ, you agree to these terms. If you do not agree, please do not use the platform."],
+            ["2. Eligibility", "ResumeIQ is for job seekers and verified recruiters. Recruiters must use a company email and are subject to admin approval."],
+            ["3. Your Account", "You are responsible for keeping your credentials secure and providing accurate information during registration."],
+            ["4. Resume Data", "Uploaded resumes are stored securely on Cloudinary and parsed using Groq AI solely for job matching. We do not sell your data."],
+            ["5. Job Postings", "Recruiters are responsible for the accuracy of their listings. Fake or misleading postings will result in account termination."],
+            ["6. Prohibited Use", "You may not scrape the platform, access other users' data, or use ResumeIQ for spam or fraudulent activity."],
+            ["7. Disclaimer", "ResumeIQ is provided as-is. ATS scores are indicative only and do not guarantee job selection."],
+            ["8. Contact", "Questions? Reach us at saransh2504@gmail.com"],
+          ].map(([title, body]) => (
+            <div key={title}>
+              <p className="font-semibold text-gray-800 mb-0.5">{title}</p>
+              <p>{body}</p>
+            </div>
+          ))}
+        </div>
+        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
+          <button onClick={onClose}
+            className="flex-1 border border-gray-200 text-gray-500 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition">
+            Decline
+          </button>
+          <button onClick={onAccept}
+            className="flex-1 bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition">
+            I Accept
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SignupPage() {
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "candidate",
-  });
+  const [form, setForm] = useState({ name: "", email: "", password: "", role: "candidate" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -56,8 +98,12 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
+      {/* Back button — top left */}
+      <button onClick={() => navigate(-1)}
+        className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm">
+        ← Back
+      </button>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-6">
           <span className="text-2xl font-bold text-indigo-600">
             Resume<span className="text-purple-500">IQ</span>
@@ -147,10 +193,28 @@ export default function SignupPage() {
             )}
           </div>
 
+          {/* Terms & Conditions checkbox */}
+          <div className="flex items-start gap-2.5">
+            <input type="checkbox" id="terms" checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
+              className="mt-0.5 accent-indigo-600 cursor-pointer" />
+            <label htmlFor="terms" className="text-xs text-gray-500 leading-relaxed">
+              I agree to the{" "}
+              <button type="button" onClick={() => setShowTerms(true)}
+                className="text-indigo-600 hover:underline font-medium">
+                Terms & Conditions
+              </button>
+            </label>
+          </div>
+
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition disabled:opacity-60"
+            disabled={loading || !termsAccepted}
+            className={`w-full py-2.5 rounded-xl text-sm font-semibold transition
+              ${termsAccepted
+                ? "bg-indigo-600 text-white hover:bg-indigo-700"
+                : "bg-indigo-200 text-indigo-400 cursor-not-allowed"
+              } disabled:opacity-60`}
           >
             {loading ? "Creating account..." : "Create Account"}
           </button>
@@ -166,13 +230,19 @@ export default function SignupPage() {
             </div>
             <div className="space-y-3">
               <button
-                onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
-                className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+                onClick={() => {
+                  if (!termsAccepted) { setShowTerms(true); return; }
+                  window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+                }}
+                className={`w-full flex items-center justify-center gap-3 border rounded-xl py-2.5 text-sm font-medium transition
+                  ${termsAccepted
+                    ? "border-gray-200 text-gray-700 hover:bg-gray-50"
+                    : "border-gray-100 text-gray-400 bg-gray-50 cursor-not-allowed"
+                  }`}
               >
                 <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
-                Sign up with Google
+                {termsAccepted ? "Sign up with Google" : "Accept terms to sign up with Google"}
               </button>
-
             </div>
           </>
         )}
@@ -184,6 +254,14 @@ export default function SignupPage() {
           </Link>
         </p>
       </div>
+
+      {/* Terms modal */}
+      {showTerms && (
+        <TermsModal
+          onAccept={() => { setTermsAccepted(true); setShowTerms(false); }}
+          onClose={() => setShowTerms(false)}
+        />
+      )}
     </div>
   );
 }
