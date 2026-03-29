@@ -12,6 +12,8 @@ import resumeRoutes from "./routes/resume.routes.js";
 import applicationRoutes from "./routes/application.routes.js";
 import healthRouter from "./routes/health.routes.js";
 
+import settingsRoutes from "./routes/settings.routes.js";
+
 const app = express();
 
 app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
@@ -29,5 +31,6 @@ app.use("/api/v1/jobs", jobRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/resume", resumeRoutes);
 app.use("/api/v1/applications", applicationRoutes);
+app.use("/api/v1/settings", settingsRoutes);
 
 export default app;

@@ -20,8 +20,8 @@ export async function getJobs(req, res) {
     }
 
     const jobs = await Job.find(filter)
-      .populate("postedBy", "name email") // show recruiter name
-      .sort({ createdAt: -1 }); // newest first
+      .populate("postedBy", "name email recruiterProfile")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({ jobs });
   } catch (err) {
@@ -53,6 +53,14 @@ export async function createJob(req, res) {
 
     if (!title || !company || !location || !type || !description) {
       return res.status(400).json({ message: "All fields are required." });
+    }
+
+    // Block if recruiter hasn't completed company profile setup
+    if (!req.user.profileSetupDone) {
+      return res.status(403).json({
+        message: "Please complete your company profile in Settings before posting jobs.",
+        requiresProfileSetup: true,
+      });
     }
 
     const job = await Job.create({

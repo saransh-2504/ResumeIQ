@@ -387,6 +387,8 @@ export async function getResumeAnalysis(req, res) {
           name: p.name,
           email: p.email,
           phone: p.phone,
+          github: p.github || null,
+          linkedin: p.linkedin || null,
         },
         suggestions,
       },

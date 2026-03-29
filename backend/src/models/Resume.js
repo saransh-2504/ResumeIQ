@@ -21,11 +21,13 @@ const resumeSchema = new mongoose.Schema({
     default: Date.now,
   },
 
-  // ---- Parsed data from Affinda ----
+  // ---- Parsed data from resume ----
   parsedData: {
     name: String,
     email: String,
     phone: String,
+    github: String,
+    linkedin: String,
     skills: [String],
     experience: [
       {

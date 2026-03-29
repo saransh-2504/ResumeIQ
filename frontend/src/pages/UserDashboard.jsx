@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import SettingsPage from "./SettingsPage";
 
 const navLinks = [
   { icon: "💼", label: "Jobs", id: "jobs" },
@@ -141,8 +142,9 @@ function ContactVerification({ parsedEmail, accountEmail, onVerified }) {
   if (!parsedEmail) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mt-3">
-        <p className="text-sm font-semibold text-yellow-700 mb-1">⚠️ No email in resume</p>
-        <p className="text-xs text-yellow-600">Add your email to your resume and re-upload to enable verification.</p>
+        <p className="text-sm font-semibold text-yellow-700 mb-1">⚠️ Email not detected in resume</p>
+        <p className="text-xs text-yellow-600 mb-1">Your resume likely uses icon-based contact info (symbols like ✉ or #).</p>
+        <p className="text-xs text-yellow-500">Please add your email as plain text in your resume and re-upload.</p>
       </div>
     );
   }
@@ -235,6 +237,8 @@ function ParsedDataCard({ parsedData, onReparse }) {
         {parsedData.name && <p>👤 {parsedData.name}</p>}
         {parsedData.email && <p>✉️ {parsedData.email}</p>}
         {parsedData.phone && <p>📞 {parsedData.phone}</p>}
+        {parsedData.github && <p>🐙 <a href={parsedData.github} target="_blank" rel="noreferrer" className="hover:underline">{parsedData.github}</a></p>}
+        {parsedData.linkedin && <p>💼 <a href={parsedData.linkedin} target="_blank" rel="noreferrer" className="hover:underline">{parsedData.linkedin}</a></p>}
       </div>
 
       {/* Skills */}
@@ -281,7 +285,8 @@ function ParsedDataCard({ parsedData, onReparse }) {
       {/* Re-parse option if email is missing */}
       {!parsedData.email && (
         <div className="mt-3 pt-3 border-t border-indigo-100">
-          <p className="text-xs text-yellow-600 mb-1">⚠️ Email not detected in resume.</p>
+          <p className="text-xs text-yellow-600 mb-1">⚠️ Email not detected.</p>
+          <p className="text-xs text-gray-400 mb-1">Your resume may use icon-based contact info (e.g. ✉ or #). Add your email as plain text in your resume for best results.</p>
           {reparseMsg && <p className="text-xs text-green-600 mb-1">{reparseMsg}</p>}
           <button onClick={handleReparse} disabled={reparsing}
             className="text-xs text-indigo-500 hover:underline disabled:opacity-50">
@@ -1151,17 +1156,24 @@ function ResumeAnalysis() {
       {/* ---- Contact Info ---- */}
       <div className="bg-white border border-gray-100 rounded-2xl p-5">
         <p className="text-sm font-semibold text-gray-800 mb-3">👤 Contact Information</p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             { label: "Name", value: contact.name, icon: "👤" },
             { label: "Email", value: contact.email, icon: "✉️" },
             { label: "Phone", value: contact.phone, icon: "📞" },
-          ].map(({ label, value, icon }) => (
+            { label: "GitHub", value: contact.github, icon: "🐙" },
+            { label: "LinkedIn", value: contact.linkedin, icon: "💼" },
+          ].filter(({ label }) => label === "Name" || label === "Email" || label === "Phone" || contact.github || contact.linkedin ? true : false)
+           .map(({ label, value, icon }) => (
             <div key={label} className={`rounded-xl px-4 py-3 ${value ? "bg-gray-50" : "bg-red-50 border border-red-100"}`}>
               <p className="text-xs text-gray-400 mb-0.5">{icon} {label}</p>
-              <p className={`text-sm font-medium truncate ${value ? "text-gray-800" : "text-red-400"}`}>
-                {value || "Not found"}
-              </p>
+              {value && (label === "GitHub" || label === "LinkedIn") ? (
+                <a href={value} target="_blank" rel="noreferrer" className="text-sm font-medium text-indigo-600 hover:underline truncate block">{value}</a>
+              ) : (
+                <p className={`text-sm font-medium truncate ${value ? "text-gray-800" : "text-red-400"}`}>
+                  {value || "Not found"}
+                </p>
+              )}
             </div>
           ))}
         </div>
@@ -1271,9 +1283,7 @@ function MainContent({ active }) {
   const [selectedJob, setSelectedJob] = useState(null);
   if (active === "applications") return <MyApplications />;
   if (active === "analysis") return <ResumeAnalysis />;
-  if (active === "settings") return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 text-sm text-gray-400 text-center">Coming soon...</div>
-  );
+  if (active === "settings") return <SettingsPage />;
   return (
     <div className={`grid gap-6 ${selectedJob ? "grid-cols-2" : "grid-cols-1"}`}>
       <JobsFeed onSelect={setSelectedJob} selectedId={selectedJob?._id} />

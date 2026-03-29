@@ -132,3 +132,63 @@ export async function sendPasswordResetEmail(toEmail, token) {
     `,
   });
 }
+
+// Recruiter approval email
+export async function sendRecruiterApprovalEmail(toEmail, recruiterName, dashboardUrl) {
+  await transporter.sendMail({
+    from: `"ResumeIQ" <${env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: "🎉 Your ResumeIQ recruiter account has been approved!",
+    html: `
+      <!DOCTYPE html><html><head><meta charset="UTF-8"/></head>
+      <body style="margin:0;padding:0;background:#F8FAFC;font-family:'Inter',Arial,sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;padding:40px 0;">
+          <tr><td align="center">
+            <table width="480" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;">
+              <tr>
+                <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:32px;text-align:center;">
+                  <h1 style="margin:0;color:#fff;font-size:24px;font-weight:800;">Resume<span style="color:#c4b5fd;">IQ</span></h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:40px 32px;">
+                  <h2 style="margin:0 0 8px;color:#111827;font-size:20px;font-weight:700;">Welcome aboard, ${recruiterName}! 🎉</h2>
+                  <p style="margin:0 0 16px;color:#6b7280;font-size:14px;line-height:1.6;">
+                    Your recruiter account on ResumeIQ has been <strong style="color:#16a34a;">approved</strong> by our admin team.
+                    You can now post jobs, review applications, and find the best candidates.
+                  </p>
+                  <p style="margin:0 0 24px;color:#6b7280;font-size:14px;line-height:1.6;">
+                    Please complete your company profile before posting your first job.
+                  </p>
+                  <table cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+                    <tr>
+                      <td style="background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:10px;">
+                        <a href="${dashboardUrl}" style="display:inline-block;padding:14px 32px;color:#fff;font-size:14px;font-weight:600;text-decoration:none;border-radius:10px;">
+                          Complete Your Profile →
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                  <div style="background:#f9fafb;border-radius:10px;padding:16px;border:1px solid #e5e7eb;">
+                    <p style="margin:0 0 8px;color:#374151;font-size:13px;font-weight:600;">Terms of Use Reminder</p>
+                    <ul style="margin:0;padding-left:16px;color:#6b7280;font-size:12px;line-height:1.8;">
+                      <li>Post only genuine job openings</li>
+                      <li>Do not misuse candidate data</li>
+                      <li>Maintain professional communication</li>
+                      <li>Violations may result in account suspension</li>
+                    </ul>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 32px;border-top:1px solid #f3f4f6;text-align:center;">
+                  <p style="margin:0;color:#d1d5db;font-size:11px;">© 2026 ResumeIQ. All rights reserved.</p>
+                </td>
+              </tr>
+            </table>
+          </td></tr>
+        </table>
+      </body></html>
+    `,
+  });
+}

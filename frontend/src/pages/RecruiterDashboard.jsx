@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import SettingsPage from "./SettingsPage";
 
 // ---- Sidebar nav links ----
 const navLinks = [
@@ -304,7 +305,7 @@ function JobModal({ job, onClose, onUpdated }) {
 }
 
 // ---- Post Job Form ----
-function PostJob({ onJobPosted }) {
+function PostJob({ onJobPosted, onGoToSettings }) {
   const { user } = useAuth();
   const [form, setForm] = useState({ title: "", description: "", skillsRequired: "", type: "Full-time", company: "", location: "" });
   const [loading, setLoading] = useState(false);
@@ -320,7 +321,13 @@ function PostJob({ onJobPosted }) {
       setForm({ title: "", description: "", skillsRequired: "", type: "Full-time", company: "", location: "" });
       onJobPosted();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to post job.");
+      const data = err.response?.data;
+      if (data?.requiresProfileSetup) {
+        // Redirect to settings to complete profile
+        onGoToSettings();
+        return;
+      }
+      setError(data?.message || "Failed to post job.");
     } finally {
       setLoading(false);
     }
@@ -469,14 +476,10 @@ function DashboardOverview({ refresh, onRefresh }) {
   );
 }
 
-function MainContent({ active }) {
+function MainContent({ active, setActive }) {
   const [refresh, setRefresh] = useState(0);
-  if (active === "post") return <PostJob onJobPosted={() => setRefresh((r) => r + 1)} />;
-  if (active === "settings") return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 text-sm text-gray-400 text-center">
-      Settings coming soon.
-    </div>
-  );
+  if (active === "post") return <PostJob onJobPosted={() => { setRefresh((r) => r + 1); setActive("dashboard"); }} onGoToSettings={() => setActive("settings")} />;
+  if (active === "settings") return <SettingsPage />;
   return <DashboardOverview refresh={refresh} onRefresh={() => setRefresh((r) => r + 1)} />;
 }
 
@@ -487,7 +490,7 @@ export default function RecruiterDashboard() {
       <Sidebar active={active} setActive={setActive} />
       <div className="flex-1 flex flex-col">
         <TopBar />
-        <main className="p-6"><MainContent active={active} /></main>
+        <main className="p-6"><MainContent active={active} setActive={setActive} /></main>
       </div>
     </div>
   );
