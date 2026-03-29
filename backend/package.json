@@ -6,6 +6,9 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.13.6",
@@ -29,7 +32,7 @@
     "passport-google-oauth20": "^2.0.0",
     "pdf-parse": "^1.1.1",
     "pdf2pic": "^3.2.0",
-    "pdfjs-dist": "^5.5.207",
+    "pdfjs-dist": "^3.11.174",
     "sharp": "^0.34.5"
   },
   "devDependencies": {

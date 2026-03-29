@@ -5,6 +5,8 @@ import Groq from "groq-sdk";
 
 const require = createRequire(import.meta.url);
 const pdfParse = require("pdf-parse");
+// pdfjs-dist legacy build — works in Node without worker
+const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
 
 // ---- Download file from Cloudinary signed URL ----
 async function downloadFile(url) {
@@ -59,6 +61,52 @@ async function extractText(buffer, contentType, fileName = "") {
   } catch {
     const result = await mammoth.extractRawText({ buffer });
     return result.value;
+  }
+}
+
+// ---- Tier 2: pdfjs annotation extractor (teacher's approach) ----
+// Extracts mailto: and tel: hyperlinks from PDF annotations
+// Works on buffer — no file system needed
+async function extractAnnotationLinks(buffer) {
+  try {
+    const data = new Uint8Array(buffer);
+    const pdfDocument = await pdfjsLib.getDocument({ data }).promise;
+
+    const emails = [];
+    const phones = [];
+    const links = [];
+
+    // Scan first 2 pages only — contact info is always at top
+    const pagesToScan = Math.min(pdfDocument.numPages, 2);
+    for (let i = 1; i <= pagesToScan; i++) {
+      const page = await pdfDocument.getPage(i);
+      const annotations = await page.getAnnotations();
+
+      annotations.forEach((anno) => {
+        // Only process Link annotations with a URL
+        if (anno.subtype === "Link" && anno.url) {
+          const url = anno.url;
+          if (url.startsWith("mailto:")) {
+            const email = url.replace("mailto:", "").split("?")[0].trim().toLowerCase();
+            if (email.includes("@")) emails.push(email);
+          } else if (url.startsWith("tel:")) {
+            const phone = url.replace("tel:", "").replace(/\s/g, "").trim();
+            if (phone.length >= 7) phones.push(phone);
+          } else if (url.includes("github.com")) {
+            links.push({ type: "github", url });
+          } else if (url.includes("linkedin.com")) {
+            links.push({ type: "linkedin", url });
+          }
+        }
+      });
+    }
+
+    console.log(`🔗 [pdfjs] emails: [${emails}], phones: [${phones}], links: ${links.length}`);
+    return { email: emails[0] || null, phone: phones[0] || null, links };
+  } catch (err) {
+    // Non-fatal — just log and return empty
+    console.warn(`⚠️  [pdfjs] Annotation extraction failed: ${err.message}`);
+    return { email: null, phone: null, links: [] };
   }
 }
 
@@ -161,6 +209,12 @@ export async function parseResumeFromUrl(fileUrl, fileName = "") {
   try {
     console.log(`\n🚀 Starting parse for: ${fileName}`);
     const { buffer, contentType } = await downloadFile(fileUrl);
+
+    // Detect file type for pdfjs tier
+    const name = fileName.toLowerCase();
+    const isPdf = contentType.includes("pdf") || name.endsWith(".pdf") ||
+      (contentType.includes("octet-stream") && name.endsWith(".pdf"));
+
     const text = await extractText(buffer, contentType, fileName);
 
     if (!text || text.trim().length < 30) {
@@ -173,12 +227,28 @@ export async function parseResumeFromUrl(fileUrl, fileName = "") {
     const regexLinks = extractLinksFromText(text);
     console.log(`🔎 Regex — email: ${regexEmail}, phone: ${regexPhone}`);
 
-    const parsed = await parseWithGroq(text, { email: regexEmail, phone: regexPhone });
+    // Tier 2: pdfjs annotation scan (for mailto:/tel: hyperlinks in PDF)
+    // Run in parallel with regex — non-blocking, non-fatal
+    let pdfjsData = { email: null, phone: null, links: [] };
+    if (isPdf) {
+      pdfjsData = await extractAnnotationLinks(buffer);
+    }
 
-    if (!parsed.email && regexEmail) parsed.email = regexEmail;
-    if (!parsed.phone && regexPhone) parsed.phone = regexPhone;
+    // Best contact info: regex first, then pdfjs annotations as fallback
+    const bestEmail = regexEmail || pdfjsData.email;
+    const bestPhone = regexPhone || pdfjsData.phone;
+
+    const parsed = await parseWithGroq(text, { email: bestEmail, phone: bestPhone });
+
+    if (!parsed.email && bestEmail) parsed.email = bestEmail;
+    if (!parsed.phone && bestPhone) parsed.phone = bestPhone;
     if (regexLinks.github) parsed.github = regexLinks.github;
     if (regexLinks.linkedin) parsed.linkedin = regexLinks.linkedin;
+    // Merge pdfjs links
+    for (const link of pdfjsData.links) {
+      if (link.type === "github" && !parsed.github) parsed.github = link.url;
+      if (link.type === "linkedin" && !parsed.linkedin) parsed.linkedin = link.url;
+    }
 
     console.log(`🎯 Final — name: ${parsed.name}, email: ${parsed.email}, phone: ${parsed.phone}`);
     return parsed;
