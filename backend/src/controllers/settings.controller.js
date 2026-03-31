@@ -1,9 +1,10 @@
 import crypto from "crypto";
 import User from "../models/User.js";
 import { env } from "../config/env.js";
-import * as SibApiV3Sdk from "@getbrevo/brevo";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const SibApiV3Sdk = require("@getbrevo/brevo");
 
-// Brevo API for email — HTTP based, works on Render
 const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
 apiInstance.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
