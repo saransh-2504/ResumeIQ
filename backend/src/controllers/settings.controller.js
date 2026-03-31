@@ -1,12 +1,15 @@
 import crypto from "crypto";
 import User from "../models/User.js";
 import { env } from "../config/env.js";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const SibApiV3Sdk = require("@getbrevo/brevo");
+import axios from "axios";
 
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-apiInstance.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+async function sendMail({ to, subject, html }) {
+  await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    { sender: { email: env.EMAIL_USER, name: "ResumeIQ" }, to: [{ email: to }], subject, htmlContent: html },
+    { headers: { "api-key": process.env.BREVO_API_KEY, "Content-Type": "application/json" } }
+  );
+}
 
 async function sendMail({ to, subject, html }) {
   const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();

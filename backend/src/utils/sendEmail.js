@@ -1,21 +1,24 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const SibApiV3Sdk = require("@getbrevo/brevo");
+import axios from "axios";
 import { env } from "../config/env.js";
 
-// ---- Brevo API client setup ----
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-apiInstance.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
-const FROM = { email: env.EMAIL_USER, name: "ResumeIQ" };
-
+// ---- Brevo API — pure HTTP, no SDK needed ----
+// Works on all platforms including Render free tier
 async function sendMail({ to, subject, html }) {
-  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-  sendSmtpEmail.sender = FROM;
-  sendSmtpEmail.to = [{ email: to }];
-  sendSmtpEmail.subject = subject;
-  sendSmtpEmail.htmlContent = html;
-  await apiInstance.sendTransacEmail(sendSmtpEmail);
+  await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      sender: { email: env.EMAIL_USER, name: "ResumeIQ" },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+    },
+    {
+      headers: {
+        "api-key": process.env.BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+    }
+  );
 }
 
 // ---- Verification email ----
@@ -68,14 +71,10 @@ export async function sendRecruiterApprovalEmail(toEmail, recruiterName, dashboa
         <h2 style="color:#4f46e5">ResumeIQ</h2>
         <p>Hi ${recruiterName},</p>
         <p>Your recruiter account has been <strong style="color:#16a34a">approved</strong>! You can now post jobs and review applications.</p>
-        <p>Please complete your company profile before posting your first job.</p>
         <a href="${dashboardUrl}" style="display:inline-block;background:#4f46e5;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">
           Complete Your Profile →
         </a>
-        <div style="background:#f9fafb;border-radius:8px;padding:12px;margin-top:16px;font-size:12px;color:#6b7280">
-          <strong>Terms reminder:</strong> Post only genuine jobs. Do not misuse candidate data. Violations may result in account suspension.
-        </div>
-        <p style="color:#d1d5db;font-size:11px;margin-top:16px">© 2026 ResumeIQ</p>
+        <p style="color:#d1d5db;font-size:11px">© 2026 ResumeIQ</p>
       </div>
     `,
   });

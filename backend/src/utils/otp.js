@@ -1,29 +1,27 @@
 import crypto from "crypto";
 import redis from "../config/redis.js";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const SibApiV3Sdk = require("@getbrevo/brevo");
+import axios from "axios";
 import { env } from "../config/env.js";
 
-const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-apiInstance.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
 async function sendOTPEmail(to, otp, userName) {
-  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-  sendSmtpEmail.sender = { email: env.EMAIL_USER, name: "ResumeIQ" };
-  sendSmtpEmail.to = [{ email: to }];
-  sendSmtpEmail.subject = "ResumeIQ — Your Verification Code";
-  sendSmtpEmail.htmlContent = `
-    <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px">
-      <h2 style="color:#4f46e5">ResumeIQ</h2>
-      <p>Hi ${userName || "there"},</p>
-      <p>Your verification code is:</p>
-      <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#4f46e5;margin:24px 0;text-align:center">${otp}</div>
-      <p style="color:#6b7280;font-size:13px">This code expires in <strong>5 minutes</strong>. Do not share it.</p>
-      <p style="color:#d1d5db;font-size:11px">© 2026 ResumeIQ</p>
-    </div>
-  `;
-  await apiInstance.sendTransacEmail(sendSmtpEmail);
+  await axios.post(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      sender: { email: env.EMAIL_USER, name: "ResumeIQ" },
+      to: [{ email: to }],
+      subject: "ResumeIQ — Your Verification Code",
+      htmlContent: `
+        <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px">
+          <h2 style="color:#4f46e5">ResumeIQ</h2>
+          <p>Hi ${userName || "there"},</p>
+          <p>Your verification code is:</p>
+          <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#4f46e5;margin:24px 0;text-align:center">${otp}</div>
+          <p style="color:#6b7280;font-size:13px">Expires in <strong>5 minutes</strong>. Do not share it.</p>
+        </div>
+      `,
+    },
+    { headers: { "api-key": process.env.BREVO_API_KEY, "Content-Type": "application/json" } }
+  );
 }
 
 const OTP_TTL = 5 * 60;        // 5 minutes in seconds
