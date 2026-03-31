@@ -11,15 +11,6 @@ async function sendMail({ to, subject, html }) {
   );
 }
 
-async function sendMail({ to, subject, html }) {
-  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-  sendSmtpEmail.sender = { email: env.EMAIL_USER, name: "ResumeIQ" };
-  sendSmtpEmail.to = [{ email: to }];
-  sendSmtpEmail.subject = subject;
-  sendSmtpEmail.htmlContent = html;
-  await apiInstance.sendTransacEmail(sendSmtpEmail);
-}
-
 // ---- GET MY PROFILE ----
 export async function getMyProfile(req, res) {
   try {
