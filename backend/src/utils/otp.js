@@ -6,8 +6,8 @@ import { env } from "../config/env.js";
 // Inline transporter — OTP emails are simple, no need to import sendEmail
 const transporter = nodemailer.createTransport({
   host: env.EMAIL_HOST,
-  port: env.EMAIL_PORT,
-  secure: false,
+  port: Number(env.EMAIL_PORT),
+  secure: Number(env.EMAIL_PORT) === 465,
   auth: { user: env.EMAIL_USER, pass: env.EMAIL_PASS },
 });
 
