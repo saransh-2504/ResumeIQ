@@ -9,6 +9,7 @@ import {
   adminSuggestChanges,
   approveAdminSuggestion,
   rejectAdminSuggestion,
+  toggleJobStatus,
 } from "../controllers/job.controller.js";
 import { applyToJob, getJobApplicants } from "../controllers/application.controller.js";
 import { getATSScore } from "../controllers/job.controller.js";
@@ -29,6 +30,7 @@ router.post("/", authMiddleware, roleMiddleware("recruiter"), recruiterApprovalM
 router.get("/:id", getJobById);
 router.put("/:id", authMiddleware, roleMiddleware("recruiter"), editJob);
 router.delete("/:id", authMiddleware, roleMiddleware("recruiter"), deleteJob);
+router.patch("/:id/toggle", authMiddleware, roleMiddleware("recruiter"), toggleJobStatus);
 
 // Recruiter — respond to admin suggestion
 router.post("/:id/suggestion/approve", authMiddleware, roleMiddleware("recruiter"), approveAdminSuggestion);

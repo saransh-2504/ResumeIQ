@@ -43,6 +43,11 @@ function AdminJobModal({ job, onClose, onSuggested }) {
             <h2 className="text-lg font-bold text-gray-800">{job.title}</h2>
             <p className="text-sm text-gray-400">{job.company} · {job.location}</p>
             <p className="text-xs text-gray-300 mt-0.5">Posted by: {job.postedBy?.name} ({job.postedBy?.email})</p>
+            {job.createdAt && (
+              <p className="text-xs text-gray-300 mt-0.5">
+                Posted on: {new Date(job.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+              </p>
+            )}
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
         </div>
@@ -370,6 +375,7 @@ export default function AdminDashboard() {
                         <th className="px-5 py-3 text-left">Title</th>
                         <th className="px-5 py-3 text-left">Company</th>
                         <th className="px-5 py-3 text-left">Posted By</th>
+                        <th className="px-5 py-3 text-left">Posted On</th>
                         <th className="px-5 py-3 text-left">Type</th>
                         <th className="px-5 py-3 text-left">Status</th>
                         <th className="px-5 py-3 text-left">Action</th>
@@ -381,6 +387,9 @@ export default function AdminDashboard() {
                           <td className="px-5 py-3 font-medium text-gray-800">{j.title}</td>
                           <td className="px-5 py-3 text-gray-500">{j.company}</td>
                           <td className="px-5 py-3 text-gray-500">{j.postedBy?.name || "—"}</td>
+                          <td className="px-5 py-3 text-gray-500 text-xs">
+                            {j.createdAt ? new Date(j.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
+                          </td>
                           <td className="px-5 py-3">
                             <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full capitalize">
                               {j.type}

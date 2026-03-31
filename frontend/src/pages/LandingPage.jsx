@@ -117,6 +117,11 @@ function JobCard({ job, onClick, highlightSkills = [] }) {
           );
         })}
       </div>
+      {job.createdAt && (
+        <p className="text-xs text-gray-400 mt-2">
+          Posted on: {new Date(job.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+        </p>
+      )}
     </div>
   );
 }

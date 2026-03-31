@@ -54,6 +54,7 @@ function TopBar() {
 function ApplicantsList({ jobId }) {
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("all"); // all | applied | reviewed | shortlisted | rejected
 
   useEffect(() => {
     api.get(`/jobs/${jobId}/applications`)
@@ -83,21 +84,49 @@ function ApplicantsList({ jobId }) {
   if (loading) return <div className="text-xs text-gray-400 py-2">Loading applicants...</div>;
   if (applicants.length === 0) return <div className="text-xs text-gray-400 py-2">No applicants yet.</div>;
 
+  // Count by status
+  const counts = applicants.reduce((acc, a) => {
+    acc[a.status] = (acc[a.status] || 0) + 1;
+    return acc;
+  }, {});
+
+  const filtered = filter === "all" ? applicants : applicants.filter((a) => a.status === filter);
+
+  const filterBtns = [
+    { key: "all", label: `All (${applicants.length})` },
+    { key: "applied", label: `Applied (${counts.applied || 0})` },
+    { key: "reviewed", label: `Reviewed (${counts.reviewed || 0})` },
+    { key: "shortlisted", label: `Shortlisted (${counts.shortlisted || 0})` },
+    { key: "rejected", label: `Rejected (${counts.rejected || 0})` },
+  ];
+
   return (
     <div className="space-y-3">
-      {applicants.map((app) => (
+      {/* Filter pills */}
+      <div className="flex flex-wrap gap-1.5">
+        {filterBtns.map(({ key, label }) => (
+          <button key={key} onClick={() => setFilter(key)}
+            className={`text-xs px-3 py-1 rounded-full font-medium transition ${
+              filter === key ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {filtered.length === 0 && (
+        <p className="text-xs text-gray-400 py-2">No applicants with this status.</p>
+      )}
+
+      {filtered.map((app) => (
         <div key={app._id} className="bg-gray-50 rounded-xl p-3">
           <div className="flex items-center justify-between mb-1">
             <div>
               <p className="text-sm font-medium text-gray-700">{app.candidate.name}</p>
               <p className="text-xs text-gray-400">{app.candidate.email}</p>
             </div>
-            {/* Status dropdown */}
-            <select
-              value={app.status}
-              onChange={(e) => handleStatusChange(app._id, e.target.value)}
-              className={`text-xs px-2 py-1 rounded-lg border-0 font-medium cursor-pointer ${statusColors[app.status]}`}
-            >
+            <select value={app.status} onChange={(e) => handleStatusChange(app._id, e.target.value)}
+              className={`text-xs px-2 py-1 rounded-lg border-0 font-medium cursor-pointer ${statusColors[app.status]}`}>
               <option value="applied">Applied</option>
               <option value="reviewed">Reviewed</option>
               <option value="shortlisted">Shortlisted</option>
@@ -110,14 +139,9 @@ function ApplicantsList({ jobId }) {
               <span className="truncate max-w-[160px]">{app.resumeFileName}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">
-                {new Date(app.appliedAt).toLocaleDateString()}
-              </span>
-              {/* View resume — opens signed URL in new tab */}
+              <span className="text-xs text-gray-400">{new Date(app.appliedAt).toLocaleDateString()}</span>
               <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer"
-                className="text-xs text-indigo-600 hover:underline">
-                View Resume
-              </a>
+                className="text-xs text-indigo-600 hover:underline">View Resume</a>
             </div>
           </div>
         </div>
@@ -404,10 +428,20 @@ function JobListings({ refresh, onRefresh }) {
   }, [refresh]);
 
   async function handleDelete(id, e) {
-    e.stopPropagation(); // don't open modal
+    e.stopPropagation();
     if (!confirm("Delete this job?")) return;
     await api.delete(`/jobs/${id}`);
     setJobs(jobs.filter((j) => j._id !== id));
+  }
+
+  async function handleToggle(id, e) {
+    e.stopPropagation();
+    try {
+      const res = await api.patch(`/jobs/${id}/toggle`);
+      setJobs(jobs.map((j) => j._id === id ? { ...j, isActive: res.data.isActive } : j));
+    } catch {
+      // silent
+    }
   }
 
   if (loading) return <div className="text-sm text-gray-400">Loading jobs...</div>;
@@ -442,11 +476,20 @@ function JobListings({ refresh, onRefresh }) {
                     )}
                   </div>
                   <p className="text-xs text-gray-400">{j.company} · {j.location}</p>
+                  {j.createdAt && (
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      Posted on: {new Date(j.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${j.isActive ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-500"}`}>
                     {j.isActive ? "Active" : "Closed"}
                   </span>
+                  <button onClick={(e) => handleToggle(j._id, e)}
+                    className={`text-xs font-medium transition ${j.isActive ? "text-yellow-500 hover:text-yellow-700" : "text-green-500 hover:text-green-700"}`}>
+                    {j.isActive ? "Pause" : "Resume"}
+                  </button>
                   <button onClick={(e) => handleDelete(j._id, e)}
                     className="text-xs text-red-400 hover:text-red-600 transition">
                     Delete

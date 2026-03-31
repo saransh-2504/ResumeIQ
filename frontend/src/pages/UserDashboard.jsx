@@ -416,7 +416,10 @@ function JobAnalysisPanel({ job, onClose }) {
         <p className="text-xs font-semibold text-gray-600 mb-2">Job Description</p>
         <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.description}</p>
       </div>
-      <div className="mt-3 text-xs text-gray-400">Posted by {job.postedBy?.name || "Recruiter"}</div>
+      <div className="mt-3 text-xs text-gray-400">
+        Posted by {job.postedBy?.name || "Recruiter"}
+        {job.createdAt && <span> · Posted on: {new Date(job.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>}
+      </div>
 
       <hr className="my-4 border-gray-100" />
 
