@@ -16,6 +16,10 @@ import settingsRoutes from "./routes/settings.routes.js";
 
 const app = express();
 
+// Trust proxy — required for Render/Vercel deployments
+// Allows rate limiter and cookies to work correctly behind reverse proxy
+app.set("trust proxy", 1);
+
 app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());

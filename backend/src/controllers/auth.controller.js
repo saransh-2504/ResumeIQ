@@ -157,8 +157,8 @@ export async function login(req, res) {
 
 // ---- LOGOUT ----
 export async function logout(req, res) {
-  // Clear the cookie
-  res.clearCookie("token", cookieOptions);
+  // Clear the cookie — don't pass maxAge when clearing
+  res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: process.env.NODE_ENV === "production" ? "none" : "lax" });
   res.status(200).json({ message: "Logged out successfully." });
 }
 
