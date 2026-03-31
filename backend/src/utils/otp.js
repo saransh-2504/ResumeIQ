@@ -1,31 +1,28 @@
 import crypto from "crypto";
 import redis from "../config/redis.js";
-import nodemailer from "nodemailer";
+import * as SibApiV3Sdk from "@getbrevo/brevo";
 import { env } from "../config/env.js";
 
-// Inline transporter — OTP emails are simple, no need to import sendEmail
-const transporter = nodemailer.createTransport({
-  host: env.EMAIL_HOST,
-  port: Number(env.EMAIL_PORT),
-  secure: Number(env.EMAIL_PORT) === 465,
-  auth: { user: env.EMAIL_USER, pass: env.EMAIL_PASS },
-});
+// Brevo API for OTP emails — HTTP based, works on all platforms
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+apiInstance.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
 async function sendOTPEmail(to, otp, userName) {
-  await transporter.sendMail({
-    from: `"ResumeIQ" <${env.EMAIL_USER}>`,
-    to,
-    subject: "ResumeIQ — Your Verification Code",
-    html: `
-      <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px">
-        <h2 style="color:#4f46e5;margin-bottom:8px">ResumeIQ</h2>
-        <p style="color:#374151">Hi ${userName || "there"},</p>
-        <p style="color:#374151">Your verification code is:</p>
-        <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#4f46e5;margin:24px 0;text-align:center">${otp}</div>
-        <p style="color:#6b7280;font-size:13px">This code expires in <strong>5 minutes</strong>. Do not share it with anyone.</p>
-      </div>
-    `,
-  });
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  sendSmtpEmail.sender = { email: env.EMAIL_USER, name: "ResumeIQ" };
+  sendSmtpEmail.to = [{ email: to }];
+  sendSmtpEmail.subject = "ResumeIQ — Your Verification Code";
+  sendSmtpEmail.htmlContent = `
+    <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px">
+      <h2 style="color:#4f46e5">ResumeIQ</h2>
+      <p>Hi ${userName || "there"},</p>
+      <p>Your verification code is:</p>
+      <div style="font-size:36px;font-weight:bold;letter-spacing:8px;color:#4f46e5;margin:24px 0;text-align:center">${otp}</div>
+      <p style="color:#6b7280;font-size:13px">This code expires in <strong>5 minutes</strong>. Do not share it.</p>
+      <p style="color:#d1d5db;font-size:11px">© 2026 ResumeIQ</p>
+    </div>
+  `;
+  await apiInstance.sendTransacEmail(sendSmtpEmail);
 }
 
 const OTP_TTL = 5 * 60;        // 5 minutes in seconds

@@ -1,12 +1,20 @@
 import crypto from "crypto";
 import User from "../models/User.js";
 import { env } from "../config/env.js";
-import nodemailer from "nodemailer";
+import * as SibApiV3Sdk from "@getbrevo/brevo";
 
-const transporter = nodemailer.createTransport({
-  host: env.EMAIL_HOST, port: Number(env.EMAIL_PORT), secure: Number(env.EMAIL_PORT) === 465,
-  auth: { user: env.EMAIL_USER, pass: env.EMAIL_PASS },
-});
+// Brevo API for email — HTTP based, works on Render
+const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+apiInstance.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
+
+async function sendMail({ to, subject, html }) {
+  const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+  sendSmtpEmail.sender = { email: env.EMAIL_USER, name: "ResumeIQ" };
+  sendSmtpEmail.to = [{ email: to }];
+  sendSmtpEmail.subject = subject;
+  sendSmtpEmail.htmlContent = html;
+  await apiInstance.sendTransacEmail(sendSmtpEmail);
+}
 
 // ---- GET MY PROFILE ----
 export async function getMyProfile(req, res) {
@@ -75,8 +83,7 @@ export async function requestEmailChange(req, res) {
     await user.save();
 
     const verifyUrl = `${env.CLIENT_URL}/verify-email-change?token=${token}`;
-    await transporter.sendMail({
-      from: `"ResumeIQ" <${env.EMAIL_USER}>`,
+    await sendMail({
       to: newEmail,
       subject: "Confirm your new email — ResumeIQ",
       html: `<div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px">
