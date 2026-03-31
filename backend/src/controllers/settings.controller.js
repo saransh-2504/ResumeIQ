@@ -144,3 +144,49 @@ export async function updateRecruiterProfile(req, res) {
     res.status(500).json({ message: "Failed to update profile." });
   }
 }
+
+// ---- DELETE ACCOUNT (candidate — direct) ----
+export async function deleteAccount(req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found." });
+    if (user.role !== "candidate")
+      return res.status(403).json({ message: "Use the request deletion flow for recruiter accounts." });
+
+    // Delete resume from Cloudinary if exists
+    try {
+      const Resume = (await import("../models/Resume.js")).default;
+      const cloudinary = (await import("../config/cloudinary.js")).default;
+      const resume = await Resume.findOne({ userId: user._id });
+      if (resume?.cloudinaryId) {
+        await cloudinary.uploader.destroy(resume.cloudinaryId, { resource_type: "raw", type: "authenticated" });
+        await resume.deleteOne();
+      }
+    } catch (e) { console.warn("Resume cleanup failed:", e.message); }
+
+    await user.deleteOne();
+    // Clear auth cookie
+    res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: process.env.NODE_ENV === "production" ? "none" : "lax" });
+    res.status(200).json({ message: "Account deleted successfully." });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete account." });
+  }
+}
+
+// ---- REQUEST ACCOUNT DELETION (recruiter) ----
+export async function requestAccountDeletion(req, res) {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: "User not found." });
+    if (user.role !== "recruiter")
+      return res.status(403).json({ message: "Candidates can delete directly." });
+
+    user.deleteRequested = true;
+    user.deleteRequestedAt = new Date();
+    await user.save();
+
+    res.status(200).json({ message: "Deletion request submitted. Admin will review it shortly." });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to submit deletion request." });
+  }
+}

@@ -70,6 +70,110 @@ function PasswordSection({ savePwd, currentPwd, setCurrentPwd, newPwd, setNewPwd
 }
 
 // ============================================================
+// DELETE ACCOUNT SECTION
+// ============================================================
+function DeleteAccountSection({ role, deleteRequested }) {
+  const { logoutUser } = useAuth();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState({ text: "", error: false });
+  const [requested, setRequested] = useState(deleteRequested || false);
+
+  async function handleDelete() {
+    setLoading(true);
+    try {
+      if (role === "candidate") {
+        await api.delete("/settings/account");
+        logoutUser();
+      } else {
+        await api.post("/settings/account/delete-request");
+        setRequested(true);
+        setShowConfirm(false);
+        setMsg({ text: "Deletion request submitted. Admin will review it.", error: false });
+      }
+    } catch (err) {
+      setMsg({ text: err.response?.data?.message || "Failed.", error: true });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <>
+      <div className="bg-white border border-red-100 rounded-2xl p-6">
+        <div className="border-b border-red-50 pb-3 mb-4">
+          <p className="text-sm font-semibold text-red-600">Danger Zone</p>
+          <p className="text-xs text-gray-400 mt-0.5">
+            {role === "candidate"
+              ? "Permanently delete your account and all associated data."
+              : "Request account deletion — admin approval required."}
+          </p>
+        </div>
+
+        {requested && role === "recruiter" ? (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-xs text-yellow-700">
+            ⏳ Your deletion request is pending admin review.
+          </div>
+        ) : (
+          <>
+            <Msg msg={msg.text} isError={msg.error} />
+            <button onClick={() => setShowConfirm(true)}
+              className="bg-red-50 text-red-600 border border-red-200 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-red-100 transition">
+              {role === "candidate" ? "Delete My Account" : "Request Account Deletion"}
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Confirmation Modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ backdropFilter: "blur(4px)", backgroundColor: "rgba(0,0,0,0.4)" }}
+          onClick={() => setShowConfirm(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}>
+            <div className="text-center mb-4">
+              <div className="text-4xl mb-2">⚠️</div>
+              <h2 className="text-lg font-bold text-gray-800">
+                {role === "candidate" ? "Delete Account?" : "Request Account Deletion?"}
+              </h2>
+              <p className="text-sm text-gray-500 mt-2">
+                {role === "candidate"
+                  ? "This will permanently delete your account, resume, and all applications. This cannot be undone."
+                  : "A request will be sent to admin. Your account will be deleted after approval. All your job postings will be removed."}
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="text-xs text-gray-500 mb-1 block">
+                Type <span className="font-mono font-bold text-red-500">DELETE</span> to confirm
+              </label>
+              <input type="text" value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder="DELETE"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-red-400 transition" />
+            </div>
+
+            <div className="flex gap-3">
+              <button onClick={() => { setShowConfirm(false); setConfirmText(""); }}
+                className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition">
+                Cancel
+              </button>
+              <button onClick={handleDelete}
+                disabled={confirmText !== "DELETE" || loading}
+                className="flex-1 bg-red-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-red-700 transition disabled:opacity-50">
+                {loading ? "Processing..." : role === "candidate" ? "Delete Forever" : "Submit Request"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ============================================================
 // CANDIDATE SETTINGS
 // ============================================================
 function CandidateSettings({ profile }) {
@@ -149,6 +253,9 @@ function CandidateSettings({ profile }) {
         <PasswordSection savePwd={savePwd} currentPwd={currentPwd} setCurrentPwd={setCurrentPwd}
           newPwd={newPwd} setNewPwd={setNewPwd} pwdMsg={pwdMsg} pwdLoading={pwdLoading} />
       )}
+
+      {/* Delete Account */}
+      <DeleteAccountSection role="candidate" />
     </div>
   );
 }
@@ -273,6 +380,9 @@ function RecruiterSettings({ profile }) {
           <SaveBtn loading={companyLoading} label={isFirstSetup ? "Complete Setup & Start Posting" : "Save Company Profile"} />
         </form>
       </Section>
+
+      {/* Delete Account Request */}
+      <DeleteAccountSection role="recruiter" deleteRequested={profile?.deleteRequested} />
     </div>
   );
 }

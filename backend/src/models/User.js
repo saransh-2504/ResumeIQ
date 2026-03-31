@@ -88,6 +88,10 @@ const userSchema = new mongoose.Schema(
 
     // Profile setup completed (for recruiters after first approval)
     profileSetupDone: { type: Boolean, default: false },
+
+    // Account deletion request (recruiters only — candidates delete directly)
+    deleteRequested: { type: Boolean, default: false },
+    deleteRequestedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

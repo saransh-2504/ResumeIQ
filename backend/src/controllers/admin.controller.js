@@ -141,3 +141,39 @@ export async function rejectProfileChange(req, res) {
     res.status(500).json({ message: "Failed to reject changes." });
   }
 }
+
+// ---- GET RECRUITERS WITH PENDING DELETE REQUESTS ----
+export async function getPendingDeleteRequests(req, res) {
+  try {
+    const recruiters = await User.find({ role: "recruiter", deleteRequested: true }).select("-password");
+    res.status(200).json({ recruiters });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch delete requests." });
+  }
+}
+
+// ---- APPROVE RECRUITER ACCOUNT DELETION ----
+export async function approveAccountDeletion(req, res) {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user || user.role !== "recruiter") return res.status(404).json({ message: "Recruiter not found." });
+    await user.deleteOne();
+    res.status(200).json({ message: "Recruiter account deleted." });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete account." });
+  }
+}
+
+// ---- REJECT RECRUITER ACCOUNT DELETION ----
+export async function rejectAccountDeletion(req, res) {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "Recruiter not found." });
+    user.deleteRequested = false;
+    user.deleteRequestedAt = null;
+    await user.save();
+    res.status(200).json({ message: "Deletion request rejected." });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to reject request." });
+  }
+}

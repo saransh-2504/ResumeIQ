@@ -9,6 +9,9 @@ import {
   getPendingProfileChanges,
   approveProfileChange,
   rejectProfileChange,
+  getPendingDeleteRequests,
+  approveAccountDeletion,
+  rejectAccountDeletion,
 } from "../controllers/admin.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { roleMiddleware } from "../middlewares/role.middleware.js";
@@ -27,5 +30,10 @@ router.get("/jobs", getAllJobs);
 router.get("/profile-changes", getPendingProfileChanges);
 router.patch("/profile-changes/:id/approve", approveProfileChange);
 router.patch("/profile-changes/:id/reject", rejectProfileChange);
+
+// Recruiter account deletion requests
+router.get("/delete-requests", getPendingDeleteRequests);
+router.delete("/delete-requests/:id/approve", approveAccountDeletion);
+router.patch("/delete-requests/:id/reject", rejectAccountDeletion);
 
 export default router;

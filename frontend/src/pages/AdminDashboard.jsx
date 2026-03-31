@@ -174,6 +174,7 @@ export default function AdminDashboard() {
   const [allRecruiters, setAllRecruiters] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [allJobs, setAllJobs] = useState([]);
+  const [deleteRequests, setDeleteRequests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState("");
   const [selectedJob, setSelectedJob] = useState(null); // job modal
@@ -200,6 +201,9 @@ export default function AdminDashboard() {
       } else if (activeTab === "jobs") {
         const res = await api.get("/admin/jobs");
         setAllJobs(res.data.jobs);
+      } else if (activeTab === "delete-requests") {
+        const res = await api.get("/admin/delete-requests");
+        setDeleteRequests(res.data.recruiters);
       }
     } catch (err) {
       showToast("Failed to load data.");
@@ -234,6 +238,7 @@ export default function AdminDashboard() {
     { key: "recruiters", label: "All Recruiters" },
     { key: "users", label: "Candidates" },
     { key: "jobs", label: "Jobs" },
+    { key: "delete-requests", label: "Delete Requests" },
   ];
 
   return (
@@ -412,6 +417,59 @@ export default function AdminDashboard() {
                       ))}
                     </tbody>
                   </table>
+                )}
+              </div>
+            )}
+
+            {/* DELETE REQUESTS */}
+            {tab === "delete-requests" && (
+              <div>
+                {deleteRequests.length === 0 ? (
+                  <div className="text-center py-16 text-gray-400 text-sm">No pending deletion requests</div>
+                ) : (
+                  <div className="space-y-3">
+                    {deleteRequests.map((r) => (
+                      <div key={r._id} className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">{r.name}</p>
+                          <p className="text-xs text-gray-400">{r.email}</p>
+                          {r.recruiterProfile?.companyName && (
+                            <p className="text-xs text-gray-400">{r.recruiterProfile.companyName}</p>
+                          )}
+                          {r.deleteRequestedAt && (
+                            <p className="text-xs text-gray-400 mt-0.5">
+                              Requested: {new Date(r.deleteRequestedAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                            </p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={async () => {
+                              if (!confirm(`Delete ${r.name}'s account permanently?`)) return;
+                              try {
+                                await api.delete(`/admin/delete-requests/${r._id}/approve`);
+                                showToast("Account deleted.");
+                                fetchTabData("delete-requests");
+                              } catch { showToast("Failed."); }
+                            }}
+                            className="text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-medium">
+                            Approve & Delete
+                          </button>
+                          <button
+                            onClick={async () => {
+                              try {
+                                await api.patch(`/admin/delete-requests/${r._id}/reject`);
+                                showToast("Request rejected.");
+                                fetchTabData("delete-requests");
+                              } catch { showToast("Failed."); }
+                            }}
+                            className="text-xs bg-gray-50 text-gray-600 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition font-medium">
+                            Reject
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
