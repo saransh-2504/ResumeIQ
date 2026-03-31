@@ -8,6 +8,16 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if token came via OAuth redirect URL (?token=...)
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlToken = urlParams.get("token");
+    if (urlToken) {
+      localStorage.setItem("token", urlToken);
+      api.defaults.headers.common["Authorization"] = `Bearer ${urlToken}`;
+      // Clean URL
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+
     // Check token in localStorage on app load
     const token = localStorage.getItem("token");
     if (!token) { setLoading(false); return; }

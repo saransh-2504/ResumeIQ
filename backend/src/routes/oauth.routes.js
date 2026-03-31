@@ -18,13 +18,16 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { session: false, failureRedirect: `${env.CLIENT_URL}/login?error=oauth_failed` }),
   (req, res) => {
-    // Generate JWT and set cookie
+    // Generate JWT
     const token = generateToken(req.user._id, req.user.role);
+
+    // Also set cookie as fallback
     res.cookie("token", token, cookieOptions);
 
-    // Redirect to correct dashboard
+    // Pass token in URL so frontend can store in localStorage
+    // Frontend reads it on the redirect page and saves to localStorage
     const redirect = req.user.role === "recruiter" ? "/recruiter" : "/dashboard";
-    res.redirect(`${env.CLIENT_URL}${redirect}`);
+    res.redirect(`${env.CLIENT_URL}${redirect}?token=${token}`);
   }
 );
 
