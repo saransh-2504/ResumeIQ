@@ -31,7 +31,7 @@ export default function LoginPage() {
 
     try {
       const res = await api.post("/auth/login", form);
-      loginUser(res.data.user);
+      loginUser(res.data.user, res.data.token);
 
       // Redirect based on role
       const role = res.data.user.role;

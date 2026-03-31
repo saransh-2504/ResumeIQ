@@ -1,31 +1,42 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import api from "../api/axios";
 
-// Create context
 const AuthContext = createContext(null);
 
-// Provider wraps the whole app
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);       // logged-in user object
-  const [loading, setLoading] = useState(true); // true while checking cookie on load
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // On app load, check if there's a valid cookie and get user info
   useEffect(() => {
-    api
-      .get("/auth/me")
+    // Check token in localStorage on app load
+    const token = localStorage.getItem("token");
+    if (!token) { setLoading(false); return; }
+
+    // Set token in axios default headers
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+    api.get("/auth/me")
       .then((res) => setUser(res.data.user))
-      .catch(() => setUser(null)) // no valid cookie = not logged in
+      .catch(() => {
+        localStorage.removeItem("token");
+        delete api.defaults.headers.common["Authorization"];
+        setUser(null);
+      })
       .finally(() => setLoading(false));
   }, []);
 
-  // Login: called after successful login API response
-  function loginUser(userData) {
+  function loginUser(userData, token) {
+    if (token) {
+      localStorage.setItem("token", token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
     setUser(userData);
   }
 
-  // Logout: call API to clear cookie, then clear state
   async function logoutUser() {
-    await api.post("/auth/logout");
+    try { await api.post("/auth/logout"); } catch {}
+    localStorage.removeItem("token");
+    delete api.defaults.headers.common["Authorization"];
     setUser(null);
   }
 
@@ -36,7 +47,6 @@ export function AuthProvider({ children }) {
   );
 }
 
-// Custom hook for easy access
 export function useAuth() {
   return useContext(AuthContext);
 }

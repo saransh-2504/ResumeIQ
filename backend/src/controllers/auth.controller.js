@@ -80,12 +80,13 @@ export async function verifyEmail(req, res) {
     user.verificationToken = undefined;
     await user.save();
 
-    // Auto-login: generate JWT and set cookie
+    // Auto-login: generate JWT and set cookie + return in body
     const jwtToken = generateToken(user._id, user.role);
     res.cookie("token", jwtToken, cookieOptions);
 
     res.status(200).json({
       message: "Email verified successfully.",
+      token: jwtToken,
       user: {
         id: user._id,
         name: user.name,
@@ -135,12 +136,13 @@ export async function login(req, res) {
       });
     }
 
-    // Generate JWT and set in cookie
+    // Generate JWT and set in cookie + return in body for cross-domain
     const token = generateToken(user._id, user.role);
     res.cookie("token", token, cookieOptions);
 
     res.status(200).json({
       message: "Login successful.",
+      token,
       user: {
         id: user._id,
         name: user.name,
@@ -282,12 +284,13 @@ export async function oauthLogin(req, res) {
       });
     }
 
-    // Generate JWT and set cookie
+    // Generate JWT and set cookie + return in body
     const token = generateToken(user._id, user.role);
     res.cookie("token", token, cookieOptions);
 
     res.status(200).json({
       message: "OAuth login successful.",
+      token,
       user: {
         id: user._id,
         name: user.name,

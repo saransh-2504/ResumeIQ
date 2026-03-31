@@ -26,7 +26,7 @@ export default function VerifyEmailPage() {
     api
       .get(`/auth/verify-email?token=${token}`)
       .then((res) => {
-        loginUser(res.data.user); // auto-login after verification
+        loginUser(res.data.user, res.data.token); // auto-login after verification
         setStatus("success");
         setMessage(res.data.message);
 
