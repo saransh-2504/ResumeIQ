@@ -525,12 +525,14 @@ function DashboardOverview({ refresh, onRefresh }) {
 function MainContent({ active, setActive }) {
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(0);
+
+  useEffect(() => {
+    if (active === "community") navigate("/community");
+  }, [active, navigate]);
+
   if (active === "post") return <PostJob onJobPosted={() => { setRefresh((r) => r + 1); setActive("dashboard"); }} onGoToSettings={() => setActive("settings")} />;
   if (active === "settings") return <SettingsPage />;
-  if (active === "community") {
-    navigate("/community");
-    return null;
-  }
+  if (active === "community") return null;
   return <DashboardOverview refresh={refresh} onRefresh={() => setRefresh((r) => r + 1)} />;
 }
 

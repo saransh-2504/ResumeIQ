@@ -1288,14 +1288,15 @@ function ResumeAnalysis() {
 function MainContent({ active }) {
   const navigate = useNavigate();
   const [selectedJob, setSelectedJob] = useState(null);
+
+  useEffect(() => {
+    if (active === "community") navigate("/community");
+  }, [active, navigate]);
+
   if (active === "applications") return <MyApplications />;
   if (active === "analysis") return <ResumeAnalysis />;
   if (active === "settings") return <SettingsPage />;
-  if (active === "community") {
-    // Navigate to community discovery page
-    navigate("/community");
-    return null;
-  }
+  if (active === "community") return null;
   return (
     <div className={`grid gap-6 ${selectedJob ? "grid-cols-2" : "grid-cols-1"}`}>
       <JobsFeed onSelect={setSelectedJob} selectedId={selectedJob?._id} />
