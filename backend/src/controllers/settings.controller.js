@@ -2,6 +2,7 @@ import crypto from "crypto";
 import User from "../models/User.js";
 import { env } from "../config/env.js";
 import axios from "axios";
+import { autoJoinOrCreateCommunity } from "../utils/communityAutoCreate.js";
 
 async function sendMail({ to, subject, html }) {
   await axios.post(
@@ -140,6 +141,11 @@ export async function updateRecruiterProfile(req, res) {
     };
     user.profileSetupDone = true;
     await user.save();
+
+    // Auto-join or create community based on email domain
+    autoJoinOrCreateCommunity(user._id).catch((e) =>
+      console.error("Community hook failed:", e.message)
+    );
 
     res.status(200).json({ message: "Company profile updated.", recruiterProfile: user.recruiterProfile });
   } catch (err) {
