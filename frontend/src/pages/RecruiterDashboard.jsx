@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import SettingsPage from "./SettingsPage";
+import NotificationBell from "../components/common/NotificationBell";
 
 // ---- Sidebar nav links ----
 const navLinks = [
   { icon: "🏠", label: "Dashboard", id: "dashboard" },
   { icon: "➕", label: "Post Job", id: "post" },
+  { icon: "🏘️", label: "Community", id: "community" },
   { icon: "⚙️", label: "Settings", id: "settings" },
 ];
 
@@ -41,6 +43,7 @@ function TopBar() {
     <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
       <p className="text-sm font-semibold text-gray-800">Recruiter Dashboard</p>
       <div className="flex items-center gap-2">
+        <NotificationBell />
         <span className="text-sm text-gray-500">{user?.name}</span>
         <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-sm">
           {user?.name?.[0]?.toUpperCase()}
@@ -520,9 +523,14 @@ function DashboardOverview({ refresh, onRefresh }) {
 }
 
 function MainContent({ active, setActive }) {
+  const navigate = useNavigate();
   const [refresh, setRefresh] = useState(0);
   if (active === "post") return <PostJob onJobPosted={() => { setRefresh((r) => r + 1); setActive("dashboard"); }} onGoToSettings={() => setActive("settings")} />;
   if (active === "settings") return <SettingsPage />;
+  if (active === "community") {
+    navigate("/community");
+    return null;
+  }
   return <DashboardOverview refresh={refresh} onRefresh={() => setRefresh((r) => r + 1)} />;
 }
 

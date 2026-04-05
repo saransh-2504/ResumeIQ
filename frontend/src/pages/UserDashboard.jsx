@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import SettingsPage from "./SettingsPage";
+import NotificationBell from "../components/common/NotificationBell";
 
 const navLinks = [
   { icon: "💼", label: "Jobs", id: "jobs" },
   { icon: "📋", label: "My Applications", id: "applications" },
   { icon: "📊", label: "Resume Analysis", id: "analysis" },
+  { icon: "🏘️", label: "Community", id: "community" },
   { icon: "⚙️", label: "Settings", id: "settings" },
 ];
 
@@ -40,6 +42,7 @@ function TopBar() {
     <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
       <p className="text-sm font-semibold text-gray-800">Candidate Dashboard</p>
       <div className="flex items-center gap-2">
+        <NotificationBell />
         <span className="text-sm text-gray-500">{user?.name}</span>
         <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
           {user?.name?.[0]?.toUpperCase()}
@@ -1283,10 +1286,16 @@ function ResumeAnalysis() {
 }
 
 function MainContent({ active }) {
+  const navigate = useNavigate();
   const [selectedJob, setSelectedJob] = useState(null);
   if (active === "applications") return <MyApplications />;
   if (active === "analysis") return <ResumeAnalysis />;
   if (active === "settings") return <SettingsPage />;
+  if (active === "community") {
+    // Navigate to community discovery page
+    navigate("/community");
+    return null;
+  }
   return (
     <div className={`grid gap-6 ${selectedJob ? "grid-cols-2" : "grid-cols-1"}`}>
       <JobsFeed onSelect={setSelectedJob} selectedId={selectedJob?._id} />

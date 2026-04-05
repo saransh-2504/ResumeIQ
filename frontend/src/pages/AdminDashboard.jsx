@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import NotificationBell from "../components/common/NotificationBell";
 
 // ---- Job Detail + Suggest Changes Modal (Admin) ----
 function AdminJobModal({ job, onClose, onSuggested }) {
@@ -165,6 +166,11 @@ function RecruiterCard({ recruiter, onApprove, onReject, showActions }) {
 }
 
 // ---- Main Admin Dashboard ----
+function CommunityRedirect({ navigate }) {
+  useEffect(() => { navigate("/community"); }, [navigate]);
+  return null;
+}
+
 export default function AdminDashboard() {
   const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
@@ -184,7 +190,7 @@ export default function AdminDashboard() {
     setTimeout(() => setToast(""), 3000);
   }
 
-  useEffect(() => { fetchTabData(tab); }, [tab]);
+  useEffect(() => { if (tab !== "community") fetchTabData(tab); }, [tab]);
 
   async function fetchTabData(activeTab) {
     setLoading(true);
@@ -239,6 +245,7 @@ export default function AdminDashboard() {
     { key: "users", label: "Candidates" },
     { key: "jobs", label: "Jobs" },
     { key: "delete-requests", label: "Delete Requests" },
+    { key: "community", label: "Community" },
   ];
 
   return (
@@ -266,6 +273,7 @@ export default function AdminDashboard() {
           <span className="ml-2 text-xs font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Admin</span>
         </span>
         <div className="flex items-center gap-4">
+          <NotificationBell />
           <span className="text-sm text-gray-500">{user?.name}</span>
           <button onClick={async () => { await logoutUser(); navigate("/login"); }}
             className="text-sm text-red-500 hover:text-red-600 transition">
@@ -294,7 +302,9 @@ export default function AdminDashboard() {
           ))}
         </div>
 
-        {loading ? (
+        {tab === "community" ? (
+          <CommunityRedirect navigate={navigate} />
+        ) : loading ? (
           <div className="text-center py-16 text-gray-400 text-sm">Loading...</div>
         ) : (
           <>
