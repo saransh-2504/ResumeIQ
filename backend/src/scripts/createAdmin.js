@@ -54,4 +54,13 @@ const saved = await mongoose.connection.collection("users").findOne({ email });
 const finalCheck = await bcrypt.compare(password, saved.password);
 console.log(finalCheck ? `✅ Admin ready — login with: ${email} / ${password}` : "❌ Something went wrong");
 
+// Add admin to all existing communities
+try {
+  const { addAdminToAllCommunities } = await import("../utils/communityAutoCreate.js");
+  await addAdminToAllCommunities(saved._id);
+  console.log("✅ Admin added to all existing communities.");
+} catch (e) {
+  console.warn("⚠️  Community sync skipped:", e.message);
+}
+
 process.exit(0);

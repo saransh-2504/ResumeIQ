@@ -4,6 +4,50 @@ import Notification from "../models/Notification.js";
 import Application from "../models/Application.js";
 import User from "../models/User.js";
 
+// ── GET /api/v1/community/:id ─────────────────────────────────────────────────
+export async function getCommunityById(req, res) {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const community = await Community.findById(id).lean();
+    if (!community) return res.status(404).json({ message: "Community not found." });
+    if (!isMember(community, userId))
+      return res.status(403).json({ message: "Not a member of this community." });
+
+    res.status(200).json({
+      community: {
+        _id: community._id,
+        name: community.name,
+        domain: community.domain,
+        memberCount: community.members.length,
+        createdAt: community.createdAt,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch community." });
+  }
+}
+
+// ── GET /api/v1/community/:id/members ────────────────────────────────────────
+export async function getCommunityMembers(req, res) {
+  try {
+    const { id } = req.params;
+    const userId = req.user._id;
+
+    const community = await Community.findById(id)
+      .populate("members.userId", "name email role avatar")
+      .lean();
+    if (!community) return res.status(404).json({ message: "Community not found." });
+    if (!isMember(community, userId))
+      return res.status(403).json({ message: "Not a member of this community." });
+
+    res.status(200).json({ members: community.members });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch members." });
+  }
+}
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function isMember(community, userId) {

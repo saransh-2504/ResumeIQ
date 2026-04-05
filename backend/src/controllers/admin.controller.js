@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import Job from "../models/Job.js";
 import { sendRecruiterApprovalEmail } from "../utils/sendEmail.js";
 import { env } from "../config/env.js";
+import { autoJoinOrCreateCommunity } from "../utils/communityAutoCreate.js";
 
 // ---- GET ALL PENDING RECRUITERS ----
 export async function getPendingRecruiters(req, res) {
@@ -36,6 +37,13 @@ export async function approveRecruiter(req, res) {
 
     user.isApproved = true;
     await user.save();
+
+    // If recruiter already has company profile set, trigger community join/create
+    if (user.recruiterProfile?.companyName) {
+      autoJoinOrCreateCommunity(user._id).catch((e) =>
+        console.error("Community hook on approval failed:", e.message)
+      );
+    }
 
     // Send approval email
     try {
