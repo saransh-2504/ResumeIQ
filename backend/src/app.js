@@ -13,6 +13,8 @@ import applicationRoutes from "./routes/application.routes.js";
 import healthRouter from "./routes/health.routes.js";
 
 import settingsRoutes from "./routes/settings.routes.js";
+import communityRoutes from "./routes/community.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 
 const app = express();
 
@@ -36,5 +38,7 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/resume", resumeRoutes);
 app.use("/api/v1/applications", applicationRoutes);
 app.use("/api/v1/settings", settingsRoutes);
+app.use("/api/v1/community", communityRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
 
 export default app;
