@@ -12,10 +12,12 @@ import UserDashboard from "./pages/UserDashboard";
 import RecruiterDashboard from "./pages/RecruiterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import VerifyEmailChangePage from "./pages/VerifyEmailChangePage";
+import CommunityDiscovery from "./pages/CommunityDiscovery";
+import CommunityPage from "./pages/CommunityPage";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
-    // AuthProvider gives user state to all pages
     <AuthProvider>
       <BrowserRouter>
         <Routes>
@@ -57,6 +59,26 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Community — all logged-in roles */}
+          <Route
+            path="/community"
+            element={
+              <ProtectedRoute allowedRoles={["candidate", "recruiter", "admin"]}>
+                <CommunityDiscovery />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/community/:id"
+            element={
+              <ProtectedRoute allowedRoles={["candidate", "recruiter", "admin"]}>
+                <CommunityPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
