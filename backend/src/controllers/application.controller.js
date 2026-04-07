@@ -3,16 +3,13 @@ import Resume from "../models/Resume.js";
 import Job from "../models/Job.js";
 import cloudinary from "../config/cloudinary.js";
 
-// Generate a signed URL for a resume (15 min expiry) — inline view for PDF
+// Generate a signed URL for a resume (15 min expiry)
 function generateSignedUrl(cloudinaryId) {
-  // Use sign_url with fl_attachment:false so browser opens inline instead of downloading
-  const url = cloudinary.url(cloudinaryId, {
+  return cloudinary.utils.private_download_url(cloudinaryId, "", {
     resource_type: "raw",
     type: "authenticated",
-    sign_url: true,
     expires_at: Math.floor(Date.now() / 1000) + 15 * 60,
   });
-  return url;
 }
 
 // ---- APPLY TO A JOB ----
@@ -149,6 +146,39 @@ export async function getResumeUrl(req, res) {
     res.status(200).json({ url, fileName: application.resumeFileName });
   } catch (err) {
     res.status(500).json({ message: "Failed to generate resume URL." });
+  }
+}
+
+// ---- STREAM RESUME (recruiter/admin) — proxies Cloudinary file inline ----
+// GET /api/v1/applications/:id/resume-view
+export async function streamResume(req, res) {
+  try {
+    const application = await Application.findById(req.params.id).populate("jobId");
+    if (!application) return res.status(404).json({ message: "Application not found." });
+
+    if (
+      req.user.role === "recruiter" &&
+      application.jobId.postedBy.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({ message: "Not authorized." });
+    }
+
+    const signedUrl = generateSignedUrl(application.resumeCloudinaryId);
+
+    // Fetch from Cloudinary and stream to client with inline headers
+    const axios = (await import("axios")).default;
+    const response = await axios.get(signedUrl, { responseType: "stream" });
+
+    const fileName = application.resumeFileName || "resume";
+    const isPdf = fileName.toLowerCase().endsWith(".pdf");
+
+    res.setHeader("Content-Type", isPdf ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+
+    response.data.pipe(res);
+  } catch (err) {
+    console.error("Stream resume error:", err.message);
+    res.status(500).json({ message: "Failed to stream resume." });
   }
 }
 // PATCH /api/v1/applications/:id/status

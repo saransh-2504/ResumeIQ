@@ -53,15 +53,24 @@ function TopBar() {
   );
 }
 
-// ---- View Resume Button — fetches fresh signed URL on click ----
+// ---- View Resume Button — streams via backend proxy, opens inline ----
 function ViewResumeButton({ appId, fileName }) {
   const [loading, setLoading] = useState(false);
 
   async function handleView() {
     setLoading(true);
     try {
-      const res = await api.get(`/applications/${appId}/resume-url`);
-      window.open(res.data.url, "_blank", "noopener,noreferrer");
+      const res = await api.get(`/applications/${appId}/resume-view`, {
+        responseType: "blob",
+      });
+      const isPdf = fileName?.toLowerCase().endsWith(".pdf");
+      const blob = new Blob([res.data], {
+        type: isPdf ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank", "noopener,noreferrer");
+      // Revoke after 60s to free memory
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } catch {
       alert("Could not load resume. Please try again.");
     } finally {
