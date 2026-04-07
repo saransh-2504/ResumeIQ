@@ -248,6 +248,8 @@ export async function deleteMessage(req, res) {
     res.status(500).json({ message: "Failed to delete message." });
   }
 }
+
+// ── POST /api/v1/community/:id/messages/:msgId/react ─────────────────────────
 export async function reactToMessage(req, res) {
   try {
     const { id, msgId } = req.params;
