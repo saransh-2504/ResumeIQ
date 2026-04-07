@@ -94,13 +94,13 @@ function ReactionBar({ communityId, msgId, reactions, currentUserId, onUpdate })
 
 // ── Single message bubble ─────────────────────────────────────────────────────
 
-function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onReactionUpdate }) {
+function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onReactionUpdate, onDelete }) {
   const isOwn = msg.senderId?._id === currentUserId || msg.senderId === currentUserId;
   const sender = msg.senderId;
-  const canReact = true; // all roles can react
+  const canDelete = isOwn || currentUserRole === "admin";
 
   return (
-    <div className={`flex gap-2 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
+    <div className={`flex gap-2 group ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
       {/* Avatar */}
       <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs shrink-0 mt-1">
         {sender?.name?.[0]?.toUpperCase() || "?"}
@@ -115,13 +115,27 @@ function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onRea
           </div>
         )}
 
-        {/* Bubble */}
-        <div className={`px-3 py-2 rounded-2xl text-sm leading-relaxed break-words
-          ${isOwn
-            ? "bg-indigo-600 text-white rounded-tr-sm"
-            : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm shadow-sm"
-          }`}>
-          {msg.text}
+        {/* Bubble + delete button */}
+        <div className="flex items-start gap-1">
+          {canDelete && isOwn && (
+            <button onClick={() => onDelete(msg._id)}
+              className="opacity-0 group-hover:opacity-100 transition text-gray-300 hover:text-red-400 text-xs mt-2 shrink-0">
+              🗑
+            </button>
+          )}
+          <div className={`px-3 py-2 rounded-2xl text-sm leading-relaxed break-words
+            ${isOwn
+              ? "bg-indigo-600 text-white rounded-tr-sm"
+              : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm shadow-sm"
+            }`}>
+            {msg.text}
+          </div>
+          {canDelete && !isOwn && (
+            <button onClick={() => onDelete(msg._id)}
+              className="opacity-0 group-hover:opacity-100 transition text-gray-300 hover:text-red-400 text-xs mt-2 shrink-0">
+              🗑
+            </button>
+          )}
         </div>
 
         {/* Timestamp */}
@@ -281,6 +295,16 @@ export default function CommunityPage() {
     setMessages((prev) => prev.map((m) => m._id === msgId ? { ...m, reactions } : m));
   }, []);
 
+  // ── Delete message ────────────────────────────────────────────────────────
+  const handleDelete = useCallback(async (msgId) => {
+    try {
+      await communityApi.deleteMessage(id, msgId);
+      setMessages((prev) => prev.filter((m) => m._id !== msgId));
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete message.");
+    }
+  }, [id]);
+
   // ── Jump to first unread ──────────────────────────────────────────────────
   function jumpToFirstUnread() {
     if (firstUnreadRef.current) {
@@ -360,6 +384,7 @@ export default function CommunityPage() {
                 currentUserId={user?._id}
                 currentUserRole={user?.role}
                 onReactionUpdate={handleReactionUpdate}
+                onDelete={handleDelete}
               />
             </div>
           );

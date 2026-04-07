@@ -165,6 +165,18 @@ export async function approveAccountDeletion(req, res) {
   try {
     const user = await User.findById(req.params.id);
     if (!user || user.role !== "recruiter") return res.status(404).json({ message: "Recruiter not found." });
+
+    // Cleanup resume from Cloudinary if exists
+    try {
+      const Resume = (await import("../models/Resume.js")).default;
+      const cloudinary = (await import("../config/cloudinary.js")).default;
+      const resume = await Resume.findOne({ userId: user._id });
+      if (resume?.cloudinaryId) {
+        await cloudinary.uploader.destroy(resume.cloudinaryId, { resource_type: "raw", type: "authenticated" });
+        await resume.deleteOne();
+      }
+    } catch (e) { console.warn("Resume cleanup failed:", e.message); }
+
     await user.deleteOne();
     res.status(200).json({ message: "Recruiter account deleted." });
   } catch (err) {

@@ -84,7 +84,6 @@ export default function CommunityDiscovery() {
 
   // Role label for back navigation
   const backPath = user?.role === "recruiter" ? "/recruiter" : user?.role === "admin" ? "/admin" : "/dashboard";
-
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header */}

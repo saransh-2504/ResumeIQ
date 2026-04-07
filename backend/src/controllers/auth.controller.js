@@ -173,7 +173,6 @@ export async function logout(req, res) {
 }
 
 // ---- GET CURRENT USER (me) ----
-// Used on app load to check if user is still logged in
 export async function getMe(req, res) {
   res.status(200).json({
     user: {
@@ -182,6 +181,8 @@ export async function getMe(req, res) {
       email: req.user.email,
       role: req.user.role,
       isApproved: req.user.isApproved,
+      profileSetupDone: req.user.profileSetupDone || false,
+      avatar: req.user.avatar || null,
     },
   });
 }
@@ -258,7 +259,33 @@ export async function resetPassword(req, res) {
   }
 }
 
-// ---- OAUTH LOGIN/SIGNUP ----
+// ---- RESEND VERIFICATION EMAIL ----
+export async function resendVerification(req, res) {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ message: "Email is required." });
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    // Always return success — don't reveal if email exists
+    if (!user || user.isVerified) {
+      return res.status(200).json({ message: "If this email exists and is unverified, a new link has been sent." });
+    }
+
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    user.verificationToken = verificationToken;
+    await user.save();
+
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (e) {
+      console.error("Resend verification email failed:", e.message);
+    }
+
+    res.status(200).json({ message: "Verification email resent." });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to resend verification." });
+  }
+}
 export async function oauthLogin(req, res) {
   try {
     const { name, email, oauthProvider, oauthId } = req.body;

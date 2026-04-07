@@ -6,6 +6,7 @@ import {
   joinCommunity,
   getMessages,
   sendMessage,
+  deleteMessage,
   reactToMessage,
 } from "../controllers/community.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
@@ -20,6 +21,7 @@ router.get("/:id/members", getCommunityMembers);
 router.post("/:id/join", joinCommunity);
 router.get("/:id/messages", getMessages);
 router.post("/:id/messages", sendMessage);
+router.delete("/:id/messages/:msgId", deleteMessage);
 router.post("/:id/messages/:msgId/react", reactToMessage);
 
 export default router;

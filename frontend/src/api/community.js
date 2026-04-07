@@ -10,6 +10,7 @@ export const communityApi = {
   getMessages: (id, params = {}) => api.get(`/community/${id}/messages`, { params }),
   sendMessage: (id, text) => api.post(`/community/${id}/messages`, { text }),
   react: (id, msgId, emoji) => api.post(`/community/${id}/messages/${msgId}/react`, { emoji }),
+  deleteMessage: (id, msgId) => api.delete(`/community/${id}/messages/${msgId}`),
 
   // Notifications
   getUnreadCount: () => api.get("/notifications/unread-count"),

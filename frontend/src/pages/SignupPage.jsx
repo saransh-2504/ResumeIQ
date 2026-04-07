@@ -2,6 +2,34 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 
+// ---- Resend Verification Email ----
+function ResendVerification({ email }) {
+  const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  async function handleResend() {
+    setLoading(true);
+    try {
+      await api.post("/auth/resend-verification", { email });
+      setSent(true);
+      setCooldown(60);
+      const t = setInterval(() => {
+        setCooldown((c) => { if (c <= 1) { clearInterval(t); return 0; } return c - 1; });
+      }, 1000);
+    } catch {}
+    finally { setLoading(false); }
+  }
+
+  if (sent) return <p className="text-xs text-green-600 mt-2">Verification email resent!</p>;
+  return (
+    <button onClick={handleResend} disabled={loading || cooldown > 0}
+      className="text-xs text-indigo-500 hover:underline disabled:opacity-50 disabled:no-underline mt-2 block mx-auto">
+      {loading ? "Sending..." : cooldown > 0 ? `Resend in ${cooldown}s` : "Didn't receive it? Resend email"}
+    </button>
+  );
+}
+
 // ---- Inline Terms Modal ----
 function TermsModal({ onAccept, onClose }) {
   return (
@@ -84,10 +112,11 @@ export default function SignupPage() {
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md text-center">
           <div className="text-4xl mb-4">📧</div>
           <h2 className="text-lg font-bold text-gray-800 mb-2">Check your email</h2>
-          <p className="text-sm text-gray-500">{success}</p>
+          <p className="text-sm text-gray-500 mb-4">{success}</p>
+          <ResendVerification email={form.email} />
           <button
             onClick={() => navigate("/login")}
-            className="mt-6 text-sm text-indigo-600 hover:underline"
+            className="mt-4 text-sm text-indigo-600 hover:underline block mx-auto"
           >
             Go to Login
           </button>
