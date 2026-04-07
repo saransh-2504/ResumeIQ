@@ -23,20 +23,22 @@ function uploadToCloudinary(buffer, filename) {
   });
 }
 
-// ---- Generate signed URL (15 min expiry) ----
+// ---- Generate signed URL (15 min expiry) — inline view ----
 export function generateSignedUrl(cloudinaryId) {
-  return cloudinary.utils.private_download_url(cloudinaryId, "", {
+  return cloudinary.url(cloudinaryId, {
     resource_type: "raw",
     type: "authenticated",
+    sign_url: true,
     expires_at: Math.floor(Date.now() / 1000) + 15 * 60,
   });
 }
 
 // ---- Generate a URL for parser to fetch the file (10 min) ----
 function generateParseUrl(cloudinaryId) {
-  return cloudinary.utils.private_download_url(cloudinaryId, "", {
+  return cloudinary.url(cloudinaryId, {
     resource_type: "raw",
     type: "authenticated",
+    sign_url: true,
     expires_at: Math.floor(Date.now() / 1000) + 10 * 60,
   });
 }

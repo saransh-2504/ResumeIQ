@@ -3,13 +3,16 @@ import Resume from "../models/Resume.js";
 import Job from "../models/Job.js";
 import cloudinary from "../config/cloudinary.js";
 
-// Generate a signed URL for a resume (15 min expiry)
+// Generate a signed URL for a resume (15 min expiry) — inline view for PDF
 function generateSignedUrl(cloudinaryId) {
-  return cloudinary.utils.private_download_url(cloudinaryId, "", {
+  // Use sign_url with fl_attachment:false so browser opens inline instead of downloading
+  const url = cloudinary.url(cloudinaryId, {
     resource_type: "raw",
     type: "authenticated",
+    sign_url: true,
     expires_at: Math.floor(Date.now() / 1000) + 15 * 60,
   });
+  return url;
 }
 
 // ---- APPLY TO A JOB ----
@@ -127,7 +130,27 @@ export async function getJobApplicants(req, res) {
   }
 }
 
-// ---- UPDATE APPLICATION STATUS (recruiter) ----
+// ---- GET FRESH RESUME URL (recruiter/admin) ----
+// GET /api/v1/applications/:id/resume-url
+export async function getResumeUrl(req, res) {
+  try {
+    const application = await Application.findById(req.params.id).populate("jobId");
+    if (!application) return res.status(404).json({ message: "Application not found." });
+
+    // Recruiter must own the job
+    if (
+      req.user.role === "recruiter" &&
+      application.jobId.postedBy.toString() !== req.user._id.toString()
+    ) {
+      return res.status(403).json({ message: "Not authorized." });
+    }
+
+    const url = generateSignedUrl(application.resumeCloudinaryId);
+    res.status(200).json({ url, fileName: application.resumeFileName });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to generate resume URL." });
+  }
+}
 // PATCH /api/v1/applications/:id/status
 export async function updateApplicationStatus(req, res) {
   try {

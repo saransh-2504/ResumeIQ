@@ -53,6 +53,30 @@ function TopBar() {
   );
 }
 
+// ---- View Resume Button — fetches fresh signed URL on click ----
+function ViewResumeButton({ appId, fileName }) {
+  const [loading, setLoading] = useState(false);
+
+  async function handleView() {
+    setLoading(true);
+    try {
+      const res = await api.get(`/applications/${appId}/resume-url`);
+      window.open(res.data.url, "_blank", "noopener,noreferrer");
+    } catch {
+      alert("Could not load resume. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button onClick={handleView} disabled={loading}
+      className="text-xs text-indigo-600 hover:underline disabled:opacity-50">
+      {loading ? "Loading..." : "View Resume"}
+    </button>
+  );
+}
+
 // ---- Applicants list inside job modal ----
 function ApplicantsList({ jobId }) {
   const [applicants, setApplicants] = useState([]);
@@ -143,8 +167,7 @@ function ApplicantsList({ jobId }) {
             </div>
             <div className="flex items-center gap-2">
               <span className="text-xs text-gray-400">{new Date(app.appliedAt).toLocaleDateString()}</span>
-              <a href={app.resumeUrl} target="_blank" rel="noopener noreferrer"
-                className="text-xs text-indigo-600 hover:underline">View Resume</a>
+              <ViewResumeButton appId={app._id} fileName={app.resumeFileName} />
             </div>
           </div>
         </div>
