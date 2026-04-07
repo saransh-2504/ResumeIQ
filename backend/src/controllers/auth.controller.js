@@ -14,11 +14,19 @@ export async function signup(req, res) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Recruiters must use company email (no gmail)
-    if (role === "recruiter" && email.includes("@gmail.com")) {
-      return res.status(400).json({
-        message: "Recruiters must use a company email, not Gmail.",
-      });
+    // Recruiters must use company email (no personal/student emails)
+    const BLOCKED_RECRUITER_DOMAINS = [
+      "gmail.com", "yahoo.com", "yahoo.in", "hotmail.com", "outlook.com",
+      "live.com", "icloud.com", "protonmail.com", "rediffmail.com",
+      "ymail.com", "aol.com"
+    ];
+    if (role === "recruiter") {
+      const emailDomain = email.split("@")[1]?.toLowerCase();
+      if (!emailDomain || BLOCKED_RECRUITER_DOMAINS.includes(emailDomain)) {
+        return res.status(400).json({
+          message: "Recruiters must use a company email address. Personal email providers (Gmail, Yahoo, Outlook etc.) are not allowed.",
+        });
+      }
     }
 
     // Check if email already exists
