@@ -163,21 +163,37 @@ export async function streamResume(req, res) {
       return res.status(403).json({ message: "Not authorized." });
     }
 
-    const signedUrl = generateSignedUrl(application.resumeCloudinaryId);
-
-    // Fetch from Cloudinary and stream to client with inline headers
-    const axios = (await import("axios")).default;
-    const response = await axios.get(signedUrl, { responseType: "stream" });
-
     const fileName = application.resumeFileName || "resume";
     const isPdf = fileName.toLowerCase().endsWith(".pdf");
+    const format = isPdf ? "pdf" : "docx";
 
-    res.setHeader("Content-Type", isPdf ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+    // Generate signed download URL with correct format
+    const signedUrl = cloudinary.utils.private_download_url(
+      application.resumeCloudinaryId,
+      format,
+      {
+        resource_type: "raw",
+        type: "authenticated",
+        expires_at: Math.floor(Date.now() / 1000) + 15 * 60,
+      }
+    );
+
+    // Fetch from Cloudinary using axios and pipe to client
+    const axios = (await import("axios")).default;
+    const response = await axios.get(signedUrl, {
+      responseType: "stream",
+      timeout: 15000,
+    });
+
+    res.setHeader(
+      "Content-Type",
+      isPdf ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    );
     res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
 
     response.data.pipe(res);
   } catch (err) {
-    console.error("Stream resume error:", err.message);
+    console.error("Stream resume error:", err.message, err.response?.data);
     res.status(500).json({ message: "Failed to stream resume." });
   }
 }
