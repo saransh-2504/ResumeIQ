@@ -75,7 +75,7 @@ export async function requestEmailChange(req, res) {
     const user = await User.findById(req.user._id);
     user.pendingEmail = newEmail.toLowerCase();
     user.emailChangeToken = token;
-    user.emailChangeExpires = Date.now() + 15 * 60 * 1000;
+    user.emailChangeExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
     const verifyUrl = `${env.CLIENT_URL}/verify-email-change?token=${token}`;

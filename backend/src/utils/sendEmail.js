@@ -30,7 +30,7 @@ export async function sendVerificationEmail(toEmail, token) {
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px">
         <h2 style="color:#4f46e5">ResumeIQ</h2>
-        <p>Thanks for signing up! Click below to verify your email:</p>
+        <p>Thanks for signing up! Click below to verify your email. This link expires in <strong>10 minutes</strong>.</p>
         <a href="${verifyUrl}" style="display:inline-block;background:#4f46e5;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">
           Verify Email Address
         </a>
@@ -50,7 +50,7 @@ export async function sendPasswordResetEmail(toEmail, token) {
     html: `
       <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:32px;border:1px solid #e5e7eb;border-radius:12px">
         <h2 style="color:#4f46e5">ResumeIQ</h2>
-        <p>Click below to reset your password. This link expires in 15 minutes.</p>
+        <p>Click below to reset your password. This link expires in <strong>10 minutes</strong>.</p>
         <a href="${resetUrl}" style="display:inline-block;background:#4f46e5;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;margin:16px 0">
           Reset Password
         </a>

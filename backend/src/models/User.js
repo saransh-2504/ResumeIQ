@@ -92,9 +92,17 @@ const userSchema = new mongoose.Schema(
     // Account deletion request (recruiters only — candidates delete directly)
     deleteRequested: { type: Boolean, default: false },
     deleteRequestedAt: { type: Date, default: null },
+
+    // TTL for unverified accounts — auto-deleted after 1 hour if not verified
+    // Set to null on verification so TTL index doesn't delete verified users
+    unverifiedExpiresAt: { type: Date, default: () => new Date(Date.now() + 60 * 60 * 1000) },
   },
   { timestamps: true }
 );
+
+// TTL index — MongoDB auto-deletes document when unverifiedExpiresAt is reached
+// Only applies when isVerified is false (verified users have this set to null)
+userSchema.index({ unverifiedExpiresAt: 1 }, { expireAfterSeconds: 0 });
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password") || !this.password) return next();

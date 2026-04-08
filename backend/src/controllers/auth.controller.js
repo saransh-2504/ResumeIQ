@@ -86,6 +86,7 @@ export async function verifyEmail(req, res) {
     // Mark as verified and clear the token
     user.isVerified = true;
     user.verificationToken = undefined;
+    user.unverifiedExpiresAt = null; // disable TTL — user is now verified
     await user.save();
 
     // Auto-login: generate JWT and set cookie + return in body
@@ -206,7 +207,7 @@ export async function forgotPassword(req, res) {
 
     // Store hashed version in DB (never store plain token)
     user.passwordResetToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-    user.passwordResetExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
     await user.save();
 
     // Send email with plain token (user clicks link, we hash and compare)
@@ -273,6 +274,7 @@ export async function resendVerification(req, res) {
 
     const verificationToken = crypto.randomBytes(32).toString("hex");
     user.verificationToken = verificationToken;
+    user.unverifiedExpiresAt = new Date(Date.now() + 60 * 60 * 1000); // reset 1h window
     await user.save();
 
     try {
