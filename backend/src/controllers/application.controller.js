@@ -167,7 +167,6 @@ export async function streamResume(req, res) {
     const isPdf = fileName.toLowerCase().endsWith(".pdf");
     const format = isPdf ? "pdf" : "docx";
 
-    // Generate signed download URL with correct format
     const signedUrl = cloudinary.utils.private_download_url(
       application.resumeCloudinaryId,
       format,
@@ -178,22 +177,26 @@ export async function streamResume(req, res) {
       }
     );
 
-    // Fetch from Cloudinary using axios and pipe to client
     const axios = (await import("axios")).default;
+    // responseType: "arraybuffer" — get raw bytes, axios handles decompression automatically
     const response = await axios.get(signedUrl, {
-      responseType: "stream",
+      responseType: "arraybuffer",
       timeout: 15000,
+      headers: { "Accept-Encoding": "identity" }, // disable compression — get raw file
     });
 
     res.setHeader(
       "Content-Type",
-      isPdf ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      isPdf
+        ? "application/pdf"
+        : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     );
     res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+    res.setHeader("Content-Length", response.data.byteLength);
 
-    response.data.pipe(res);
+    res.send(Buffer.from(response.data));
   } catch (err) {
-    console.error("Stream resume error:", err.message, err.response?.data);
+    console.error("Stream resume error:", err.message);
     res.status(500).json({ message: "Failed to stream resume." });
   }
 }
