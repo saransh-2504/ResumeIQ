@@ -58,12 +58,12 @@ function TopBar() {
 
 function TypeBadge({ type }) {
   const colors = { "Full-time": "bg-green-100 text-green-700", Internship: "bg-blue-100 text-blue-700", "Part-time": "bg-yellow-100 text-yellow-700" };
-  return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[type] || "bg-gray-100 text-gray-500"}`}>{type}</span>;
+  return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[type] || "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>{type}</span>;
 }
 
 function StatusBadge({ status }) {
   const colors = { applied: "bg-blue-50 text-blue-600", reviewed: "bg-yellow-50 text-yellow-600", shortlisted: "bg-green-50 text-green-600", rejected: "bg-red-50 text-red-500" };
-  return <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${colors[status] || "bg-gray-100 text-gray-500"}`}>{status}</span>;
+  return <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${colors[status] || "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>{status}</span>;
 }
 
 function ScoreCircle({ score }) {
@@ -73,7 +73,7 @@ function ScoreCircle({ score }) {
         <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e5e7eb" strokeWidth="3" />
         <circle cx="18" cy="18" r="15.9" fill="none" stroke="#6366f1" strokeWidth="3" strokeDasharray={`${score} 100`} strokeLinecap="round" />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-base font-bold text-gray-800">{score}</span>
+      <span className="absolute inset-0 flex items-center justify-center text-base font-bold text-[var(--text-primary)]">{score}</span>
     </div>
   );
 }
@@ -180,7 +180,7 @@ function ContactVerification({ parsedEmail, accountEmail, onVerified }) {
             onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
             placeholder="Enter 6-digit OTP"
             maxLength={6}
-            className="w-full border border-yellow-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-400 bg-white tracking-widest text-center font-mono"
+            className="w-full border border-yellow-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-yellow-400 bg-[var(--bg-surface)] tracking-widest text-center font-mono"
           />
           <button onClick={handleVerify} disabled={otp.length !== 6 || loading}
             className="w-full bg-green-600 text-white py-2 rounded-xl text-xs font-semibold hover:bg-green-700 transition disabled:opacity-60">
@@ -293,7 +293,7 @@ function ParsedDataCard({ parsedData, onReparse }) {
       {!parsedData.email && (
         <div className="mt-3 pt-3 border-t border-indigo-100">
           <p className="text-xs text-yellow-600 mb-1">⚠️ Email not detected.</p>
-          <p className="text-xs text-gray-400 mb-1">Your resume may use icon-based contact info (e.g. ✉ or #). Add your email as plain text in your resume for best results.</p>
+          <p className="text-xs text-[var(--text-muted)] mb-1">Your resume may use icon-based contact info (e.g. ✉ or #). Add your email as plain text in your resume for best results.</p>
           {reparseMsg && <p className="text-xs text-green-600 mb-1">{reparseMsg}</p>}
           <button onClick={handleReparse} disabled={reparsing}
             className="text-xs text-indigo-500 hover:underline disabled:opacity-50">
@@ -397,38 +397,38 @@ function JobAnalysisPanel({ job, onClose }) {
   const parsedEmail = existingResume?.parsedData?.email;
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 overflow-y-auto max-h-[calc(100vh-120px)]">
+    <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] shadow-sm p-6 overflow-y-auto max-h-[calc(100vh-120px)]">
       {/* Job header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">{job.company[0]}</div>
           <div>
-            <p className="font-semibold text-gray-800">{job.title}</p>
-            <p className="text-xs text-gray-400">{job.company} · {job.location}</p>
+            <p className="font-semibold text-[var(--text-primary)]">{job.title}</p>
+            <p className="text-xs text-[var(--text-muted)]">{job.company} · {job.location}</p>
           </div>
         </div>
-        <button onClick={onClose} className="text-gray-300 hover:text-gray-500 text-lg">✕</button>
+        <button onClick={onClose} className="text-[var(--text-faint)] hover:text-[var(--text-muted)] text-lg">✕</button>
       </div>
 
       <TypeBadge type={job.type} />
 
       <div className="mt-4">
-        <p className="text-xs font-semibold text-gray-600 mb-2">Required Skills</p>
+        <p className="text-xs font-semibold text-[var(--text-secondary)] mb-2">Required Skills</p>
         <div className="flex flex-wrap gap-1">
-          {job.skillsRequired?.map((t) => <span key={t} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg">{t}</span>)}
+          {job.skillsRequired?.map((t) => <span key={t} className="text-xs bg-[var(--bg-surface-2)] text-[var(--text-secondary)] px-2 py-0.5 rounded-lg">{t}</span>)}
         </div>
       </div>
 
       <div className="mt-4">
-        <p className="text-xs font-semibold text-gray-600 mb-2">Job Description</p>
-        <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.description}</p>
+        <p className="text-xs font-semibold text-[var(--text-secondary)] mb-2">Job Description</p>
+        <p className="text-sm text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap">{job.description}</p>
       </div>
-      <div className="mt-3 text-xs text-gray-400">
+      <div className="mt-3 text-xs text-[var(--text-muted)]">
         Posted by {job.postedBy?.name || "Recruiter"}
         {job.createdAt && <span> · Posted on: {new Date(job.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>}
       </div>
 
-      <hr className="my-4 border-gray-100" />
+      <hr className="my-4 border-[var(--border)]" />
 
       {/* Show applyMsg at top only when NOT in ATS result view (ATS view has its own) */}
       {applyMsg && !result && (
@@ -439,13 +439,13 @@ function JobAnalysisPanel({ job, onClose }) {
       )}
 
       {resumeLoading ? (
-        <div className="text-xs text-gray-400 text-center py-2">Checking resume...</div>
+        <div className="text-xs text-[var(--text-muted)] text-center py-2">Checking resume...</div>
       ) : result ? (
         /* ---- ATS Result Panel ---- */
         <div className="space-y-3">
           {/* Back button */}
           <button onClick={() => setResult(null)}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 transition">
+            className="flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition">
             ← Back to resume
           </button>
 
@@ -458,7 +458,7 @@ function JobAnalysisPanel({ job, onClose }) {
             <div className="flex items-center gap-4">
               <ScoreCircle score={result.score} />
               <div>
-                <p className="text-base font-bold text-gray-800">{result.score}% Match</p>
+                <p className="text-base font-bold text-[var(--text-primary)]">{result.score}% Match</p>
                 <p className={`text-xs font-medium mt-0.5 ${
                   result.score >= 80 ? "text-green-600" :
                   result.score >= 60 ? "text-yellow-600" : "text-red-500"
@@ -478,11 +478,11 @@ function JobAnalysisPanel({ job, onClose }) {
                 { label: "Education", value: result.breakdown.eduScore, max: 15, color: "bg-blue-400" },
               ].map(({ label, value, max, color }) => (
                 <div key={label}>
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                  <div className="flex justify-between text-xs text-[var(--text-muted)] mb-1">
                     <span>{label}</span>
                     <span>{value}/{max}</span>
                   </div>
-                  <div className="h-1.5 bg-white rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-[var(--bg-surface)] rounded-full overflow-hidden">
                     <div className={`h-full ${color} rounded-full transition-all`}
                       style={{ width: `${(value / max) * 100}%` }} />
                   </div>
@@ -493,7 +493,7 @@ function JobAnalysisPanel({ job, onClose }) {
 
           {/* Matched skills */}
           {result.matched.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--border)] p-4">
               <p className="text-xs font-semibold text-green-600 mb-2">✅ Matching Skills ({result.matched.length})</p>
               <div className="flex flex-wrap gap-1">
                 {result.matched.map((k) => (
@@ -505,7 +505,7 @@ function JobAnalysisPanel({ job, onClose }) {
 
           {/* Missing skills */}
           {result.missing.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-100 p-4">
+            <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--border)] p-4">
               <p className="text-xs font-semibold text-red-500 mb-2">❌ Missing Skills ({result.missing.length})</p>
               <div className="flex flex-wrap gap-1">
                 {result.missing.map((k) => (
@@ -517,11 +517,11 @@ function JobAnalysisPanel({ job, onClose }) {
 
           {/* Suggestions */}
           {result.suggestions?.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-100 p-4">
-              <p className="text-xs font-semibold text-gray-600 mb-2">💡 Suggestions</p>
+            <div className="bg-[var(--bg-surface)] rounded-xl border border-[var(--border)] p-4">
+              <p className="text-xs font-semibold text-[var(--text-secondary)] mb-2">💡 Suggestions</p>
               <ul className="space-y-1.5">
                 {result.suggestions.map((s, i) => (
-                  <li key={i} className="text-xs text-gray-500 flex gap-2">
+                  <li key={i} className="text-xs text-[var(--text-muted)] flex gap-2">
                     <span className="text-indigo-400 shrink-0">→</span>{s}
                   </li>
                 ))}
@@ -538,7 +538,7 @@ function JobAnalysisPanel({ job, onClose }) {
               </button>
             )}
             <button onClick={() => { setResult(null); setReplacing(true); }}
-              className="flex-1 border border-gray-200 text-gray-500 py-2.5 rounded-xl text-xs font-semibold hover:bg-gray-50 transition">
+              className="flex-1 border border-[var(--border)] text-[var(--text-muted)] py-2.5 rounded-xl text-xs font-semibold hover:bg-[var(--bg-surface-2)] transition">
               Replace Resume
             </button>
           </div>
@@ -556,7 +556,7 @@ function JobAnalysisPanel({ job, onClose }) {
               {isVerified && <span className="text-xs bg-green-200 text-green-700 px-2 py-0.5 rounded-full">✓ Verified</span>}
             </div>
             <p className="text-xs text-green-600 mb-1 truncate">{existingResume.fileName}</p>
-            <p className="text-xs text-gray-400 mb-3">Uploaded {new Date(existingResume.uploadedAt).toLocaleDateString()}</p>
+            <p className="text-xs text-[var(--text-muted)] mb-3">Uploaded {new Date(existingResume.uploadedAt).toLocaleDateString()}</p>
 
             <div className="flex gap-2 mb-2">
               {/* Analyze button — only after OTP verification */}
@@ -567,7 +567,7 @@ function JobAnalysisPanel({ job, onClose }) {
                 </button>
               )}
               <button onClick={() => setReplacing(true)}
-                className={`border border-gray-200 text-gray-600 py-2 rounded-xl text-xs font-semibold hover:bg-gray-50 transition ${isVerified ? "flex-1" : "w-full"}`}>
+                className={`border border-[var(--border)] text-[var(--text-secondary)] py-2 rounded-xl text-xs font-semibold hover:bg-[var(--bg-surface-2)] transition ${isVerified ? "flex-1" : "w-full"}`}>
                 Replace
               </button>
             </div>
@@ -616,9 +616,9 @@ function JobAnalysisPanel({ job, onClose }) {
             onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}
             onClick={() => document.getElementById("resume-input").click()}
             className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition
-              ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-white hover:bg-indigo-50"}`}>
+              ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-[var(--bg-surface)] hover:bg-indigo-50"}`}>
             <p className="text-xl mb-1">📄</p>
-            {file ? <p className="text-xs text-indigo-600 font-medium">{file.name}</p> : <p className="text-xs text-gray-400">Drag & drop or click to select</p>}
+            {file ? <p className="text-xs text-indigo-600 font-medium">{file.name}</p> : <p className="text-xs text-[var(--text-muted)]">Drag & drop or click to select</p>}
           </div>
           <input id="resume-input" type="file"
             accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -630,7 +630,7 @@ function JobAnalysisPanel({ job, onClose }) {
             </button>
             {replacing && (
               <button onClick={() => { setReplacing(false); setFile(null); setError(""); }}
-                className="px-4 border border-gray-200 text-gray-500 rounded-xl text-sm hover:bg-gray-50 transition">Cancel</button>
+                className="px-4 border border-[var(--border)] text-[var(--text-muted)] rounded-xl text-sm hover:bg-[var(--bg-surface-2)] transition">Cancel</button>
             )}
           </div>
         </div>
@@ -871,8 +871,8 @@ function JobsFeed({ onSelect, selectedId }) {
   if (loading) return (
     <div className="space-y-3">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="bg-white border border-gray-100 rounded-2xl p-4 animate-pulse">
-          <div className="h-4 w-40 bg-gray-100 rounded mb-2" /><div className="h-3 w-24 bg-gray-100 rounded" />
+        <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 animate-pulse">
+          <div className="h-4 w-40 bg-[var(--bg-surface-2)] rounded mb-2" /><div className="h-3 w-24 bg-[var(--bg-surface-2)] rounded" />
         </div>
       ))}
     </div>
@@ -881,14 +881,14 @@ function JobsFeed({ onSelect, selectedId }) {
   return (
     <div className="space-y-3">
       {/* ---- Search & Filter Bar ---- */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-4 space-y-3">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 space-y-3">
         {/* Title search */}
         <input
           type="text"
           value={titleQuery}
           onChange={(e) => setTitleQuery(e.target.value)}
           placeholder="🔍 Search by job title or company..."
-          className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+          className="w-full border border-[var(--border)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
         />
 
         <div className="flex gap-2">
@@ -899,15 +899,15 @@ function JobsFeed({ onSelect, selectedId }) {
               value={locationQuery}
               onChange={(e) => handleLocationChange(e.target.value)}
               placeholder="📍 City (e.g. Bangalore)"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
             />
             {citySuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-20 overflow-hidden">
                 {citySuggestions.map((city) => (
                   <button key={city.name} onMouseDown={() => { setLocationQuery(city.name); setCitySuggestions([]); }}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
                     📍 {city.name}
-                    {city.aliases.length > 0 && <span className="text-xs text-gray-400 ml-1">({city.aliases[0]})</span>}
+                    {city.aliases.length > 0 && <span className="text-xs text-[var(--text-muted)] ml-1">({city.aliases[0]})</span>}
                   </button>
                 ))}
               </div>
@@ -922,13 +922,13 @@ function JobsFeed({ onSelect, selectedId }) {
               onChange={(e) => handleSkillChange(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && skillQuery.trim()) addSkill(skillQuery.trim()); }}
               placeholder="🛠 Add skill filter..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
             />
             {skillSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-20 overflow-hidden">
                 {skillSuggestions.map((skill) => (
                   <button key={skill} onMouseDown={() => addSkill(skill)}
-                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
                     🛠 {skill}
                   </button>
                 ))}
@@ -946,7 +946,7 @@ function JobsFeed({ onSelect, selectedId }) {
                 <button onClick={() => removeSkill(s)} className="text-indigo-400 hover:text-indigo-700 ml-0.5">×</button>
               </span>
             ))}
-            <button onClick={() => setSelectedSkills([])} className="text-xs text-gray-400 hover:text-red-400 transition">Clear all</button>
+            <button onClick={() => setSelectedSkills([])} className="text-xs text-[var(--text-muted)] hover:text-red-400 transition">Clear all</button>
           </div>
         )}
       </div>
@@ -960,10 +960,10 @@ function JobsFeed({ onSelect, selectedId }) {
 
       {/* No results */}
       {sortedJobs.length === 0 && (
-        <div className="bg-white border border-gray-100 rounded-2xl p-10 text-center">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-10 text-center">
           <p className="text-2xl mb-2">🔍</p>
-          <p className="text-sm font-medium text-gray-600 mb-1">No jobs found</p>
-          <p className="text-xs text-gray-400">
+          <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">No jobs found</p>
+          <p className="text-xs text-[var(--text-muted)]">
             {isFiltering ? "Try different keywords, city, or skills." : "No jobs available right now."}
           </p>
           {isFiltering && (
@@ -980,12 +980,12 @@ function JobsFeed({ onSelect, selectedId }) {
         const score = matchScore(job);
         return (
           <div key={job._id} onClick={() => onSelect(job)}
-            className={`bg-white border rounded-2xl p-4 cursor-pointer transition hover:shadow-md ${selectedId === job._id ? "border-indigo-400 shadow-sm" : "border-gray-100"}`}>
+            className={`bg-[var(--bg-surface)] border rounded-2xl p-4 cursor-pointer transition hover:shadow-md ${selectedId === job._id ? "border-indigo-400 shadow-sm" : "border-[var(--border)]"}`}>
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">{job.company[0]}</div>
               <div className="flex-1">
-                <p className="text-sm font-semibold text-gray-800">{job.title}</p>
-                <p className="text-xs text-gray-400">{job.company} · {job.location}</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">{job.title}</p>
+                <p className="text-xs text-[var(--text-muted)]">{job.company} · {job.location}</p>
               </div>
               <div className="flex flex-col items-end gap-1">
                 <TypeBadge type={job.type} />
@@ -993,7 +993,7 @@ function JobsFeed({ onSelect, selectedId }) {
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     score >= 70 ? "bg-green-100 text-green-700" :
                     score >= 40 ? "bg-yellow-100 text-yellow-700" :
-                    "bg-gray-100 text-gray-500"
+                    "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"
                   }`}>
                     {score}% match
                   </span>
@@ -1004,11 +1004,11 @@ function JobsFeed({ onSelect, selectedId }) {
               {job.skillsRequired?.map((t) => (
                 <span key={t} className={`text-xs px-2 py-0.5 rounded-lg ${
                   selectedSkills.some((s) => s.toLowerCase() === t.toLowerCase() || t.toLowerCase().includes(s.toLowerCase()))
-                    ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-500"
+                    ? "bg-indigo-100 text-indigo-600" : "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"
                 }`}>{t}</span>
               ))}
             </div>
-            {job.description && <p className="text-xs text-gray-400 mt-2 line-clamp-2">{job.description}</p>}
+            {job.description && <p className="text-xs text-[var(--text-muted)] mt-2 line-clamp-2">{job.description}</p>}
           </div>
         );
       })}
@@ -1028,15 +1028,15 @@ function MyApplications() {
   if (loading) return (
     <div className="space-y-3">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="bg-white border border-gray-100 rounded-2xl p-4 animate-pulse">
-          <div className="h-4 w-40 bg-gray-100 rounded mb-2" /><div className="h-3 w-24 bg-gray-100 rounded" />
+        <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 animate-pulse">
+          <div className="h-4 w-40 bg-[var(--bg-surface-2)] rounded mb-2" /><div className="h-3 w-24 bg-[var(--bg-surface-2)] rounded" />
         </div>
       ))}
     </div>
   );
 
   if (applications.length === 0) return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center text-sm text-gray-400">
+    <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-10 text-center text-sm text-[var(--text-muted)]">
       No applications yet. Apply to jobs from the Jobs tab.
     </div>
   );
@@ -1047,22 +1047,22 @@ function MyApplications() {
         {applications.length} Application{applications.length !== 1 ? "s" : ""}
       </p>
       {applications.map((app) => (
-        <div key={app._id} className="bg-white border border-gray-100 rounded-2xl p-4">
+        <div key={app._id} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">{app.jobId?.company?.[0] || "?"}</div>
               <div>
-                <p className="text-sm font-semibold text-gray-800">{app.jobId?.title || "Job removed"}</p>
-                <p className="text-xs text-gray-400">{app.jobId?.company} · {app.jobId?.location}</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">{app.jobId?.title || "Job removed"}</p>
+                <p className="text-xs text-[var(--text-muted)]">{app.jobId?.company} · {app.jobId?.location}</p>
               </div>
             </div>
             <StatusBadge status={app.status} />
           </div>
           <div className="mt-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
               <span>📄</span><span className="truncate max-w-[180px]">{app.resumeFileName}</span>
             </div>
-            <span className="text-xs text-gray-400">Applied {new Date(app.createdAt).toLocaleDateString()}</span>
+            <span className="text-xs text-[var(--text-muted)]">Applied {new Date(app.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
       ))}
@@ -1086,20 +1086,20 @@ function ResumeAnalysis() {
   if (loading) return (
     <div className="space-y-4">
       {[...Array(4)].map((_, i) => (
-        <div key={i} className="bg-white border border-gray-100 rounded-2xl p-5 animate-pulse">
-          <div className="h-4 w-40 bg-gray-100 rounded mb-3" />
-          <div className="h-3 w-full bg-gray-100 rounded mb-2" />
-          <div className="h-3 w-3/4 bg-gray-100 rounded" />
+        <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 animate-pulse">
+          <div className="h-4 w-40 bg-[var(--bg-surface-2)] rounded mb-3" />
+          <div className="h-3 w-full bg-[var(--bg-surface-2)] rounded mb-2" />
+          <div className="h-3 w-3/4 bg-[var(--bg-surface-2)] rounded" />
         </div>
       ))}
     </div>
   );
 
   if (error) return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-10 text-center">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-10 text-center">
       <p className="text-2xl mb-2">📄</p>
-      <p className="text-sm font-medium text-gray-600 mb-1">{error}</p>
-      <p className="text-xs text-gray-400">Upload a resume first to see your analysis.</p>
+      <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">{error}</p>
+      <p className="text-xs text-[var(--text-muted)]">Upload a resume first to see your analysis.</p>
     </div>
   );
 
@@ -1117,7 +1117,7 @@ function ResumeAnalysis() {
     "Frontend": "bg-blue-50 text-blue-700",
     "Backend": "bg-purple-50 text-purple-700",
     "Database": "bg-orange-50 text-orange-700",
-    "DevOps": "bg-gray-100 text-gray-700",
+    "DevOps": "bg-[var(--bg-surface-2)] text-[var(--text-primary)]",
     "Mobile": "bg-pink-50 text-pink-700",
     "AI/ML": "bg-green-50 text-green-700",
     "Other": "bg-indigo-50 text-indigo-700",
@@ -1131,9 +1131,9 @@ function ResumeAnalysis() {
       <div className={`rounded-2xl border p-5 ${scoreBg}`}>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-sm font-bold text-gray-800">Profile Completeness</p>
+            <p className="text-sm font-bold text-[var(--text-primary)]">Profile Completeness</p>
             <p className={`text-3xl font-extrabold mt-1 ${scoreColor}`}>{completenessScore}%</p>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-[var(--text-muted)] mt-0.5">
               {completenessScore >= 90 ? "Excellent — fully optimized" :
                completenessScore >= 70 ? "Good — a few sections missing" :
                "Needs work — fill in missing sections"}
@@ -1147,25 +1147,25 @@ function ResumeAnalysis() {
                 stroke={completenessScore >= 80 ? "#16a34a" : completenessScore >= 60 ? "#ca8a04" : "#dc2626"}
                 strokeWidth="3" strokeDasharray={`${completenessScore} 100`} strokeLinecap="round" />
             </svg>
-            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-gray-800">{completenessScore}</span>
+            <span className="absolute inset-0 flex items-center justify-center text-sm font-bold text-[var(--text-primary)]">{completenessScore}</span>
           </div>
         </div>
 
         {/* Section checklist */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {Object.entries(sections).map(([key, s]) => (
-            <div key={key} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium ${s.present ? "bg-white text-gray-700" : "bg-white/60 text-gray-400"}`}>
+            <div key={key} className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium ${s.present ? "bg-[var(--bg-surface)] text-[var(--text-primary)]" : "bg-[var(--bg-surface)]/60 text-[var(--text-muted)]"}`}>
               <span>{s.present ? "✅" : "⬜"}</span>
               <span>{s.label}</span>
-              <span className="ml-auto text-gray-400">{s.weight}%</span>
+              <span className="ml-auto text-[var(--text-muted)]">{s.weight}%</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* ---- Contact Info ---- */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5">
-        <p className="text-sm font-semibold text-gray-800 mb-3">👤 Contact Information</p>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
+        <p className="text-sm font-semibold text-[var(--text-primary)] mb-3">👤 Contact Information</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[
             { label: "Name", value: contact.name, icon: "👤" },
@@ -1175,12 +1175,12 @@ function ResumeAnalysis() {
             { label: "LinkedIn", value: contact.linkedin, icon: "💼" },
           ].filter(({ label }) => label === "Name" || label === "Email" || label === "Phone" || contact.github || contact.linkedin ? true : false)
            .map(({ label, value, icon }) => (
-            <div key={label} className={`rounded-xl px-4 py-3 ${value ? "bg-gray-50" : "bg-red-50 border border-red-100"}`}>
-              <p className="text-xs text-gray-400 mb-0.5">{icon} {label}</p>
+            <div key={label} className={`rounded-xl px-4 py-3 ${value ? "bg-[var(--bg-surface-2)]" : "bg-red-50 border border-red-100"}`}>
+              <p className="text-xs text-[var(--text-muted)] mb-0.5">{icon} {label}</p>
               {value && (label === "GitHub" || label === "LinkedIn") ? (
                 <a href={value} target="_blank" rel="noreferrer" className="text-sm font-medium text-indigo-600 hover:underline truncate block">{value}</a>
               ) : (
-                <p className={`text-sm font-medium truncate ${value ? "text-gray-800" : "text-red-400"}`}>
+                <p className={`text-sm font-medium truncate ${value ? "text-[var(--text-primary)]" : "text-red-400"}`}>
                   {value || "Not found"}
                 </p>
               )}
@@ -1190,9 +1190,9 @@ function ResumeAnalysis() {
       </div>
 
       {/* ---- Skills Breakdown ---- */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-semibold text-gray-800">🛠 Skills ({skills.total})</p>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">🛠 Skills ({skills.total})</p>
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
             skills.total >= 10 ? "bg-green-100 text-green-700" :
             skills.total >= 5 ? "bg-yellow-100 text-yellow-700" :
@@ -1206,10 +1206,10 @@ function ResumeAnalysis() {
           <div className="space-y-3">
             {Object.entries(skills.categorized).map(([cat, catSkills]) => (
               <div key={cat}>
-                <p className="text-xs text-gray-400 font-medium mb-1.5">{cat}</p>
+                <p className="text-xs text-[var(--text-muted)] font-medium mb-1.5">{cat}</p>
                 <div className="flex flex-wrap gap-1.5">
                   {catSkills.map((s) => (
-                    <span key={s} className={`text-xs px-2.5 py-1 rounded-lg font-medium ${categoryColors[cat] || "bg-gray-100 text-gray-600"}`}>
+                    <span key={s} className={`text-xs px-2.5 py-1 rounded-lg font-medium ${categoryColors[cat] || "bg-[var(--bg-surface-2)] text-[var(--text-secondary)]"}`}>
                       {s}
                     </span>
                   ))}
@@ -1218,14 +1218,14 @@ function ResumeAnalysis() {
             ))}
           </div>
         ) : (
-          <p className="text-xs text-gray-400">No skills detected. Add skills to your resume.</p>
+          <p className="text-xs text-[var(--text-muted)]">No skills detected. Add skills to your resume.</p>
         )}
       </div>
 
       {/* ---- Experience ---- */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-semibold text-gray-800">💼 Work Experience</p>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">💼 Work Experience</p>
           {experience.count > 0 && (
             <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-medium">
               ~{experience.totalYears} yr{experience.totalYears !== 1 ? "s" : ""}
@@ -1233,17 +1233,17 @@ function ResumeAnalysis() {
           )}
         </div>
         {experience.count === 0 ? (
-          <p className="text-xs text-gray-400">No work experience found. Add internships or projects.</p>
+          <p className="text-xs text-[var(--text-muted)]">No work experience found. Add internships or projects.</p>
         ) : (
           <div className="space-y-3">
             {experience.items.map((exp, i) => (
               <div key={i} className="border-l-2 border-indigo-100 pl-4">
-                <p className="text-sm font-semibold text-gray-800">{exp.jobTitle || "Role"}</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">{exp.jobTitle || "Role"}</p>
                 {exp.organization && <p className="text-xs text-indigo-600 font-medium">{exp.organization}</p>}
                 {(exp.startDate || exp.endDate) && (
-                  <p className="text-xs text-gray-400 mt-0.5">{exp.startDate} — {exp.endDate || "Present"}</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5">{exp.startDate} — {exp.endDate || "Present"}</p>
                 )}
-                {exp.description && <p className="text-xs text-gray-500 mt-1 leading-relaxed">{exp.description}</p>}
+                {exp.description && <p className="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">{exp.description}</p>}
               </div>
             ))}
           </div>
@@ -1251,19 +1251,19 @@ function ResumeAnalysis() {
       </div>
 
       {/* ---- Education ---- */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-5">
-        <p className="text-sm font-semibold text-gray-800 mb-3">🎓 Education</p>
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
+        <p className="text-sm font-semibold text-[var(--text-primary)] mb-3">🎓 Education</p>
         {education.count === 0 ? (
-          <p className="text-xs text-gray-400">No education details found.</p>
+          <p className="text-xs text-[var(--text-muted)]">No education details found.</p>
         ) : (
           <div className="space-y-3">
             {education.items.map((edu, i) => (
               <div key={i} className="border-l-2 border-purple-100 pl-4">
-                <p className="text-sm font-semibold text-gray-800">{edu.degree || edu.field || "Degree"}</p>
+                <p className="text-sm font-semibold text-[var(--text-primary)]">{edu.degree || edu.field || "Degree"}</p>
                 {edu.institution && <p className="text-xs text-purple-600 font-medium">{edu.institution}</p>}
-                {edu.field && edu.degree && <p className="text-xs text-gray-500">{edu.field}</p>}
+                {edu.field && edu.degree && <p className="text-xs text-[var(--text-muted)]">{edu.field}</p>}
                 {(edu.startDate || edu.endDate) && (
-                  <p className="text-xs text-gray-400 mt-0.5">{edu.startDate} — {edu.endDate}</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5">{edu.startDate} — {edu.endDate}</p>
                 )}
               </div>
             ))}
@@ -1273,8 +1273,8 @@ function ResumeAnalysis() {
 
       {/* ---- Suggestions ---- */}
       {suggestions.length > 0 && (
-        <div className="bg-white border border-gray-100 rounded-2xl p-5">
-          <p className="text-sm font-semibold text-gray-800 mb-3">📋 Improvement Suggestions</p>
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
+          <p className="text-sm font-semibold text-[var(--text-primary)] mb-3">📋 Improvement Suggestions</p>
           <div className="space-y-2">
             {suggestions.map((s, i) => (
               <div key={i} className={`flex items-start gap-2.5 px-3 py-2.5 rounded-xl border text-xs ${suggestionColors[s.type]}`}>

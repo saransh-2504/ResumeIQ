@@ -80,7 +80,7 @@ function TypeBadge({ type }) {
     "Part-time": "bg-yellow-100 text-yellow-700",
   };
   return (
-    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[type] || "bg-gray-100 text-gray-500"}`}>
+    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[type] || "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>
       {type}
     </span>
   );
@@ -90,18 +90,18 @@ function TypeBadge({ type }) {
 function JobCard({ job, onClick, highlightSkills = [] }) {
   return (
     <div onClick={() => onClick(job)}
-      className="bg-white border border-gray-100 rounded-2xl p-5 cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+      className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-200">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">
           {job.company[0]}
         </div>
         <div>
-          <p className="text-xs text-gray-400">{job.company}</p>
-          <p className="text-sm font-semibold text-gray-800">{job.title}</p>
+          <p className="text-xs text-[var(--text-muted)]">{job.company}</p>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{job.title}</p>
         </div>
       </div>
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-xs text-gray-400">📍 {job.location}</span>
+        <span className="text-xs text-[var(--text-muted)]">📍 {job.location}</span>
         <TypeBadge type={job.type} />
       </div>
       <div className="flex flex-wrap gap-1">
@@ -111,7 +111,7 @@ function JobCard({ job, onClick, highlightSkills = [] }) {
           );
           return (
             <span key={tag} className={`text-xs px-2 py-0.5 rounded-lg ${
-              isHighlighted ? "bg-indigo-100 text-indigo-600" : "bg-gray-100 text-gray-600"
+              isHighlighted ? "bg-indigo-100 text-indigo-600" : "bg-[var(--bg-surface-2)] text-[var(--text-secondary)]"
             }`}>
               {tag}
             </span>
@@ -119,7 +119,7 @@ function JobCard({ job, onClick, highlightSkills = [] }) {
         })}
       </div>
       {job.createdAt && (
-        <p className="text-xs text-gray-400 mt-2">
+        <p className="text-xs text-[var(--text-muted)] mt-2">
           Posted on: {new Date(job.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
         </p>
       )}
@@ -130,18 +130,18 @@ function JobCard({ job, onClick, highlightSkills = [] }) {
 // ---- Skeleton loader ----
 function JobSkeleton() {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-5 animate-pulse">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 animate-pulse">
       <div className="flex items-center gap-3 mb-3">
-        <div className="w-10 h-10 rounded-xl bg-gray-100" />
+        <div className="w-10 h-10 rounded-xl bg-[var(--bg-surface-2)]" />
         <div className="space-y-1">
-          <div className="h-3 w-20 bg-gray-100 rounded" />
-          <div className="h-4 w-32 bg-gray-100 rounded" />
+          <div className="h-3 w-20 bg-[var(--bg-surface-2)] rounded" />
+          <div className="h-4 w-32 bg-[var(--bg-surface-2)] rounded" />
         </div>
       </div>
-      <div className="h-3 w-24 bg-gray-100 rounded mb-3" />
+      <div className="h-3 w-24 bg-[var(--bg-surface-2)] rounded mb-3" />
       <div className="flex gap-1">
-        <div className="h-5 w-14 bg-gray-100 rounded-lg" />
-        <div className="h-5 w-14 bg-gray-100 rounded-lg" />
+        <div className="h-5 w-14 bg-[var(--bg-surface-2)] rounded-lg" />
+        <div className="h-5 w-14 bg-[var(--bg-surface-2)] rounded-lg" />
       </div>
     </div>
   );
@@ -154,7 +154,7 @@ function JobModal({ job, onClose }) {
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl"
+      <div className="bg-[var(--bg-surface)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -162,22 +162,22 @@ function JobModal({ job, onClose }) {
               {job.company[0]}
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-800">{job.title}</h2>
-              <p className="text-sm text-gray-400">{job.company} · {job.location}</p>
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">{job.title}</h2>
+              <p className="text-sm text-[var(--text-muted)]">{job.company} · {job.location}</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl">✕</button>
         </div>
 
         <TypeBadge type={job.type} />
 
         <div className="mt-4">
-          <p className="text-sm font-semibold text-gray-700 mb-1">About the Role</p>
-          <p className="text-sm text-gray-500 leading-relaxed">{job.description}</p>
+          <p className="text-sm font-semibold text-[var(--text-primary)] mb-1">About the Role</p>
+          <p className="text-sm text-[var(--text-muted)] leading-relaxed">{job.description}</p>
         </div>
 
         <div className="mt-4">
-          <p className="text-sm font-semibold text-gray-700 mb-2">Required Skills</p>
+          <p className="text-sm font-semibold text-[var(--text-primary)] mb-2">Required Skills</p>
           <div className="flex flex-wrap gap-2">
             {job.skillsRequired?.map((s) => (
               <span key={s} className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-lg">{s}</span>
@@ -352,15 +352,15 @@ function JobsSection({ onJobClick }) {
           <div className="relative flex-1" ref={locationRef}>
             <input type="text" value={locationQuery} onChange={(e) => handleLocationChange(e.target.value)}
               placeholder="📍 City (e.g. Bangalore, Mumbai)"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
             {citySuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-30 overflow-hidden">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-30 overflow-hidden">
                 {citySuggestions.map((city) => (
                   <button key={city.name}
                     onMouseDown={() => { setLocationQuery(city.name); setCitySuggestions([]); }}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
                     📍 {city.name}
-                    {city.aliases.length > 0 && <span className="text-xs text-gray-400 ml-1.5">also: {city.aliases[0]}</span>}
+                    {city.aliases.length > 0 && <span className="text-xs text-[var(--text-muted)] ml-1.5">also: {city.aliases[0]}</span>}
                   </button>
                 ))}
               </div>
@@ -372,12 +372,12 @@ function JobsSection({ onJobClick }) {
             <input type="text" value={skillQuery} onChange={(e) => handleSkillChange(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && skillQuery.trim()) addSkill(skillQuery.trim()); }}
               placeholder="🛠 Filter by skill (Enter to add)"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
             {skillSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-30 overflow-hidden">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-30 overflow-hidden">
                 {skillSuggestions.map((skill) => (
                   <button key={skill} onMouseDown={() => addSkill(skill)}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
                     🛠 {skill}
                   </button>
                 ))}
@@ -395,7 +395,7 @@ function JobsSection({ onJobClick }) {
                 <button onClick={() => removeSkill(s)} className="text-indigo-400 hover:text-red-500 ml-0.5 font-bold">×</button>
               </span>
             ))}
-            <button onClick={() => setSelectedSkills([])} className="text-xs text-gray-400 hover:text-red-400 transition px-1">Clear skills</button>
+            <button onClick={() => setSelectedSkills([])} className="text-xs text-[var(--text-muted)] hover:text-red-400 transition px-1">Clear skills</button>
           </div>
         )}
       </div>
@@ -405,7 +405,7 @@ function JobsSection({ onJobClick }) {
         {types.map((f) => (
           <button key={f} onClick={() => setActiveType(f)}
             className={`text-xs px-4 py-1.5 rounded-full font-medium transition
-              ${activeType === f ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+              ${activeType === f ? "bg-indigo-600 text-white" : "bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-gray-200"}`}>
             {f}
           </button>
         ))}
@@ -414,7 +414,7 @@ function JobsSection({ onJobClick }) {
       {/* Results count */}
       {isFiltering && !loading && (
         <div className="flex items-center justify-between mb-3">
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-[var(--text-muted)]">
             {filteredJobs.length} job{filteredJobs.length !== 1 ? "s" : ""} found
           </p>
           <button onClick={clearAll} className="text-xs text-indigo-500 hover:underline">Clear all filters</button>
@@ -429,10 +429,10 @@ function JobsSection({ onJobClick }) {
       ) : filteredJobs.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-3xl mb-3">🔍</p>
-          <p className="text-sm font-medium text-gray-600 mb-1">
+          <p className="text-sm font-medium text-[var(--text-secondary)] mb-1">
             {isFiltering ? `No jobs found for your search` : "No jobs available right now"}
           </p>
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-[var(--text-muted)] mb-4">
             {isFiltering ? "Try different keywords, city, or skills" : "Check back soon!"}
           </p>
           {isFiltering && (
@@ -508,7 +508,7 @@ function RecruiterCTA() {
       <h2 className="text-2xl md:text-3xl font-bold mb-3">Post Jobs & Find the Best Candidates</h2>
       <p className="text-indigo-100 text-sm mb-6">Use AI to match candidates to your job requirements automatically</p>
       <button onClick={() => navigate("/signup")}
-        className="bg-white text-indigo-600 font-bold px-8 py-3 rounded-xl hover:bg-indigo-50 transition">
+        className="bg-[var(--bg-surface)] text-indigo-600 font-bold px-8 py-3 rounded-xl hover:bg-indigo-50 transition">
         For Recruiters →
       </button>
     </section>
@@ -521,45 +521,45 @@ function TermsModal({ onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backdropFilter: "blur(4px)", backgroundColor: "rgba(0,0,0,0.3)" }}
       onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl"
+      <div className="bg-[var(--bg-surface)] rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-          <h2 className="text-lg font-bold text-gray-800">Terms & Conditions</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl transition">✕</button>
+        <div className="sticky top-0 bg-[var(--bg-surface)] border-b border-[var(--border)] px-6 py-4 flex items-center justify-between rounded-t-2xl">
+          <h2 className="text-lg font-bold text-[var(--text-primary)]">Terms & Conditions</h2>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl transition">✕</button>
         </div>
 
-        <div className="px-6 py-5 space-y-5 text-sm text-gray-600">
-          <p className="text-xs text-gray-400">Last updated: March 2026</p>
+        <div className="px-6 py-5 space-y-5 text-sm text-[var(--text-secondary)]">
+          <p className="text-xs text-[var(--text-muted)]">Last updated: March 2026</p>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">1. Acceptance of Terms</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">1. Acceptance of Terms</p>
             <p>By accessing or using ResumeIQ, you agree to be bound by these Terms. If you do not agree, please do not use the platform.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">2. Who Can Use ResumeIQ</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">2. Who Can Use ResumeIQ</p>
             <p>ResumeIQ is available to job seekers and verified recruiters. Recruiters must use a company email and are subject to admin approval before posting jobs.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">3. User Accounts</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">3. User Accounts</p>
             <p>You are responsible for maintaining the confidentiality of your account credentials. You must provide accurate information during registration. We reserve the right to suspend accounts that violate these terms.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">4. Resume Data & Privacy</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">4. Resume Data & Privacy</p>
             <p>When you upload a resume, it is stored securely on Cloudinary. Resume content is parsed using Groq AI solely for job matching purposes. We do not sell or share your personal data with third parties.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">5. Job Postings</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">5. Job Postings</p>
             <p>Recruiters are solely responsible for the accuracy of job listings. Fake, misleading, or fraudulent job postings are strictly prohibited and will result in immediate account termination.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">6. Prohibited Activities</p>
-            <ul className="list-disc list-inside space-y-1 text-gray-500">
+            <p className="font-semibold text-[var(--text-primary)] mb-1">6. Prohibited Activities</p>
+            <ul className="list-disc list-inside space-y-1 text-[var(--text-muted)]">
               <li>Posting false or misleading job listings</li>
               <li>Attempting to access other users' data</li>
               <li>Using the platform for spam or unsolicited communication</li>
@@ -568,27 +568,27 @@ function TermsModal({ onClose }) {
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">7. Intellectual Property</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">7. Intellectual Property</p>
             <p>All content, design, and code on ResumeIQ is the property of ResumeIQ. You may not copy or reproduce any part without written permission.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">8. Disclaimer</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">8. Disclaimer</p>
             <p>ResumeIQ is provided "as is" without warranties of any kind. We do not guarantee job placement or interview success. ATS scores are indicative and not a guarantee of selection.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">9. Changes to Terms</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">9. Changes to Terms</p>
             <p>We may update these terms at any time. Continued use of the platform after changes constitutes acceptance of the new terms.</p>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-800 mb-1">10. Contact</p>
+            <p className="font-semibold text-[var(--text-primary)] mb-1">10. Contact</p>
             <p>For any questions regarding these terms, reach us at <span className="text-indigo-600">saransh2504@gmail.com</span></p>
           </div>
         </div>
 
-        <div className="px-6 py-4 border-t border-gray-100">
+        <div className="px-6 py-4 border-t border-[var(--border)]">
           <button onClick={onClose}
             className="w-full bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition">
             I Understand

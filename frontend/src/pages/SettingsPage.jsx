@@ -5,21 +5,21 @@ import { useAuth } from "../context/AuthContext";
 function Field({ label, value, onChange, type = "text", placeholder, disabled, hint }) {
   return (
     <div>
-      <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+      <label className="text-xs text-[var(--text-muted)] mb-1 block">{label}</label>
       <input type={type} value={value} onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder} disabled={disabled}
-        className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition disabled:bg-gray-50 disabled:text-gray-400" />
-      {hint && <p className="text-xs text-gray-400 mt-1">{hint}</p>}
+        className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition disabled:opacity-50" />
+      {hint && <p className="text-xs text-[var(--text-muted)] mt-1">{hint}</p>}
     </div>
   );
 }
 
 function Section({ title, subtitle, children }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-6 space-y-4">
-      <div className="border-b border-gray-100 pb-3">
-        <p className="text-sm font-semibold text-gray-800">{title}</p>
-        {subtitle && <p className="text-xs text-gray-400 mt-0.5">{subtitle}</p>}
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-6 space-y-4">
+      <div className="border-b border-[var(--border)] pb-3">
+        <p className="text-sm font-semibold text-[var(--text-primary)]">{title}</p>
+        {subtitle && <p className="text-xs text-[var(--text-muted)] mt-0.5">{subtitle}</p>}
       </div>
       {children}
     </div>
@@ -29,7 +29,9 @@ function Section({ title, subtitle, children }) {
 function Msg({ msg, isError }) {
   if (!msg) return null;
   return (
-    <p className={`text-xs px-3 py-2 rounded-lg ${isError ? "bg-red-50 text-red-600" : "bg-green-50 text-green-700"}`}>
+    <p className={`text-xs px-3 py-2 rounded-lg ${isError
+      ? "bg-[var(--error-bg)] text-[var(--error-text)]"
+      : "bg-[var(--success-bg)] text-[var(--success-text)]"}`}>
       {msg}
     </p>
   );
@@ -44,7 +46,6 @@ function SaveBtn({ loading, label = "Save Changes", disabled }) {
   );
 }
 
-// Shared password change section — used by both candidate and recruiter
 function PasswordSection({ savePwd, currentPwd, setCurrentPwd, newPwd, setNewPwd, pwdMsg, pwdLoading }) {
   return (
     <Section title="Change Password">
@@ -53,14 +54,14 @@ function PasswordSection({ savePwd, currentPwd, setCurrentPwd, newPwd, setNewPwd
           type="password" placeholder="••••••••" />
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="text-xs text-gray-500">New Password</label>
+            <label className="text-xs text-[var(--text-muted)]">New Password</label>
             <a href="/forgot-password" className="text-xs text-indigo-500 hover:underline">
               Forgot current password?
             </a>
           </div>
           <input type="password" value={newPwd} onChange={(e) => setNewPwd(e.target.value)}
             placeholder="Min 6 characters"
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
+            className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
         </div>
         <Msg msg={pwdMsg.text} isError={pwdMsg.error} />
         <SaveBtn loading={pwdLoading} label="Change Password" />
@@ -69,9 +70,6 @@ function PasswordSection({ savePwd, currentPwd, setCurrentPwd, newPwd, setNewPwd
   );
 }
 
-// ============================================================
-// DELETE ACCOUNT SECTION
-// ============================================================
 function DeleteAccountSection({ role, deleteRequested }) {
   const { logoutUser } = useAuth();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -94,70 +92,64 @@ function DeleteAccountSection({ role, deleteRequested }) {
       }
     } catch (err) {
       setMsg({ text: err.response?.data?.message || "Failed.", error: true });
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   }
 
   return (
     <>
-      <div className="bg-white border border-red-100 rounded-2xl p-6">
-        <div className="border-b border-red-50 pb-3 mb-4">
-          <p className="text-sm font-semibold text-red-600">Danger Zone</p>
-          <p className="text-xs text-gray-400 mt-0.5">
+      <div className="bg-[var(--bg-surface)] border border-[var(--error-border)] rounded-2xl p-6">
+        <div className="border-b border-[var(--error-border)] pb-3 mb-4">
+          <p className="text-sm font-semibold text-[var(--error-text)]">Danger Zone</p>
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">
             {role === "candidate"
               ? "Permanently delete your account and all associated data."
               : "Request account deletion — admin approval required."}
           </p>
         </div>
-
         {requested && role === "recruiter" ? (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 text-xs text-yellow-700">
+          <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-xl p-3 text-xs text-[var(--warning-text)]">
             ⏳ Your deletion request is pending admin review.
           </div>
         ) : (
           <>
             <Msg msg={msg.text} isError={msg.error} />
             <button onClick={() => setShowConfirm(true)}
-              className="bg-red-50 text-red-600 border border-red-200 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-red-100 transition">
+              className="bg-[var(--error-bg)] text-[var(--error-text)] border border-[var(--error-border)] px-5 py-2.5 rounded-xl text-sm font-semibold hover:opacity-80 transition">
               {role === "candidate" ? "Delete My Account" : "Request Account Deletion"}
             </button>
           </>
         )}
       </div>
 
-      {/* Confirmation Modal */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-          style={{ backdropFilter: "blur(4px)", backgroundColor: "rgba(0,0,0,0.4)" }}
+          style={{ backdropFilter: "blur(4px)", backgroundColor: "rgba(0,0,0,0.5)" }}
           onClick={() => setShowConfirm(false)}>
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl"
+          <div className="bg-[var(--bg-surface)] rounded-2xl w-full max-w-md p-6 shadow-2xl border border-[var(--border)]"
             onClick={(e) => e.stopPropagation()}>
             <div className="text-center mb-4">
               <div className="text-4xl mb-2">⚠️</div>
-              <h2 className="text-lg font-bold text-gray-800">
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">
                 {role === "candidate" ? "Delete Account?" : "Request Account Deletion?"}
               </h2>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className="text-sm text-[var(--text-secondary)] mt-2">
                 {role === "candidate"
                   ? "This will permanently delete your account, resume, and all applications. This cannot be undone."
-                  : "A request will be sent to admin. Your account will be deleted after approval. All your job postings will be removed."}
+                  : "A request will be sent to admin. Your account will be deleted after approval."}
               </p>
             </div>
-
             <div className="mb-4">
-              <label className="text-xs text-gray-500 mb-1 block">
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">
                 Type <span className="font-mono font-bold text-red-500">DELETE</span> to confirm
               </label>
               <input type="text" value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value)}
                 placeholder="DELETE"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-red-400 transition" />
+                className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-red-400 transition" />
             </div>
-
             <div className="flex gap-3">
               <button onClick={() => { setShowConfirm(false); setConfirmText(""); }}
-                className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition">
+                className="flex-1 border border-[var(--border)] text-[var(--text-secondary)] py-2.5 rounded-xl text-sm font-semibold hover:bg-[var(--bg-surface-2)] transition">
                 Cancel
               </button>
               <button onClick={handleDelete}
@@ -173,21 +165,15 @@ function DeleteAccountSection({ role, deleteRequested }) {
   );
 }
 
-// ============================================================
-// CANDIDATE SETTINGS
-// ============================================================
 function CandidateSettings({ profile }) {
   const { user, loginUser } = useAuth();
-
   const [name, setName] = useState(user?.name || "");
   const [phone, setPhone] = useState(profile?.phone || "");
   const [basicMsg, setBasicMsg] = useState({ text: "", error: false });
   const [basicLoading, setBasicLoading] = useState(false);
-
   const [newEmail, setNewEmail] = useState("");
   const [emailMsg, setEmailMsg] = useState({ text: "", error: false });
   const [emailLoading, setEmailLoading] = useState(false);
-
   const [currentPwd, setCurrentPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
   const [pwdMsg, setPwdMsg] = useState({ text: "", error: false });
@@ -254,15 +240,11 @@ function CandidateSettings({ profile }) {
           newPwd={newPwd} setNewPwd={setNewPwd} pwdMsg={pwdMsg} pwdLoading={pwdLoading} />
       )}
 
-      {/* Delete Account */}
       <DeleteAccountSection role="candidate" />
     </div>
   );
 }
 
-// ============================================================
-// RECRUITER SETTINGS
-// ============================================================
 function RecruiterSettings({ profile }) {
   const { user, loginUser } = useAuth();
   const isFirstSetup = !profile?.profileSetupDone;
@@ -272,12 +254,10 @@ function RecruiterSettings({ profile }) {
   const [phone, setPhone] = useState(profile?.phone || "");
   const [basicMsg, setBasicMsg] = useState({ text: "", error: false });
   const [basicLoading, setBasicLoading] = useState(false);
-
   const [currentPwd, setCurrentPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
   const [pwdMsg, setPwdMsg] = useState({ text: "", error: false });
   const [pwdLoading, setPwdLoading] = useState(false);
-
   const [companyName, setCompanyName] = useState(rp.companyName || "");
   const [companyWebsite, setCompanyWebsite] = useState(rp.companyWebsite || "");
   const [companySize, setCompanySize] = useState(rp.companySize || "");
@@ -318,7 +298,6 @@ function RecruiterSettings({ profile }) {
         designation, companyDescription, companyLocation,
       });
       setCompanyMsg({ text: res.data.message, error: false });
-      // Refresh user so profileSetupDone updates
       if (isFirstSetup) loginUser({ ...user, profileSetupDone: true });
     } catch (err) {
       setCompanyMsg({ text: err.response?.data?.message || "Failed.", error: true });
@@ -327,11 +306,10 @@ function RecruiterSettings({ profile }) {
 
   return (
     <div className="space-y-5 max-w-xl">
-      {/* First setup banner */}
       {isFirstSetup && (
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-          <p className="text-sm font-semibold text-amber-700 mb-1">⚠️ Complete your company profile</p>
-          <p className="text-xs text-amber-600">You need to fill in your company details before you can post jobs.</p>
+        <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-2xl p-4">
+          <p className="text-sm font-semibold text-[var(--warning-text)] mb-1">⚠️ Complete your company profile</p>
+          <p className="text-xs text-[var(--warning-text)] opacity-80">You need to fill in your company details before you can post jobs.</p>
         </div>
       )}
 
@@ -359,9 +337,9 @@ function RecruiterSettings({ profile }) {
             <Field label="Company Website" value={companyWebsite} onChange={setCompanyWebsite} placeholder="https://company.com" />
             <Field label="Company Location" value={companyLocation} onChange={setCompanyLocation} placeholder="Bengaluru, India" />
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Company Size</label>
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">Company Size</label>
               <select value={companySize} onChange={(e) => setCompanySize(e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition">
+                className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition">
                 <option value="">Select size</option>
                 {["1-10", "11-50", "51-200", "201-500", "500+"].map((s) => (
                   <option key={s} value={s}>{s} employees</option>
@@ -371,25 +349,21 @@ function RecruiterSettings({ profile }) {
             <Field label="Industry" value={industry} onChange={setIndustry} placeholder="Technology, Finance..." />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Company Description</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">Company Description</label>
             <textarea value={companyDescription} onChange={(e) => setCompanyDescription(e.target.value)} rows={3}
               placeholder="Brief description of your company..."
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition resize-none" />
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition resize-none" />
           </div>
           <Msg msg={companyMsg.text} isError={companyMsg.error} />
           <SaveBtn loading={companyLoading} label={isFirstSetup ? "Complete Setup & Start Posting" : "Save Company Profile"} />
         </form>
       </Section>
 
-      {/* Delete Account Request */}
       <DeleteAccountSection role="recruiter" deleteRequested={profile?.deleteRequested} />
     </div>
   );
 }
 
-// ============================================================
-// MAIN
-// ============================================================
 export default function SettingsPage() {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
@@ -405,10 +379,10 @@ export default function SettingsPage() {
   if (loading) return (
     <div className="space-y-4 max-w-xl">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="bg-white border border-gray-100 rounded-2xl p-6 animate-pulse">
-          <div className="h-4 w-32 bg-gray-100 rounded mb-4" />
-          <div className="h-10 bg-gray-100 rounded-xl mb-3" />
-          <div className="h-10 bg-gray-100 rounded-xl" />
+        <div key={i} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-6 animate-pulse">
+          <div className="h-4 w-32 bg-[var(--bg-surface-2)] rounded mb-4" />
+          <div className="h-10 bg-[var(--bg-surface-2)] rounded-xl mb-3" />
+          <div className="h-10 bg-[var(--bg-surface-2)] rounded-xl" />
         </div>
       ))}
     </div>

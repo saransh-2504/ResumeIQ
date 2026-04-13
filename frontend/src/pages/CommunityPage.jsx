@@ -34,7 +34,7 @@ function RoleBadge({ role }) {
     candidate: "bg-blue-100 text-blue-600",
   };
   return (
-    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold capitalize ${map[role] || "bg-gray-100 text-gray-500"}`}>
+    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold capitalize ${map[role] || "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>
       {role}
     </span>
   );
@@ -69,17 +69,17 @@ function ReactionBar({ communityId, msgId, reactions, currentUserId, onUpdate })
         return (
           <button key={emoji} onClick={() => handleReact(emoji)}
             className={`flex items-center gap-0.5 text-xs px-2 py-0.5 rounded-full border transition
-              ${reacted ? "bg-indigo-50 border-indigo-200 text-indigo-700" : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"}`}>
+              ${reacted ? "bg-indigo-50 border-indigo-200 text-indigo-700" : "bg-[var(--bg-surface-2)] border-[var(--border)] text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]"}`}>
             {emoji} <span>{users.length}</span>
           </button>
         );
       })}
       <button onClick={() => setShowPicker((p) => !p)}
-        className="text-xs px-1.5 py-0.5 rounded-full border border-gray-200 text-gray-400 hover:bg-gray-100 transition">
+        className="text-xs px-1.5 py-0.5 rounded-full border border-[var(--border)] text-[var(--text-muted)] hover:bg-[var(--bg-surface-2)] transition">
         +
       </button>
       {showPicker && (
-        <div className="absolute bottom-7 left-0 bg-white border border-gray-200 rounded-xl shadow-lg flex gap-1 p-2 z-10">
+        <div className="absolute bottom-7 left-0 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg flex gap-1 p-2 z-10">
           {EMOJI_LIST.map((e) => (
             <button key={e} onClick={() => handleReact(e)}
               className="text-lg hover:scale-125 transition-transform">
@@ -110,7 +110,7 @@ function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onRea
         {/* Sender info */}
         {!isOwn && (
           <div className="flex items-center gap-1.5 mb-0.5">
-            <span className="text-xs font-semibold text-gray-700">{sender?.name || "Unknown"}</span>
+            <span className="text-xs font-semibold text-[var(--text-primary)]">{sender?.name || "Unknown"}</span>
             <RoleBadge role={sender?.role} />
           </div>
         )}
@@ -119,7 +119,7 @@ function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onRea
         <div className="flex items-start gap-1">
           {canDelete && isOwn && (
             <button onClick={() => onDelete(msg._id)}
-              className="opacity-0 group-hover:opacity-100 transition text-gray-300 hover:text-red-400 text-xs mt-2 shrink-0">
+              className="opacity-0 group-hover:opacity-100 transition text-[var(--text-faint)] hover:text-red-400 text-xs mt-2 shrink-0">
               🗑
             </button>
           )}
@@ -132,14 +132,14 @@ function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onRea
           </div>
           {canDelete && !isOwn && (
             <button onClick={() => onDelete(msg._id)}
-              className="opacity-0 group-hover:opacity-100 transition text-gray-300 hover:text-red-400 text-xs mt-2 shrink-0">
+              className="opacity-0 group-hover:opacity-100 transition text-[var(--text-faint)] hover:text-red-400 text-xs mt-2 shrink-0">
               🗑
             </button>
           )}
         </div>
 
         {/* Timestamp */}
-        <span className="text-[10px] text-gray-400 mt-0.5 px-1">{formatTime(msg.createdAt)}</span>
+        <span className="text-[10px] text-[var(--text-muted)] mt-0.5 px-1">{formatTime(msg.createdAt)}</span>
 
         {/* Reactions */}
         <ReactionBar
@@ -159,9 +159,9 @@ function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onRea
 function DateSeparator({ date }) {
   return (
     <div className="flex items-center gap-3 my-4">
-      <div className="flex-1 h-px bg-gray-100" />
-      <span className="text-xs text-gray-400 font-medium px-2">{formatDate(date)}</span>
-      <div className="flex-1 h-px bg-gray-100" />
+      <div className="flex-1 h-px bg-[var(--bg-surface-2)]" />
+      <span className="text-xs text-[var(--text-muted)] font-medium px-2">{formatDate(date)}</span>
+      <div className="flex-1 h-px bg-[var(--bg-surface-2)]" />
     </div>
   );
 }
@@ -320,10 +320,10 @@ export default function CommunityPage() {
       <header className="bg-[var(--bg-surface)] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate("/community")}
-            className="text-gray-400 hover:text-gray-600 transition text-lg leading-none">←</button>
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition text-lg leading-none">←</button>
           <div>
-            <p className="text-sm font-semibold text-gray-800">{community?.name || "Community"}</p>
-            <p className="text-xs text-gray-400">{community?.memberCount} members · @{community?.domain}</p>
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{community?.name || "Community"}</p>
+            <p className="text-xs text-[var(--text-muted)]">{community?.memberCount} members · @{community?.domain}</p>
           </div>
         </div>
         <NotificationBell />
@@ -357,7 +357,7 @@ export default function CommunityPage() {
         )}
 
         {messages.length === 0 && !error && (
-          <div className="text-center text-sm text-gray-400 py-16">
+          <div className="text-center text-sm text-[var(--text-muted)] py-16">
             No messages yet. {canSend ? "Be the first to say something!" : ""}
           </div>
         )}
@@ -409,7 +409,7 @@ export default function CommunityPage() {
               style={{ minHeight: "42px" }}
             />
             <div className="flex flex-col items-end gap-1">
-              <span className="text-[10px] text-gray-300">{text.length}/2000</span>
+              <span className="text-[10px] text-[var(--text-faint)]">{text.length}/2000</span>
               <button type="submit" disabled={!text.trim() || sending}
                 className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition disabled:opacity-50">
                 {sending ? "..." : "Send"}
@@ -417,7 +417,7 @@ export default function CommunityPage() {
             </div>
           </form>
         ) : (
-          <p className="text-xs text-center text-gray-400 py-1">
+          <p className="text-xs text-center text-[var(--text-muted)] py-1">
             You can react to messages but cannot send in this community.
           </p>
         )}

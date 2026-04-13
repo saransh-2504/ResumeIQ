@@ -36,14 +36,14 @@ function TermsModal({ onAccept, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backdropFilter: "blur(4px)", backgroundColor: "rgba(0,0,0,0.3)" }}
       onClick={onClose}>
-      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto shadow-2xl"
+      <div className="bg-[var(--bg-surface)] rounded-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto shadow-2xl"
         onClick={(e) => e.stopPropagation()}>
-        <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-          <h2 className="text-base font-bold text-gray-800">Terms & Conditions</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl">✕</button>
+        <div className="sticky top-0 bg-[var(--bg-surface)] border-b border-[var(--border)] px-6 py-4 flex items-center justify-between rounded-t-2xl">
+          <h2 className="text-base font-bold text-[var(--text-primary)]">Terms & Conditions</h2>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl">✕</button>
         </div>
-        <div className="px-6 py-4 space-y-4 text-sm text-gray-600">
-          <p className="text-xs text-gray-400">Last updated: March 2026</p>
+        <div className="px-6 py-4 space-y-4 text-sm text-[var(--text-secondary)]">
+          <p className="text-xs text-[var(--text-muted)]">Last updated: March 2026</p>
           {[
             ["1. Acceptance", "By using ResumeIQ, you agree to these terms. If you do not agree, please do not use the platform."],
             ["2. Eligibility", "ResumeIQ is for job seekers and verified recruiters. Recruiters must use a company email and are subject to admin approval."],
@@ -55,14 +55,14 @@ function TermsModal({ onAccept, onClose }) {
             ["8. Contact", "Questions? Reach us at saransh2504@gmail.com"],
           ].map(([title, body]) => (
             <div key={title}>
-              <p className="font-semibold text-gray-800 mb-0.5">{title}</p>
+              <p className="font-semibold text-[var(--text-primary)] mb-0.5">{title}</p>
               <p>{body}</p>
             </div>
           ))}
         </div>
-        <div className="px-6 py-4 border-t border-gray-100 flex gap-3">
+        <div className="px-6 py-4 border-t border-[var(--border)] flex gap-3">
           <button onClick={onClose}
-            className="flex-1 border border-gray-200 text-gray-500 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition">
+            className="flex-1 border border-[var(--border)] text-[var(--text-muted)] py-2.5 rounded-xl text-sm font-semibold hover:bg-[var(--bg-surface-2)] transition">
             Decline
           </button>
           <button onClick={onAccept}
@@ -109,10 +109,10 @@ export default function SignupPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md text-center">
+        <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md text-center">
           <div className="text-4xl mb-4">📧</div>
-          <h2 className="text-lg font-bold text-gray-800 mb-2">Check your email</h2>
-          <p className="text-sm text-gray-500 mb-4">{success}</p>
+          <h2 className="text-lg font-bold text-[var(--text-primary)] mb-2">Check your email</h2>
+          <p className="text-sm text-[var(--text-muted)] mb-4">{success}</p>
           <ResendVerification email={form.email} />
           <button
             onClick={() => navigate("/login")}
@@ -129,15 +129,15 @@ export default function SignupPage() {
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
       {/* Back button — top left */}
       <button onClick={() => navigate(-1)}
-        className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm">
+        className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-indigo-600 transition bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl px-3 py-2 shadow-sm">
         ← Back
       </button>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
+      <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md">
         <div className="text-center mb-6">
           <span className="text-2xl font-bold text-indigo-600">
             Resume<span className="text-purple-500">IQ</span>
           </span>
-          <p className="text-sm text-gray-500 mt-1">Create your account</p>
+          <p className="text-sm text-[var(--text-muted)] mt-1">Create your account</p>
         </div>
 
         {error && (
@@ -148,7 +148,7 @@ export default function SignupPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Full Name</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">Full Name</label>
             <input
               type="text"
               name="name"
@@ -156,12 +156,12 @@ export default function SignupPage() {
               onChange={handleChange}
               placeholder="Your name"
               required
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
 
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Email</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">Email</label>
             <input
               type="email"
               name="email"
@@ -170,7 +170,7 @@ export default function SignupPage() {
               placeholder="you@example.com"
               required
               autoComplete="email"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
             {/* Show hint if recruiter is selected */}
             {form.role === "recruiter" && (
@@ -181,7 +181,7 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Password</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">Password</label>
             <input
               type="password"
               name="password"
@@ -191,13 +191,13 @@ export default function SignupPage() {
               required
               minLength={6}
               autoComplete="new-password"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
 
           {/* Role selector */}
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">I am a...</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">I am a...</label>
             <div className="flex gap-3">
               {["candidate", "recruiter"].map((r) => (
                 <button
@@ -207,7 +207,7 @@ export default function SignupPage() {
                   className={`flex-1 py-2 rounded-xl text-sm font-medium border transition capitalize
                     ${form.role === r
                       ? "bg-indigo-600 text-white border-indigo-600"
-                      : "bg-white text-gray-600 border-gray-200 hover:border-indigo-300"
+                      : "bg-[var(--bg-surface)] text-[var(--text-secondary)] border-[var(--border)] hover:border-indigo-300"
                     }`}
                 >
                   {r}
@@ -216,7 +216,7 @@ export default function SignupPage() {
             </div>
             {/* Recruiter approval notice */}
             {form.role === "recruiter" && (
-              <p className="text-xs text-gray-400 mt-2">
+              <p className="text-xs text-[var(--text-muted)] mt-2">
                 Recruiter accounts require admin approval before you can post jobs.
               </p>
             )}
@@ -227,7 +227,7 @@ export default function SignupPage() {
             <input type="checkbox" id="terms" checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
               className="mt-0.5 accent-indigo-600 cursor-pointer" />
-            <label htmlFor="terms" className="text-xs text-gray-500 leading-relaxed">
+            <label htmlFor="terms" className="text-xs text-[var(--text-muted)] leading-relaxed">
               I agree to the{" "}
               <button type="button" onClick={() => setShowTerms(true)}
                 className="text-indigo-600 hover:underline font-medium">
@@ -253,9 +253,9 @@ export default function SignupPage() {
         {form.role === "candidate" && (
           <>
             <div className="flex items-center gap-3 my-5">
-              <div className="flex-1 h-px bg-gray-100" />
-              <span className="text-xs text-gray-400">or</span>
-              <div className="flex-1 h-px bg-gray-100" />
+              <div className="flex-1 h-px bg-[var(--bg-surface-2)]" />
+              <span className="text-xs text-[var(--text-muted)]">or</span>
+              <div className="flex-1 h-px bg-[var(--bg-surface-2)]" />
             </div>
             <div className="space-y-3">
               <button
@@ -265,8 +265,8 @@ export default function SignupPage() {
                 }}
                 className={`w-full flex items-center justify-center gap-3 border rounded-xl py-2.5 text-sm font-medium transition
                   ${termsAccepted
-                    ? "border-gray-200 text-gray-700 hover:bg-gray-50"
-                    : "border-gray-100 text-gray-400 bg-gray-50 cursor-not-allowed"
+                    ? "border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--bg-surface-2)]"
+                    : "border-[var(--border)] text-[var(--text-muted)] bg-[var(--bg-surface-2)] cursor-not-allowed"
                   }`}
               >
                 <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
@@ -276,7 +276,7 @@ export default function SignupPage() {
           </>
         )}
 
-        <p className="text-center text-xs text-gray-400 mt-6">
+        <p className="text-center text-xs text-[var(--text-muted)] mt-6">
           Already have an account?{" "}
           <Link to="/login" className="text-indigo-600 font-medium hover:underline">
             Login

@@ -7,14 +7,14 @@ import NotificationBell from "../components/common/NotificationBell";
 function CommunityCard({ community, joined, onJoin, joining }) {
   const navigate = useNavigate();
   return (
-    <div className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition">
+    <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 flex items-center justify-between shadow-sm hover:shadow-md transition">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-base">
           {community.name[0].toUpperCase()}
         </div>
         <div>
-          <p className="text-sm font-semibold text-gray-800">{community.name}</p>
-          <p className="text-xs text-gray-400">@{community.domain} · {community.memberCount} members</p>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{community.name}</p>
+          <p className="text-xs text-[var(--text-muted)]">@{community.domain} · {community.memberCount} members</p>
         </div>
       </div>
       {joined ? (
@@ -90,11 +90,11 @@ export default function CommunityDiscovery() {
       <header className="bg-[var(--bg-surface)] border-b border-[var(--border)] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(backPath)}
-            className="text-gray-400 hover:text-gray-600 transition text-lg leading-none">←</button>
+            className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition text-lg leading-none">←</button>
           <span className="text-lg font-bold text-indigo-600">
             Resume<span className="text-purple-500">IQ</span>
           </span>
-          <span className="text-sm font-semibold text-gray-700">Community</span>
+          <span className="text-sm font-semibold text-[var(--text-primary)]">Community</span>
         </div>
         <NotificationBell />
       </header>
@@ -102,13 +102,13 @@ export default function CommunityDiscovery() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Search bar */}
         <div className="relative mb-6">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] text-sm">🔍</span>
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search communities by company name..."
-            className="w-full pl-9 pr-4 py-3 border border-gray-200 rounded-2xl text-sm outline-none focus:border-indigo-400 bg-white shadow-sm"
+            className="w-full pl-9 pr-4 py-3 border border-[var(--border)] rounded-2xl text-sm outline-none focus:border-indigo-400 bg-[var(--bg-surface)] shadow-sm"
           />
         </div>
 
@@ -117,13 +117,13 @@ export default function CommunityDiscovery() {
         )}
 
         {loading ? (
-          <div className="text-center py-16 text-gray-400 text-sm">Loading communities...</div>
+          <div className="text-center py-16 text-[var(--text-muted)] text-sm">Loading communities...</div>
         ) : (
           <>
             {/* Joined communities */}
             {filteredJoined.length > 0 && (
               <section className="mb-8">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-3">
                   Your Communities
                 </p>
                 <div className="space-y-3">
@@ -137,7 +137,7 @@ export default function CommunityDiscovery() {
             {/* Suggested communities */}
             {filteredSuggested.length > 0 && (
               <section className="mb-8">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-3">
                   {joined.length > 0 ? "Suggested Communities" : "Discover Communities"}
                 </p>
                 <div className="space-y-3">
@@ -152,10 +152,10 @@ export default function CommunityDiscovery() {
             {filteredJoined.length === 0 && filteredSuggested.length === 0 && (
               <div className="text-center py-16">
                 <p className="text-4xl mb-3">🏘️</p>
-                <p className="text-sm font-semibold text-gray-600 mb-1">
+                <p className="text-sm font-semibold text-[var(--text-secondary)] mb-1">
                   {search ? "No communities match your search" : "No communities yet"}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-[var(--text-muted)]">
                   {search
                     ? "Try a different search term"
                     : "Communities are created automatically when recruiters set up their company profile."}

@@ -37,21 +37,21 @@ function AdminJobModal({ job, onClose, onSuggested }) {
 
   return (
     <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center px-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
+      <div className="bg-[var(--bg-surface)] rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
         onClick={(e) => e.stopPropagation()}>
 
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-800">{job.title}</h2>
-            <p className="text-sm text-gray-400">{job.company} · {job.location}</p>
-            <p className="text-xs text-gray-300 mt-0.5">Posted by: {job.postedBy?.name} ({job.postedBy?.email})</p>
+            <h2 className="text-lg font-bold text-[var(--text-primary)]">{job.title}</h2>
+            <p className="text-sm text-[var(--text-muted)]">{job.company} · {job.location}</p>
+            <p className="text-xs text-[var(--text-faint)] mt-0.5">Posted by: {job.postedBy?.name} ({job.postedBy?.email})</p>
             {job.createdAt && (
-              <p className="text-xs text-gray-300 mt-0.5">
+              <p className="text-xs text-[var(--text-faint)] mt-0.5">
                 Posted on: {new Date(job.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
               </p>
             )}
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl leading-none">×</button>
         </div>
 
         {msg && <div className="bg-indigo-50 text-indigo-700 text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
@@ -69,12 +69,12 @@ function AdminJobModal({ job, onClose, onSuggested }) {
             <div className="flex gap-2 flex-wrap">
               <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">{job.type}</span>
               {job.skillsRequired?.map((s) => (
-                <span key={s} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">{s}</span>
+                <span key={s} className="text-xs bg-[var(--bg-surface-2)] text-[var(--text-secondary)] px-2 py-1 rounded-full">{s}</span>
               ))}
             </div>
             <div>
-              <p className="text-xs text-gray-400 mb-1">Description</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{job.description}</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1">Description</p>
+              <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">{job.description}</p>
             </div>
             {!hasPendingSuggestion && (
               <button onClick={() => setSuggesting(true)}
@@ -86,39 +86,39 @@ function AdminJobModal({ job, onClose, onSuggested }) {
         ) : (
           /* Suggest changes form */
           <div className="space-y-3">
-            <p className="text-xs text-gray-500 mb-2">Edit the fields you want to suggest changes for. Recruiter will review and approve or reject.</p>
+            <p className="text-xs text-[var(--text-muted)] mb-2">Edit the fields you want to suggest changes for. Recruiter will review and approve or reject.</p>
             {[
               { label: "Job Title", key: "title" },
               { label: "Company", key: "company" },
               { label: "Location", key: "location" },
             ].map(({ label, key }) => (
               <div key={key}>
-                <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+                <label className="text-xs text-[var(--text-muted)] mb-1 block">{label}</label>
                 <input type="text" value={form[key]}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                  className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
               </div>
             ))}
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Job Type</label>
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">Job Type</label>
               <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 bg-white">
+                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 bg-[var(--bg-surface-2)] text-[var(--text-primary)]">
                 <option>Full-time</option>
                 <option>Internship</option>
                 <option>Part-time</option>
               </select>
             </div>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Description</label>
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">Description</label>
               <textarea rows={4} value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
+                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
             </div>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Skills (comma separated)</label>
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">Skills (comma separated)</label>
               <input type="text" value={form.skillsRequired}
                 onChange={(e) => setForm({ ...form, skillsRequired: e.target.value })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
             </div>
             <div className="flex gap-2 pt-1">
               <button onClick={handleSuggest} disabled={loading}
@@ -126,7 +126,7 @@ function AdminJobModal({ job, onClose, onSuggested }) {
                 {loading ? "Sending..." : "Send Suggestion"}
               </button>
               <button onClick={() => setSuggesting(false)}
-                className="text-sm text-gray-500 px-4 py-2 rounded-xl hover:bg-gray-100 transition">
+                className="text-sm text-[var(--text-muted)] px-4 py-2 rounded-xl hover:bg-[var(--bg-surface-2)] transition">
                 Cancel
               </button>
             </div>
@@ -140,11 +140,11 @@ function AdminJobModal({ job, onClose, onSuggested }) {
 // ---- Recruiter Card ----
 function RecruiterCard({ recruiter, onApprove, onReject, showActions }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 px-5 py-4 flex items-center justify-between">
+    <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] px-5 py-4 flex items-center justify-between">
       <div>
-        <p className="font-medium text-gray-800 text-sm">{recruiter.name}</p>
-        <p className="text-xs text-gray-400 mt-0.5">{recruiter.email}</p>
-        <p className="text-xs text-gray-300 mt-0.5">Joined {new Date(recruiter.createdAt).toLocaleDateString()}</p>
+        <p className="font-medium text-[var(--text-primary)] text-sm">{recruiter.name}</p>
+        <p className="text-xs text-[var(--text-muted)] mt-0.5">{recruiter.email}</p>
+        <p className="text-xs text-[var(--text-faint)] mt-0.5">Joined {new Date(recruiter.createdAt).toLocaleDateString()}</p>
       </div>
       <div className="flex items-center gap-2">
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium
@@ -285,15 +285,15 @@ export default function AdminDashboard() {
       </nav>
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-1">Admin Dashboard</h1>
-        <p className="text-sm text-gray-400 mb-6">Manage recruiters, candidates, and jobs</p>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-1">Admin Dashboard</h1>
+        <p className="text-sm text-[var(--text-muted)] mb-6">Manage recruiters, candidates, and jobs</p>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-100">
+        <div className="flex gap-2 mb-6 border-b border-[var(--border)]">
           {tabs.map((t) => (
             <button key={t.key} onClick={() => setTab(t.key)}
               className={`px-4 py-2.5 text-sm font-medium transition border-b-2 -mb-px
-                ${tab === t.key ? "border-indigo-600 text-indigo-600" : "border-transparent text-gray-500 hover:text-gray-700"}`}>
+                ${tab === t.key ? "border-indigo-600 text-indigo-600" : "border-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]"}`}>
               {t.label}
               {t.key === "pending" && pendingRecruiters.length > 0 && (
                 <span className="ml-2 bg-red-100 text-red-600 text-xs px-1.5 py-0.5 rounded-full">
@@ -307,14 +307,14 @@ export default function AdminDashboard() {
         {tab === "community" ? (
           <CommunityRedirect navigate={navigate} />
         ) : loading ? (
-          <div className="text-center py-16 text-gray-400 text-sm">Loading...</div>
+          <div className="text-center py-16 text-[var(--text-muted)] text-sm">Loading...</div>
         ) : (
           <>
             {/* PENDING */}
             {tab === "pending" && (
               <div>
                 {pendingRecruiters.length === 0 ? (
-                  <div className="text-center py-16 text-gray-400 text-sm">No pending approvals</div>
+                  <div className="text-center py-16 text-[var(--text-muted)] text-sm">No pending approvals</div>
                 ) : (
                   <div className="space-y-3">
                     {pendingRecruiters.map((r) => (
@@ -332,7 +332,7 @@ export default function AdminDashboard() {
             {tab === "recruiters" && (
               <div>
                 {allRecruiters.length === 0 ? (
-                  <div className="text-center py-16 text-gray-400 text-sm">No recruiters found</div>
+                  <div className="text-center py-16 text-[var(--text-muted)] text-sm">No recruiters found</div>
                 ) : (
                   <div className="space-y-3">
                     {allRecruiters.map((r) => (
@@ -347,12 +347,12 @@ export default function AdminDashboard() {
 
             {/* CANDIDATES */}
             {tab === "users" && (
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+              <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-hidden">
                 {allUsers.length === 0 ? (
-                  <div className="text-center py-16 text-gray-400 text-sm">No candidates found</div>
+                  <div className="text-center py-16 text-[var(--text-muted)] text-sm">No candidates found</div>
                 ) : (
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                    <thead className="bg-[var(--bg-surface-2)] text-[var(--text-muted)] text-xs uppercase">
                       <tr>
                         <th className="px-5 py-3 text-left">Name</th>
                         <th className="px-5 py-3 text-left">Email</th>
@@ -362,13 +362,13 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {allUsers.map((u) => (
-                        <tr key={u._id} className="hover:bg-gray-50 transition">
-                          <td className="px-5 py-3 font-medium text-gray-800">{u.name}</td>
-                          <td className="px-5 py-3 text-gray-500">{u.email}</td>
-                          <td className="px-5 py-3 text-gray-400">{new Date(u.createdAt).toLocaleDateString()}</td>
+                        <tr key={u._id} className="hover:bg-[var(--bg-surface-2)] transition">
+                          <td className="px-5 py-3 font-medium text-[var(--text-primary)]">{u.name}</td>
+                          <td className="px-5 py-3 text-[var(--text-muted)]">{u.email}</td>
+                          <td className="px-5 py-3 text-[var(--text-muted)]">{new Date(u.createdAt).toLocaleDateString()}</td>
                           <td className="px-5 py-3">
                             <span className={`text-xs px-2 py-0.5 rounded-full font-medium
-                              ${u.oauthProvider ? "bg-blue-50 text-blue-600" : "bg-gray-100 text-gray-500"}`}>
+                              ${u.oauthProvider ? "bg-blue-50 text-blue-600" : "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>
                               {u.oauthProvider || "email"}
                             </span>
                           </td>
@@ -382,12 +382,12 @@ export default function AdminDashboard() {
 
             {/* JOBS */}
             {tab === "jobs" && (
-              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+              <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-hidden">
                 {allJobs.length === 0 ? (
-                  <div className="text-center py-16 text-gray-400 text-sm">No jobs found</div>
+                  <div className="text-center py-16 text-[var(--text-muted)] text-sm">No jobs found</div>
                 ) : (
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                    <thead className="bg-[var(--bg-surface-2)] text-[var(--text-muted)] text-xs uppercase">
                       <tr>
                         <th className="px-5 py-3 text-left">Title</th>
                         <th className="px-5 py-3 text-left">Company</th>
@@ -400,11 +400,11 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                       {allJobs.map((j) => (
-                        <tr key={j._id} className="hover:bg-gray-50 transition">
-                          <td className="px-5 py-3 font-medium text-gray-800">{j.title}</td>
-                          <td className="px-5 py-3 text-gray-500">{j.company}</td>
-                          <td className="px-5 py-3 text-gray-500">{j.postedBy?.name || "—"}</td>
-                          <td className="px-5 py-3 text-gray-500 text-xs">
+                        <tr key={j._id} className="hover:bg-[var(--bg-surface-2)] transition">
+                          <td className="px-5 py-3 font-medium text-[var(--text-primary)]">{j.title}</td>
+                          <td className="px-5 py-3 text-[var(--text-muted)]">{j.company}</td>
+                          <td className="px-5 py-3 text-[var(--text-muted)]">{j.postedBy?.name || "—"}</td>
+                          <td className="px-5 py-3 text-[var(--text-muted)] text-xs">
                             {j.createdAt ? new Date(j.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
                           </td>
                           <td className="px-5 py-3">
@@ -437,19 +437,19 @@ export default function AdminDashboard() {
             {tab === "delete-requests" && (
               <div>
                 {deleteRequests.length === 0 ? (
-                  <div className="text-center py-16 text-gray-400 text-sm">No pending deletion requests</div>
+                  <div className="text-center py-16 text-[var(--text-muted)] text-sm">No pending deletion requests</div>
                 ) : (
                   <div className="space-y-3">
                     {deleteRequests.map((r) => (
-                      <div key={r._id} className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center justify-between">
+                      <div key={r._id} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-semibold text-gray-800">{r.name}</p>
-                          <p className="text-xs text-gray-400">{r.email}</p>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">{r.name}</p>
+                          <p className="text-xs text-[var(--text-muted)]">{r.email}</p>
                           {r.recruiterProfile?.companyName && (
-                            <p className="text-xs text-gray-400">{r.recruiterProfile.companyName}</p>
+                            <p className="text-xs text-[var(--text-muted)]">{r.recruiterProfile.companyName}</p>
                           )}
                           {r.deleteRequestedAt && (
-                            <p className="text-xs text-gray-400 mt-0.5">
+                            <p className="text-xs text-[var(--text-muted)] mt-0.5">
                               Requested: {new Date(r.deleteRequestedAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                             </p>
                           )}
@@ -475,7 +475,7 @@ export default function AdminDashboard() {
                                 fetchTabData("delete-requests");
                               } catch { showToast("Failed."); }
                             }}
-                            className="text-xs bg-gray-50 text-gray-600 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-100 transition font-medium">
+                            className="text-xs bg-[var(--bg-surface-2)] text-[var(--text-secondary)] border border-[var(--border)] px-3 py-1.5 rounded-lg hover:bg-[var(--bg-surface-2)] transition font-medium">
                             Reject
                           </button>
                         </div>

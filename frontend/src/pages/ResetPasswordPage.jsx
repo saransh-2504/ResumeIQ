@@ -42,10 +42,10 @@ export default function ResetPasswordPage() {
   if (success) {
     return (
       <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md text-center">
+        <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md text-center">
           <div className="text-4xl mb-4">✅</div>
-          <h2 className="text-lg font-bold text-gray-800 mb-2">Password reset successful</h2>
-          <p className="text-sm text-gray-500">Redirecting you to login...</p>
+          <h2 className="text-lg font-bold text-[var(--text-primary)] mb-2">Password reset successful</h2>
+          <p className="text-sm text-[var(--text-muted)]">Redirecting you to login...</p>
         </div>
       </div>
     );
@@ -53,12 +53,12 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
+      <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md">
         <div className="text-center mb-6">
           <span className="text-2xl font-bold text-indigo-600">
             Resume<span className="text-purple-500">IQ</span>
           </span>
-          <p className="text-sm text-gray-500 mt-1">Create a new password</p>
+          <p className="text-sm text-[var(--text-muted)] mt-1">Create a new password</p>
         </div>
 
         {error && (
@@ -67,7 +67,7 @@ export default function ResetPasswordPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">New Password</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">New Password</label>
             <input
               type="password"
               value={form.password}
@@ -75,11 +75,11 @@ export default function ResetPasswordPage() {
               placeholder="Min 6 characters"
               required
               autoComplete="new-password"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
           <div>
-            <label className="text-xs text-gray-500 mb-1 block">Confirm Password</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">Confirm Password</label>
             <input
               type="password"
               value={form.confirm}
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
               placeholder="Repeat password"
               required
               autoComplete="new-password"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
           <button
@@ -99,7 +99,7 @@ export default function ResetPasswordPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-gray-400 mt-6">
+        <p className="text-center text-xs text-[var(--text-muted)] mt-6">
           <Link to="/login" className="text-indigo-600 hover:underline">Back to Login</Link>
         </p>
       </div>

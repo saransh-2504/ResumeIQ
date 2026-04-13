@@ -121,8 +121,8 @@ function ApplicantsList({ jobId }) {
     }
   }
 
-  if (loading) return <div className="text-xs text-gray-400 py-2">Loading applicants...</div>;
-  if (applicants.length === 0) return <div className="text-xs text-gray-400 py-2">No applicants yet.</div>;
+  if (loading) return <div className="text-xs text-[var(--text-muted)] py-2">Loading applicants...</div>;
+  if (applicants.length === 0) return <div className="text-xs text-[var(--text-muted)] py-2">No applicants yet.</div>;
 
   // Count by status
   const counts = applicants.reduce((acc, a) => {
@@ -147,7 +147,7 @@ function ApplicantsList({ jobId }) {
         {filterBtns.map(({ key, label }) => (
           <button key={key} onClick={() => setFilter(key)}
             className={`text-xs px-3 py-1 rounded-full font-medium transition ${
-              filter === key ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              filter === key ? "bg-indigo-600 text-white" : "bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-gray-200"
             }`}>
             {label}
           </button>
@@ -155,15 +155,15 @@ function ApplicantsList({ jobId }) {
       </div>
 
       {filtered.length === 0 && (
-        <p className="text-xs text-gray-400 py-2">No applicants with this status.</p>
+        <p className="text-xs text-[var(--text-muted)] py-2">No applicants with this status.</p>
       )}
 
       {filtered.map((app) => (
-        <div key={app._id} className="bg-gray-50 rounded-xl p-3">
+        <div key={app._id} className="bg-[var(--bg-surface-2)] rounded-xl p-3">
           <div className="flex items-center justify-between mb-1">
             <div>
-              <p className="text-sm font-medium text-gray-700">{app.candidate.name}</p>
-              <p className="text-xs text-gray-400">{app.candidate.email}</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">{app.candidate.name}</p>
+              <p className="text-xs text-[var(--text-muted)]">{app.candidate.email}</p>
             </div>
             <select value={app.status} onChange={(e) => handleStatusChange(app._id, e.target.value)}
               className={`text-xs px-2 py-1 rounded-lg border-0 font-medium cursor-pointer ${statusColors[app.status]}`}>
@@ -174,12 +174,12 @@ function ApplicantsList({ jobId }) {
             </select>
           </div>
           <div className="flex items-center justify-between mt-2">
-            <div className="flex items-center gap-1 text-xs text-gray-400">
+            <div className="flex items-center gap-1 text-xs text-[var(--text-muted)]">
               <span>📄</span>
               <span className="truncate max-w-[160px]">{app.resumeFileName}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">{new Date(app.appliedAt).toLocaleDateString()}</span>
+              <span className="text-xs text-[var(--text-muted)]">{new Date(app.appliedAt).toLocaleDateString()}</span>
               <ViewResumeButton appId={app._id} fileName={app.resumeFileName} />
             </div>
           </div>
@@ -245,28 +245,28 @@ function JobModal({ job, onClose, onUpdated }) {
 
   return (
     <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center px-4" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
+      <div className="bg-[var(--bg-surface)] rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6"
         onClick={(e) => e.stopPropagation()}>
 
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-gray-800">{job.title}</h2>
-            <p className="text-sm text-gray-400">{job.company} · {job.location}</p>
+            <h2 className="text-lg font-bold text-[var(--text-primary)]">{job.title}</h2>
+            <p className="text-sm text-[var(--text-muted)]">{job.company} · {job.location}</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none">×</button>
+          <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl leading-none">×</button>
         </div>
 
         {msg && <div className="bg-indigo-50 text-indigo-700 text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-4 bg-gray-50 rounded-xl p-1">
+        <div className="flex gap-1 mb-4 bg-[var(--bg-surface-2)] rounded-xl p-1">
           <button onClick={() => setActiveTab("details")}
-            className={`flex-1 text-xs font-medium py-1.5 rounded-lg transition ${activeTab === "details" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500"}`}>
+            className={`flex-1 text-xs font-medium py-1.5 rounded-lg transition ${activeTab === "details" ? "bg-[var(--bg-surface)] text-indigo-600 shadow-sm" : "text-[var(--text-muted)]"}`}>
             Job Details
           </button>
           <button onClick={() => setActiveTab("applicants")}
-            className={`flex-1 text-xs font-medium py-1.5 rounded-lg transition ${activeTab === "applicants" ? "bg-white text-indigo-600 shadow-sm" : "text-gray-500"}`}>
+            className={`flex-1 text-xs font-medium py-1.5 rounded-lg transition ${activeTab === "applicants" ? "bg-[var(--bg-surface)] text-indigo-600 shadow-sm" : "text-[var(--text-muted)]"}`}>
             Applicants
           </button>
         </div>
@@ -302,12 +302,12 @@ function JobModal({ job, onClose, onUpdated }) {
             <div className="flex gap-2 flex-wrap">
               <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">{job.type}</span>
               {job.skillsRequired?.map((s) => (
-                <span key={s} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">{s}</span>
+                <span key={s} className="text-xs bg-[var(--bg-surface-2)] text-[var(--text-secondary)] px-2 py-1 rounded-full">{s}</span>
               ))}
             </div>
             <div>
-              <p className="text-xs text-gray-400 mb-1">Description</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{job.description}</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1">Description</p>
+              <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap leading-relaxed">{job.description}</p>
             </div>
             <button onClick={() => setEditing(true)}
               className="text-sm bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition">
@@ -323,32 +323,32 @@ function JobModal({ job, onClose, onUpdated }) {
               { label: "Location", key: "location" },
             ].map(({ label, key }) => (
               <div key={key}>
-                <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+                <label className="text-xs text-[var(--text-muted)] mb-1 block">{label}</label>
                 <input type="text" value={form[key]}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                  className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
               </div>
             ))}
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Job Type</label>
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">Job Type</label>
               <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 bg-white">
+                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 bg-[var(--bg-surface-2)] text-[var(--text-primary)]">
                 <option>Full-time</option>
                 <option>Internship</option>
                 <option>Part-time</option>
               </select>
             </div>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Description</label>
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">Description</label>
               <textarea rows={4} value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
+                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
             </div>
             <div>
-              <label className="text-xs text-gray-500 mb-1 block">Skills (comma separated)</label>
+              <label className="text-xs text-[var(--text-muted)] mb-1 block">Skills (comma separated)</label>
               <input type="text" value={form.skillsRequired}
                 onChange={(e) => setForm({ ...form, skillsRequired: e.target.value })}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
             </div>
             <div className="flex gap-2 pt-1">
               <button onClick={handleSave} disabled={loading}
@@ -356,7 +356,7 @@ function JobModal({ job, onClose, onUpdated }) {
                 {loading ? "Saving..." : "Save Changes"}
               </button>
               <button onClick={() => setEditing(false)}
-                className="text-sm text-gray-500 px-4 py-2 rounded-xl hover:bg-gray-100 transition">
+                className="text-sm text-[var(--text-muted)] px-4 py-2 rounded-xl hover:bg-[var(--bg-surface-2)] transition">
                 Cancel
               </button>
             </div>
@@ -398,15 +398,15 @@ function PostJob({ onJobPosted, onGoToSettings }) {
 
   if (!user?.isApproved) {
     return (
-      <div className="bg-white rounded-2xl border border-gray-100 p-8 text-center text-sm text-gray-400">
+      <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-8 text-center text-sm text-[var(--text-muted)]">
         You need admin approval before you can post jobs.
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-6 max-w-xl">
-      <p className="text-sm font-semibold text-gray-700 mb-5">Post a New Job</p>
+    <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-6 max-w-xl">
+      <p className="text-sm font-semibold text-[var(--text-primary)] mb-5">Post a New Job</p>
       {error && <div className="bg-red-50 text-red-600 text-xs px-4 py-3 rounded-xl mb-4">{error}</div>}
       {success && <div className="bg-green-50 text-green-600 text-xs px-4 py-3 rounded-xl mb-4">{success}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -416,28 +416,28 @@ function PostJob({ onJobPosted, onGoToSettings }) {
           { label: "Location", key: "location", placeholder: "e.g. Bangalore / Remote" },
         ].map(({ label, key, placeholder }) => (
           <div key={key}>
-            <label className="text-xs text-gray-500 mb-1 block">{label}</label>
+            <label className="text-xs text-[var(--text-muted)] mb-1 block">{label}</label>
             <input required type="text" placeholder={placeholder} value={form[key]}
               onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
           </div>
         ))}
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Job Description</label>
+          <label className="text-xs text-[var(--text-muted)] mb-1 block">Job Description</label>
           <textarea required rows={4} placeholder="Describe the role..." value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
+            className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Required Skills (comma separated)</label>
+          <label className="text-xs text-[var(--text-muted)] mb-1 block">Required Skills (comma separated)</label>
           <input type="text" placeholder="e.g. React, Node.js, SQL" value={form.skillsRequired}
             onChange={(e) => setForm({ ...form, skillsRequired: e.target.value })}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+            className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
         </div>
         <div>
-          <label className="text-xs text-gray-500 mb-1 block">Job Type</label>
+          <label className="text-xs text-[var(--text-muted)] mb-1 block">Job Type</label>
           <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 bg-white">
+            className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 bg-[var(--bg-surface-2)] text-[var(--text-primary)]">
             <option>Full-time</option>
             <option>Internship</option>
             <option>Part-time</option>
@@ -483,7 +483,7 @@ function JobListings({ refresh, onRefresh }) {
     }
   }
 
-  if (loading) return <div className="text-sm text-gray-400">Loading jobs...</div>;
+  if (loading) return <div className="text-sm text-[var(--text-muted)]">Loading jobs...</div>;
 
   return (
     <>
@@ -494,19 +494,19 @@ function JobListings({ refresh, onRefresh }) {
           onUpdated={() => { onRefresh(); setSelectedJob(null); }}
         />
       )}
-      <div className="bg-white rounded-2xl border border-gray-100 p-6">
-        <p className="text-sm font-semibold text-gray-700 mb-4">Your Job Postings</p>
+      <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-6">
+        <p className="text-sm font-semibold text-[var(--text-primary)] mb-4">Your Job Postings</p>
         {jobs.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-8">No jobs posted yet.</p>
+          <p className="text-sm text-[var(--text-muted)] text-center py-8">No jobs posted yet.</p>
         ) : (
           <div className="space-y-3">
             {jobs.map((j) => (
               <div key={j._id}
                 onClick={() => setSelectedJob(j)}
-                className="flex items-center justify-between px-4 py-3 bg-gray-50 rounded-xl hover:bg-indigo-50 transition cursor-pointer">
+                className="flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] rounded-xl hover:bg-indigo-50 transition cursor-pointer">
                 <div>
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-gray-700">{j.title}</p>
+                    <p className="text-sm font-medium text-[var(--text-primary)]">{j.title}</p>
                     {/* Show badge if admin has a pending suggestion */}
                     {j.adminSuggestion?.status === "pending" && (
                       <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">
@@ -514,15 +514,15 @@ function JobListings({ refresh, onRefresh }) {
                       </span>
                     )}
                   </div>
-                  <p className="text-xs text-gray-400">{j.company} · {j.location}</p>
+                  <p className="text-xs text-[var(--text-muted)]">{j.company} · {j.location}</p>
                   {j.createdAt && (
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">
                       Posted on: {new Date(j.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                     </p>
                   )}
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${j.isActive ? "bg-green-50 text-green-600" : "bg-gray-100 text-gray-500"}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${j.isActive ? "bg-green-50 text-green-600" : "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>
                     {j.isActive ? "Active" : "Closed"}
                   </span>
                   <button onClick={(e) => handleToggle(j._id, e)}
