@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import NotificationBell from "../components/common/NotificationBell";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 // ---- Job Detail + Suggest Changes Modal (Admin) ----
 function AdminJobModal({ job, onClose, onSuggested }) {
@@ -249,7 +250,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[var(--bg-base)]">
       {/* Toast */}
       {toast && (
         <div className="fixed top-4 right-4 z-50 bg-gray-800 text-white text-sm px-4 py-3 rounded-xl shadow-lg">
@@ -267,16 +268,17 @@ export default function AdminDashboard() {
       )}
 
       {/* Navbar */}
-      <nav className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+      <nav className="bg-[var(--bg-surface)] border-b border-[var(--border)] px-6 py-4 flex items-center justify-between">
         <span className="text-xl font-bold text-indigo-600">
           Resume<span className="text-purple-500">IQ</span>
-          <span className="ml-2 text-xs font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">Admin</span>
+          <span className="ml-2 text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-surface-2)] px-2 py-0.5 rounded-full">Admin</span>
         </span>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
           <NotificationBell />
-          <span className="text-sm text-gray-500">{user?.name}</span>
+          <span className="text-sm text-[var(--text-muted)]">{user?.name}</span>
           <button onClick={async () => { await logoutUser(); navigate("/login"); }}
-            className="text-sm text-red-500 hover:text-red-600 transition">
+            className="text-sm text-red-400 hover:text-red-500 transition">
             Logout
           </button>
         </div>

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 // ---- Indian cities with common aliases ----
 const INDIAN_CITIES = [
@@ -203,22 +204,23 @@ function Navbar() {
   const { user, logoutUser } = useAuth();
 
   return (
-    <nav className="flex items-center justify-between px-6 md:px-16 py-4 bg-white border-b border-gray-100 sticky top-0 z-40">
+    <nav className="flex items-center justify-between px-6 md:px-16 py-4 bg-[var(--bg-surface)] border-b border-[var(--border)] sticky top-0 z-40">
       <Link to="/" className="text-xl font-bold text-indigo-600">
         Resume<span className="text-purple-500">IQ</span>
       </Link>
-      <div className="hidden md:flex gap-6 text-sm text-gray-600 font-medium">
+      <div className="hidden md:flex gap-6 text-sm text-[var(--text-secondary)] font-medium">
         <a href="#jobs" className="hover:text-indigo-600 transition">Jobs</a>
         <a href="#how-it-works" className="hover:text-indigo-600 transition">How it Works</a>
         <Link to="/recruiter" className="hover:text-indigo-600 transition">For Recruiters</Link>
         {!user && <Link to="/login" className="hover:text-indigo-600 transition">Login</Link>}
       </div>
       <div className="flex items-center gap-3">
+        <ThemeToggle />
         {user ? (
           <>
             <button onClick={() => navigate(user.role === "recruiter" ? "/recruiter" : "/dashboard")}
               className="text-sm text-indigo-600 font-medium hover:underline">Dashboard</button>
-            <button onClick={logoutUser} className="text-sm text-gray-500 hover:text-red-500 transition">Logout</button>
+            <button onClick={logoutUser} className="text-sm text-[var(--text-muted)] hover:text-red-500 transition">Logout</button>
           </>
         ) : (
           <button onClick={() => navigate("/signup")}
@@ -335,15 +337,15 @@ function JobsSection({ onJobClick }) {
   const types = ["All", "Full-time", "Internship", "Part-time"];
 
   return (
-    <section id="jobs" className="px-6 md:px-16 py-10 bg-[#F8FAFC]">
-      <h2 className="text-xl font-bold text-gray-800 mb-5">Find Your Next Job</h2>
+    <section id="jobs" className="px-6 md:px-16 py-10 bg-[var(--bg-base)]">
+      <h2 className="text-xl font-bold text-[var(--text-primary)] mb-5">Find Your Next Job</h2>
 
       {/* ---- Search Bar ---- */}
-      <div className="bg-white border border-gray-100 rounded-2xl p-4 mb-5 space-y-3 shadow-sm">
+      <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 mb-5 space-y-3 shadow-sm">
         {/* Title search */}
         <input type="text" value={titleQuery} onChange={(e) => setTitleQuery(e.target.value)}
           placeholder="🔍 Search by job title or company..."
-          className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
+          className="w-full border border-[var(--border)] bg-[var(--bg-surface)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
 
         <div className="flex gap-3">
           {/* Location with city autocomplete */}
@@ -451,17 +453,17 @@ function JobsSection({ onJobClick }) {
 // ---- Hero ----
 function Hero() {
   return (
-    <section className="px-6 md:px-16 py-16 text-center bg-[#F8FAFC]">
-      <span className="text-xs font-semibold bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full">
+    <section className="px-6 md:px-16 py-16 text-center bg-[var(--bg-base)]">
+      <span className="text-xs font-semibold bg-[var(--accent-light)] text-[var(--accent-text)] px-3 py-1 rounded-full">
         AI-Powered Job Platform
       </span>
-      <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 mt-4 leading-tight">
+      <h1 className="text-4xl md:text-5xl font-extrabold text-[var(--text-primary)] mt-4 leading-tight">
         Discover Top Jobs.<br />
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
           Get Selected Faster.
         </span>
       </h1>
-      <p className="text-gray-500 mt-3 text-base max-w-xl mx-auto">
+      <p className="text-[var(--text-secondary)] mt-3 text-base max-w-xl mx-auto">
         Explore curated opportunities and optimize your resume for each role using AI.
       </p>
       <a href="#jobs">
@@ -482,15 +484,15 @@ function HowItWorks() {
     { icon: "🚀", num: "04", title: "Improve & Apply", desc: "Fix gaps and apply with confidence" },
   ];
   return (
-    <section id="how-it-works" className="px-6 md:px-16 py-16 bg-white">
-      <h2 className="text-2xl font-bold text-center text-gray-900 mb-10">How it Works</h2>
+    <section id="how-it-works" className="px-6 md:px-16 py-16 bg-[var(--bg-surface)]">
+      <h2 className="text-2xl font-bold text-center text-[var(--text-primary)] mb-10">How it Works</h2>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {steps.map((s) => (
           <div key={s.num} className="text-center">
-            <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-2xl mx-auto">{s.icon}</div>
-            <p className="text-xs text-indigo-400 font-bold mt-2">{s.num}</p>
-            <p className="font-semibold text-gray-800 text-sm mt-1">{s.title}</p>
-            <p className="text-xs text-gray-400 mt-1">{s.desc}</p>
+            <div className="w-12 h-12 rounded-full bg-[var(--accent-light)] flex items-center justify-center text-2xl mx-auto">{s.icon}</div>
+            <p className="text-xs text-[var(--accent-text)] font-bold mt-2">{s.num}</p>
+            <p className="font-semibold text-[var(--text-primary)] text-sm mt-1">{s.title}</p>
+            <p className="text-xs text-[var(--text-muted)] mt-1">{s.desc}</p>
           </div>
         ))}
       </div>
@@ -598,14 +600,14 @@ function TermsModal({ onClose }) {
 }
 function Footer({ onTermsClick }) {
   return (
-    <footer className="px-6 md:px-16 py-8 bg-white border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4">
+    <footer className="px-6 md:px-16 py-8 bg-[var(--bg-surface)] border-t border-[var(--border)] flex flex-col md:flex-row items-center justify-between gap-4">
       <div className="text-lg font-bold text-indigo-600">Resume<span className="text-purple-500">IQ</span></div>
-      <div className="flex gap-6 text-sm text-gray-400">
+      <div className="flex gap-6 text-sm text-[var(--text-muted)]">
         <a href="#" className="hover:text-indigo-600 transition">Privacy</a>
         <button onClick={onTermsClick} className="hover:text-indigo-600 transition">Terms</button>
         <a href="mailto:saransh2504@gmail.com" className="hover:text-indigo-600 transition">Contact</a>
       </div>
-      <p className="text-xs text-gray-400">© 2026 ResumeIQ. All rights reserved.</p>
+      <p className="text-xs text-[var(--text-muted)]">© 2026 ResumeIQ. All rights reserved.</p>
     </footer>
   );
 }
@@ -615,7 +617,7 @@ export default function LandingPage() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [showTerms, setShowTerms] = useState(false);
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[var(--bg-base)]">
       <Navbar />
       <Hero />
       <JobsSection onJobClick={setSelectedJob} />

@@ -46,13 +46,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       {/* Back button — top left */}
       <button onClick={() => navigate(-1)}
-        className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-gray-500 hover:text-indigo-600 transition bg-white border border-gray-200 rounded-xl px-3 py-2 shadow-sm">
+        className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-[var(--text-secondary)] hover:text-indigo-600 transition bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl px-3 py-2 shadow-sm">
         ← Back
       </button>
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-md">
+      <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-6">
           <span className="text-2xl font-bold text-indigo-600">

@@ -38,13 +38,13 @@ export default function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-11 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 z-50 overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-50">
-            <p className="text-sm font-semibold text-gray-700">Notifications</p>
+        <div className="absolute right-0 top-11 w-72 bg-[var(--bg-surface)] rounded-2xl shadow-xl border border-[var(--border)] z-50 overflow-hidden">
+          <div className="px-4 py-3 border-b border-[var(--border-light)]">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">Notifications</p>
           </div>
 
           {breakdown.length === 0 ? (
-            <div className="px-4 py-6 text-center text-xs text-gray-400">
+            <div className="px-4 py-6 text-center text-xs text-[var(--text-muted)]">
               No unread messages
             </div>
           ) : (
@@ -53,15 +53,15 @@ export default function NotificationBell() {
                 <button
                   key={item.communityId}
                   onClick={() => handleCommunityClick(item.communityId)}
-                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-indigo-50 transition text-left"
+                  className="w-full flex items-center justify-between px-4 py-3 hover:bg-[var(--bg-surface-2)] transition text-left"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-base">💬</span>
-                    <span className="text-sm text-gray-700 truncate max-w-[160px]">
+                    <span className="text-sm text-[var(--text-primary)] truncate max-w-[160px]">
                       {item.communityName}
                     </span>
                   </div>
-                  <span className="text-xs bg-indigo-100 text-indigo-600 font-semibold px-2 py-0.5 rounded-full shrink-0">
+                  <span className="text-xs bg-[var(--accent-light)] text-[var(--accent-text)] font-semibold px-2 py-0.5 rounded-full shrink-0">
                     {item.unreadCount} new
                   </span>
                 </button>
@@ -69,7 +69,7 @@ export default function NotificationBell() {
             </div>
           )}
 
-          <div className="px-4 py-2 border-t border-gray-50">
+          <div className="px-4 py-2 border-t border-[var(--border-light)]">
             <button
               onClick={() => { setOpen(false); navigate("/community"); }}
               className="w-full text-xs text-indigo-500 hover:text-indigo-700 font-medium py-1 transition"

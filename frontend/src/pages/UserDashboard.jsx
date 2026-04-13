@@ -4,6 +4,7 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import SettingsPage from "./SettingsPage";
 import NotificationBell from "../components/common/NotificationBell";
+import ThemeToggle from "../components/common/ThemeToggle";
 
 const navLinks = [
   { icon: "💼", label: "Jobs", id: "jobs" },
@@ -17,19 +18,21 @@ function Sidebar({ active, setActive }) {
   const navigate = useNavigate();
   const { logoutUser } = useAuth();
   return (
-    <aside className="w-56 min-h-screen bg-white border-r border-gray-100 flex flex-col py-6 px-4 gap-1">
+    <aside className="w-56 min-h-screen bg-[var(--bg-surface)] border-r border-[var(--border)] flex flex-col py-6 px-4 gap-1">
       <div className="text-lg font-bold text-indigo-600 mb-6 cursor-pointer" onClick={() => navigate("/")}>
         Resume<span className="text-purple-500">IQ</span>
       </div>
       {navLinks.map((link) => (
         <button key={link.id} onClick={() => setActive(link.id)}
           className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition text-left
-            ${active === link.id ? "bg-indigo-50 text-indigo-600" : "text-gray-600 hover:bg-gray-50"}`}>
+            ${active === link.id
+              ? "bg-[var(--accent-light)] text-[var(--accent-text)]"
+              : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)]"}`}>
           <span>{link.icon}</span>{link.label}
         </button>
       ))}
       <button onClick={logoutUser}
-        className="mt-auto flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-50 transition text-left">
+        className="mt-auto flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition text-left">
         <span>🚪</span> Logout
       </button>
     </aside>
@@ -39,12 +42,13 @@ function Sidebar({ active, setActive }) {
 function TopBar() {
   const { user } = useAuth();
   return (
-    <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-100">
-      <p className="text-sm font-semibold text-gray-800">Candidate Dashboard</p>
+    <header className="flex items-center justify-between px-6 py-4 bg-[var(--bg-surface)] border-b border-[var(--border)]">
+      <p className="text-sm font-semibold text-[var(--text-primary)]">Candidate Dashboard</p>
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <NotificationBell />
-        <span className="text-sm text-gray-500">{user?.name}</span>
-        <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-sm">
+        <span className="text-sm text-[var(--text-muted)]">{user?.name}</span>
+        <div className="w-9 h-9 rounded-full bg-[var(--accent-light)] flex items-center justify-center text-[var(--accent-text)] font-bold text-sm">
           {user?.name?.[0]?.toUpperCase()}
         </div>
       </div>
@@ -1308,7 +1312,7 @@ function MainContent({ active }) {
 export default function UserDashboard() {
   const [active, setActive] = useState("jobs");
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
+    <div className="flex min-h-screen bg-[var(--bg-base)]">
       <Sidebar active={active} setActive={setActive} />
       <div className="flex-1 flex flex-col">
         <TopBar />

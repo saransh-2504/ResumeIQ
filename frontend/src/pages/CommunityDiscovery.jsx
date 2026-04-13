@@ -85,9 +85,9 @@ export default function CommunityDiscovery() {
   // Role label for back navigation
   const backPath = user?.role === "recruiter" ? "/recruiter" : user?.role === "admin" ? "/admin" : "/dashboard";
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-[var(--bg-base)]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+      <header className="bg-[var(--bg-surface)] border-b border-[var(--border)] px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate(backPath)}
             className="text-gray-400 hover:text-gray-600 transition text-lg leading-none">←</button>

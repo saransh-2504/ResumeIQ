@@ -2,8 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Base font */
+/* ── Light theme (default) ─────────────────────────────────────────────────── */
+:root {
+  --bg-base:        #F8FAFC;
+  --bg-surface:     #FFFFFF;
+  --bg-surface-2:   #F1F5F9;
+  --bg-hover:       #F8FAFC;
+  --border:         #E2E8F0;
+  --border-light:   #F1F5F9;
+
+  --text-primary:   #1E293B;
+  --text-secondary: #475569;
+  --text-muted:     #94A3B8;
+  --text-faint:     #CBD5E1;
+
+  --accent:         #4F46E5;
+  --accent-hover:   #4338CA;
+  --accent-light:   #EEF2FF;
+  --accent-text:    #4F46E5;
+
+  --purple:         #7C3AED;
+  --purple-light:   #F5F3FF;
+
+  --success-bg:     #F0FDF4;
+  --success-text:   #16A34A;
+  --success-border: #BBF7D0;
+
+  --warning-bg:     #FFFBEB;
+  --warning-text:   #D97706;
+  --warning-border: #FDE68A;
+
+  --error-bg:       #FEF2F2;
+  --error-text:     #DC2626;
+  --error-border:   #FECACA;
+
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md:      0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* ── Dark theme ─────────────────────────────────────────────────────────────── */
+.dark {
+  --bg-base:        #0F172A;
+  --bg-surface:     #1E293B;
+  --bg-surface-2:   #273549;
+  --bg-hover:       #273549;
+  --border:         #334155;
+  --border-light:   #1E293B;
+
+  --text-primary:   #F1F5F9;
+  --text-secondary: #CBD5E1;
+  --text-muted:     #64748B;
+  --text-faint:     #475569;
+
+  --accent:         #6366F1;
+  --accent-hover:   #4F46E5;
+  --accent-light:   #1E1B4B;
+  --accent-text:    #818CF8;
+
+  --purple:         #A78BFA;
+  --purple-light:   #1E1B4B;
+
+  --success-bg:     #052E16;
+  --success-text:   #4ADE80;
+  --success-border: #166534;
+
+  --warning-bg:     #1C1400;
+  --warning-text:   #FCD34D;
+  --warning-border: #92400E;
+
+  --error-bg:       #1C0A0A;
+  --error-text:     #F87171;
+  --error-border:   #991B1B;
+
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:      0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* ── Base styles ─────────────────────────────────────────────────────────────── */
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #F8FAFC;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Utility classes using CSS variables ─────────────────────────────────────── */
+.bg-base        { background-color: var(--bg-base); }
+.bg-surface     { background-color: var(--bg-surface); }
+.bg-surface-2   { background-color: var(--bg-surface-2); }
+.bg-hover:hover { background-color: var(--bg-hover); }
+
+.border-theme   { border-color: var(--border); }
+.border-light   { border-color: var(--border-light); }
+
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted     { color: var(--text-muted); }
+
+.accent-bg      { background-color: var(--accent-light); }
+.accent-text    { color: var(--accent-text); }
+
+/* Smooth transitions for theme switch */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
 }

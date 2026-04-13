@@ -123,10 +123,10 @@ function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onRea
               🗑
             </button>
           )}
-          <div className={`px-3 py-2 rounded-2xl text-sm leading-relaxed break-words
+        <div className={`px-3 py-2 rounded-2xl text-sm leading-relaxed break-words
             ${isOwn
               ? "bg-indigo-600 text-white rounded-tr-sm"
-              : "bg-white border border-gray-100 text-gray-800 rounded-tl-sm shadow-sm"
+              : "bg-[var(--bg-surface)] border border-[var(--border)] text-[var(--text-primary)] rounded-tl-sm shadow-sm"
             }`}>
             {msg.text}
           </div>
@@ -315,9 +315,9 @@ export default function CommunityPage() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-screen bg-[#F8FAFC]">
+    <div className="flex flex-col h-screen bg-[var(--bg-base)]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between shrink-0">
+      <header className="bg-[var(--bg-surface)] border-b border-[var(--border)] px-4 py-3 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate("/community")}
             className="text-gray-400 hover:text-gray-600 transition text-lg leading-none">←</button>
@@ -341,7 +341,7 @@ export default function CommunityPage() {
       )}
 
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-[var(--bg-base)]">
         {/* Load more */}
         {hasMore && (
           <div className="text-center">
@@ -393,7 +393,7 @@ export default function CommunityPage() {
       </div>
 
       {/* Input area */}
-      <div className="bg-white border-t border-gray-100 px-4 py-3 shrink-0">
+      <div className="bg-[var(--bg-surface)] border-t border-[var(--border)] px-4 py-3 shrink-0">
         {canSend ? (
           <form onSubmit={handleSend} className="flex items-end gap-2">
             <textarea
@@ -405,7 +405,7 @@ export default function CommunityPage() {
               placeholder="Type a message... (Enter to send, Shift+Enter for new line)"
               maxLength={2000}
               rows={1}
-              className="flex-1 border border-gray-200 rounded-2xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none max-h-32 overflow-y-auto"
+              className="flex-1 border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-2xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none max-h-32 overflow-y-auto"
               style={{ minHeight: "42px" }}
             />
             <div className="flex flex-col items-end gap-1">
