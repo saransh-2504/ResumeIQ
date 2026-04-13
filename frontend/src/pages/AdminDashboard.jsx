@@ -54,11 +54,11 @@ function AdminJobModal({ job, onClose, onSuggested }) {
           <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl leading-none">×</button>
         </div>
 
-        {msg && <div className="bg-indigo-50 text-indigo-700 text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
+        {msg && <div className="bg-[var(--accent-light)] text-[var(--accent-text)] text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
 
         {/* Pending suggestion status */}
         {hasPendingSuggestion && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3 mb-4 text-xs text-yellow-700">
+          <div className="bg-[var(--warning-bg)] text-[var(--warning-text)]">
             ⏳ You already have a pending suggestion waiting for recruiter response.
           </div>
         )}
@@ -67,7 +67,7 @@ function AdminJobModal({ job, onClose, onSuggested }) {
         {!suggesting ? (
           <div className="space-y-4">
             <div className="flex gap-2 flex-wrap">
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">{job.type}</span>
+              <span className="text-xs bg-[var(--accent-light)] text-[var(--accent-text)] px-2 py-1 rounded-full">{job.type}</span>
               {job.skillsRequired?.map((s) => (
                 <span key={s} className="text-xs bg-[var(--bg-surface-2)] text-[var(--text-secondary)] px-2 py-1 rounded-full">{s}</span>
               ))}
@@ -96,7 +96,7 @@ function AdminJobModal({ job, onClose, onSuggested }) {
                 <label className="text-xs text-[var(--text-muted)] mb-1 block">{label}</label>
                 <input type="text" value={form[key]}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                  className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
               </div>
             ))}
             <div>
@@ -118,7 +118,7 @@ function AdminJobModal({ job, onClose, onSuggested }) {
               <label className="text-xs text-[var(--text-muted)] mb-1 block">Skills (comma separated)</label>
               <input type="text" value={form.skillsRequired}
                 onChange={(e) => setForm({ ...form, skillsRequired: e.target.value })}
-                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
             </div>
             <div className="flex gap-2 pt-1">
               <button onClick={handleSuggest} disabled={loading}
@@ -148,7 +148,7 @@ function RecruiterCard({ recruiter, onApprove, onReject, showActions }) {
       </div>
       <div className="flex items-center gap-2">
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium
-          ${recruiter.isApproved ? "bg-green-50 text-green-600" : "bg-yellow-50 text-yellow-600"}`}>
+          ${recruiter.isApproved ? "bg-[var(--success-bg)] text-[var(--success-text)]" : "bg-yellow-50 text-yellow-600"}`}>
           {recruiter.isApproved ? "Approved" : "Pending"}
         </span>
         {showActions && !recruiter.isApproved && (
@@ -408,7 +408,7 @@ export default function AdminDashboard() {
                             {j.createdAt ? new Date(j.createdAt).toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}
                           </td>
                           <td className="px-5 py-3">
-                            <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full capitalize">
+                            <span className="text-xs bg-[var(--accent-light)] text-[var(--accent-text)] px-2 py-0.5 rounded-full capitalize">
                               {j.type}
                             </span>
                           </td>
@@ -416,7 +416,7 @@ export default function AdminDashboard() {
                             {j.adminSuggestion?.status === "pending" ? (
                               <span className="text-xs bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full">Suggestion pending</span>
                             ) : (
-                              <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded-full">Active</span>
+                              <span className="text-xs bg-[var(--success-bg)] text-[var(--success-text)] px-2 py-0.5 rounded-full">Active</span>
                             )}
                           </td>
                           <td className="px-5 py-3">
@@ -464,7 +464,7 @@ export default function AdminDashboard() {
                                 fetchTabData("delete-requests");
                               } catch { showToast("Failed."); }
                             }}
-                            className="text-xs bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-medium">
+                            className="text-xs bg-[var(--error-bg)] text-[var(--error-text)] border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition font-medium">
                             Approve & Delete
                           </button>
                           <button

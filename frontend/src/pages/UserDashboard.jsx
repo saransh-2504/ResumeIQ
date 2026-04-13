@@ -62,7 +62,7 @@ function TypeBadge({ type }) {
 }
 
 function StatusBadge({ status }) {
-  const colors = { applied: "bg-blue-50 text-blue-600", reviewed: "bg-yellow-50 text-yellow-600", shortlisted: "bg-green-50 text-green-600", rejected: "bg-red-50 text-red-500" };
+  const colors = { applied: "bg-blue-50 text-blue-600", reviewed: "bg-yellow-50 text-yellow-600", shortlisted: "bg-[var(--success-bg)] text-[var(--success-text)]", rejected: "bg-red-50 text-red-500" };
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${colors[status] || "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>{status}</span>;
 }
 
@@ -432,7 +432,7 @@ function JobAnalysisPanel({ job, onClose }) {
 
       {/* Show applyMsg at top only when NOT in ATS result view (ATS view has its own) */}
       {applyMsg && !result && (
-        <div className={`text-xs px-4 py-2 rounded-xl mb-3 ${alreadyApplied ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>{applyMsg}</div>
+        <div className={`text-xs px-4 py-2 rounded-xl mb-3 ${alreadyApplied ? "bg-[var(--success-bg)] text-[var(--success-text)]" : "bg-[var(--error-bg)] text-[var(--error-text)]"}`}>{applyMsg}</div>
       )}
       {alreadyApplied && !applyMsg && (
         <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-3 text-xs text-green-700 font-medium">✅ You have already applied to this job.</div>
@@ -497,7 +497,7 @@ function JobAnalysisPanel({ job, onClose }) {
               <p className="text-xs font-semibold text-green-600 mb-2">✅ Matching Skills ({result.matched.length})</p>
               <div className="flex flex-wrap gap-1">
                 {result.matched.map((k) => (
-                  <span key={k} className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-lg border border-green-100">{k}</span>
+                  <span key={k} className="text-xs bg-[var(--success-bg)] text-[var(--success-text)] px-2 py-0.5 rounded-lg border border-green-100">{k}</span>
                 ))}
               </div>
             </div>
@@ -616,7 +616,7 @@ function JobAnalysisPanel({ job, onClose }) {
             onDrop={(e) => { e.preventDefault(); setDragging(false); const f = e.dataTransfer.files[0]; if (f) handleFile(f); }}
             onClick={() => document.getElementById("resume-input").click()}
             className={`border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition
-              ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-[var(--bg-surface)] hover:bg-indigo-50"}`}>
+              ${dragging ? "border-indigo-400 bg-indigo-100" : "border-indigo-200 bg-[var(--bg-surface)] hover:bg-[var(--accent-light)]"}`}>
             <p className="text-xl mb-1">📄</p>
             {file ? <p className="text-xs text-indigo-600 font-medium">{file.name}</p> : <p className="text-xs text-[var(--text-muted)]">Drag & drop or click to select</p>}
           </div>
@@ -905,7 +905,7 @@ function JobsFeed({ onSelect, selectedId }) {
               <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-20 overflow-hidden">
                 {citySuggestions.map((city) => (
                   <button key={city.name} onMouseDown={() => { setLocationQuery(city.name); setCitySuggestions([]); }}
-                    className="w-full text-left px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-light)] hover:text-indigo-600 transition">
                     📍 {city.name}
                     {city.aliases.length > 0 && <span className="text-xs text-[var(--text-muted)] ml-1">({city.aliases[0]})</span>}
                   </button>
@@ -928,7 +928,7 @@ function JobsFeed({ onSelect, selectedId }) {
               <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-20 overflow-hidden">
                 {skillSuggestions.map((skill) => (
                   <button key={skill} onMouseDown={() => addSkill(skill)}
-                    className="w-full text-left px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-3 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-light)] hover:text-indigo-600 transition">
                     🛠 {skill}
                   </button>
                 ))}
@@ -941,7 +941,7 @@ function JobsFeed({ onSelect, selectedId }) {
         {selectedSkills.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
             {selectedSkills.map((s) => (
-              <span key={s} className="flex items-center gap-1 text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded-lg">
+              <span key={s} className="flex items-center gap-1 text-xs bg-[var(--accent-light)] text-[var(--accent-text)] border border-indigo-100 px-2 py-0.5 rounded-lg">
                 {s}
                 <button onClick={() => removeSkill(s)} className="text-indigo-400 hover:text-indigo-700 ml-0.5">×</button>
               </span>
@@ -1110,7 +1110,7 @@ function ResumeAnalysis() {
   // Color helpers
   const scoreColor = completenessScore >= 80 ? "text-green-600" : completenessScore >= 60 ? "text-yellow-600" : "text-red-500";
   const scoreBg = completenessScore >= 80 ? "bg-green-50 border-green-200" : completenessScore >= 60 ? "bg-yellow-50 border-yellow-200" : "bg-red-50 border-red-200";
-  const suggestionColors = { success: "bg-green-50 text-green-700 border-green-200", info: "bg-blue-50 text-blue-700 border-blue-200", warning: "bg-yellow-50 text-yellow-700 border-yellow-200", error: "bg-red-50 text-red-600 border-red-200" };
+  const suggestionColors = { success: "bg-[var(--success-bg)] text-[var(--success-text)] border-green-200", info: "bg-blue-50 text-blue-700 border-blue-200", warning: "bg-[var(--warning-bg)] text-[var(--warning-text)] border-yellow-200", error: "bg-[var(--error-bg)] text-[var(--error-text)] border-red-200" };
   const suggestionIcons = { success: "✅", info: "💡", warning: "⚠️", error: "❌" };
 
   const categoryColors = {
@@ -1119,8 +1119,8 @@ function ResumeAnalysis() {
     "Database": "bg-orange-50 text-orange-700",
     "DevOps": "bg-[var(--bg-surface-2)] text-[var(--text-primary)]",
     "Mobile": "bg-pink-50 text-pink-700",
-    "AI/ML": "bg-green-50 text-green-700",
-    "Other": "bg-indigo-50 text-indigo-700",
+    "AI/ML": "bg-[var(--success-bg)] text-[var(--success-text)]",
+    "Other": "bg-[var(--accent-light)] text-[var(--accent-text)]",
   };
 
   return (
@@ -1227,7 +1227,7 @@ function ResumeAnalysis() {
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-[var(--text-primary)]">💼 Work Experience</p>
           {experience.count > 0 && (
-            <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-medium">
+            <span className="text-xs bg-[var(--accent-light)] text-[var(--accent-text)] px-2 py-0.5 rounded-full font-medium">
               ~{experience.totalYears} yr{experience.totalYears !== 1 ? "s" : ""}
             </span>
           )}

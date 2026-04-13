@@ -90,7 +90,7 @@ function TypeBadge({ type }) {
 function JobCard({ job, onClick, highlightSkills = [] }) {
   return (
     <div onClick={() => onClick(job)}
-      className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-200">
+      className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 cursor-pointer hover:shadow-md hover:scale-[1.02] hover:border-[var(--border)] transition-all duration-200">
       <div className="flex items-center gap-3 mb-3">
         <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">
           {job.company[0]}
@@ -352,13 +352,13 @@ function JobsSection({ onJobClick }) {
           <div className="relative flex-1" ref={locationRef}>
             <input type="text" value={locationQuery} onChange={(e) => handleLocationChange(e.target.value)}
               placeholder="📍 City (e.g. Bangalore, Mumbai)"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
             {citySuggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-30 overflow-hidden">
                 {citySuggestions.map((city) => (
                   <button key={city.name}
                     onMouseDown={() => { setLocationQuery(city.name); setCitySuggestions([]); }}
-                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-light)] hover:text-[var(--accent-text)] transition">
                     📍 {city.name}
                     {city.aliases.length > 0 && <span className="text-xs text-[var(--text-muted)] ml-1.5">also: {city.aliases[0]}</span>}
                   </button>
@@ -372,12 +372,12 @@ function JobsSection({ onJobClick }) {
             <input type="text" value={skillQuery} onChange={(e) => handleSkillChange(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && skillQuery.trim()) addSkill(skillQuery.trim()); }}
               placeholder="🛠 Filter by skill (Enter to add)"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition" />
             {skillSuggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-30 overflow-hidden">
                 {skillSuggestions.map((skill) => (
                   <button key={skill} onMouseDown={() => addSkill(skill)}
-                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-indigo-50 hover:text-indigo-600 transition">
+                    className="w-full text-left px-4 py-2 text-sm text-[var(--text-primary)] hover:bg-[var(--accent-light)] hover:text-[var(--accent-text)] transition">
                     🛠 {skill}
                   </button>
                 ))}
@@ -390,7 +390,7 @@ function JobsSection({ onJobClick }) {
         {selectedSkills.length > 0 && (
           <div className="flex flex-wrap gap-1.5 pt-1">
             {selectedSkills.map((s) => (
-              <span key={s} className="flex items-center gap-1 text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-1 rounded-lg">
+              <span key={s} className="flex items-center gap-1 text-xs bg-[var(--accent-light)] text-[var(--accent-text)] border border-[var(--border)] px-2.5 py-1 rounded-lg">
                 {s}
                 <button onClick={() => removeSkill(s)} className="text-indigo-400 hover:text-red-500 ml-0.5 font-bold">×</button>
               </span>
@@ -405,7 +405,7 @@ function JobsSection({ onJobClick }) {
         {types.map((f) => (
           <button key={f} onClick={() => setActiveType(f)}
             className={`text-xs px-4 py-1.5 rounded-full font-medium transition
-              ${activeType === f ? "bg-indigo-600 text-white" : "bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-gray-200"}`}>
+              ${activeType === f ? "bg-indigo-600 text-white" : "bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-[var(--border)]"}`}>
             {f}
           </button>
         ))}

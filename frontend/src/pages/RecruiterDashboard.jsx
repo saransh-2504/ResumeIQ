@@ -106,7 +106,7 @@ function ApplicantsList({ jobId }) {
   const statusColors = {
     applied: "bg-blue-50 text-blue-600",
     reviewed: "bg-yellow-50 text-yellow-600",
-    shortlisted: "bg-green-50 text-green-600",
+    shortlisted: "bg-[var(--success-bg)] text-[var(--success-text)]",
     rejected: "bg-red-50 text-red-500",
   };
 
@@ -147,7 +147,7 @@ function ApplicantsList({ jobId }) {
         {filterBtns.map(({ key, label }) => (
           <button key={key} onClick={() => setFilter(key)}
             className={`text-xs px-3 py-1 rounded-full font-medium transition ${
-              filter === key ? "bg-indigo-600 text-white" : "bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-gray-200"
+              filter === key ? "bg-indigo-600 text-white" : "bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:bg-[var(--border)]"
             }`}>
             {label}
           </button>
@@ -257,7 +257,7 @@ function JobModal({ job, onClose, onUpdated }) {
           <button onClick={onClose} className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] text-xl leading-none">×</button>
         </div>
 
-        {msg && <div className="bg-indigo-50 text-indigo-700 text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
+        {msg && <div className="bg-[var(--accent-light)] text-[var(--accent-text)] text-xs px-4 py-2 rounded-xl mb-4">{msg}</div>}
 
         {/* Tabs */}
         <div className="flex gap-1 mb-4 bg-[var(--bg-surface-2)] rounded-xl p-1">
@@ -273,8 +273,8 @@ function JobModal({ job, onClose, onUpdated }) {
 
         {/* Admin suggestion banner */}
         {hasPendingSuggestion && activeTab === "details" && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-4">
-            <p className="text-sm font-semibold text-yellow-700 mb-2">📝 Admin suggested changes to this job</p>
+          <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-xl p-4 mb-4">
+            <p className="text-sm font-semibold text-[var(--warning-text)] mb-2">📝 Admin suggested changes to this job</p>
             <div className="text-xs text-yellow-600 space-y-1 mb-3">
               {job.adminSuggestion.suggestedTitle !== job.title && <p><span className="font-medium">Title:</span> {job.adminSuggestion.suggestedTitle}</p>}
               {job.adminSuggestion.suggestedDescription !== job.description && <p><span className="font-medium">Description:</span> {job.adminSuggestion.suggestedDescription}</p>}
@@ -300,7 +300,7 @@ function JobModal({ job, onClose, onUpdated }) {
         ) : !editing ? (
           <div className="space-y-4">
             <div className="flex gap-2 flex-wrap">
-              <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full">{job.type}</span>
+              <span className="text-xs bg-[var(--accent-light)] text-[var(--accent-text)] px-2 py-1 rounded-full">{job.type}</span>
               {job.skillsRequired?.map((s) => (
                 <span key={s} className="text-xs bg-[var(--bg-surface-2)] text-[var(--text-secondary)] px-2 py-1 rounded-full">{s}</span>
               ))}
@@ -326,7 +326,7 @@ function JobModal({ job, onClose, onUpdated }) {
                 <label className="text-xs text-[var(--text-muted)] mb-1 block">{label}</label>
                 <input type="text" value={form[key]}
                   onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                  className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                  className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
               </div>
             ))}
             <div>
@@ -342,13 +342,13 @@ function JobModal({ job, onClose, onUpdated }) {
               <label className="text-xs text-[var(--text-muted)] mb-1 block">Description</label>
               <textarea rows={4} value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
+                className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
             </div>
             <div>
               <label className="text-xs text-[var(--text-muted)] mb-1 block">Skills (comma separated)</label>
               <input type="text" value={form.skillsRequired}
                 onChange={(e) => setForm({ ...form, skillsRequired: e.target.value })}
-                className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+                className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
             </div>
             <div className="flex gap-2 pt-1">
               <button onClick={handleSave} disabled={loading}
@@ -407,8 +407,8 @@ function PostJob({ onJobPosted, onGoToSettings }) {
   return (
     <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-6 max-w-xl">
       <p className="text-sm font-semibold text-[var(--text-primary)] mb-5">Post a New Job</p>
-      {error && <div className="bg-red-50 text-red-600 text-xs px-4 py-3 rounded-xl mb-4">{error}</div>}
-      {success && <div className="bg-green-50 text-green-600 text-xs px-4 py-3 rounded-xl mb-4">{success}</div>}
+      {error && <div className="bg-[var(--error-bg)] text-[var(--error-text)] text-xs px-4 py-3 rounded-xl mb-4">{error}</div>}
+      {success && <div className="bg-[var(--success-bg)] text-[var(--success-text)] text-xs px-4 py-3 rounded-xl mb-4">{success}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
         {[
           { label: "Job Title", key: "title", placeholder: "e.g. Frontend Developer" },
@@ -419,20 +419,20 @@ function PostJob({ onJobPosted, onGoToSettings }) {
             <label className="text-xs text-[var(--text-muted)] mb-1 block">{label}</label>
             <input required type="text" placeholder={placeholder} value={form[key]}
               onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
           </div>
         ))}
         <div>
           <label className="text-xs text-[var(--text-muted)] mb-1 block">Job Description</label>
           <textarea required rows={4} placeholder="Describe the role..." value={form.description}
             onChange={(e) => setForm({ ...form, description: e.target.value })}
-            className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
+            className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 resize-none" />
         </div>
         <div>
           <label className="text-xs text-[var(--text-muted)] mb-1 block">Required Skills (comma separated)</label>
           <input type="text" placeholder="e.g. React, Node.js, SQL" value={form.skillsRequired}
             onChange={(e) => setForm({ ...form, skillsRequired: e.target.value })}
-            className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
+            className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400" />
         </div>
         <div>
           <label className="text-xs text-[var(--text-muted)] mb-1 block">Job Type</label>
@@ -503,7 +503,7 @@ function JobListings({ refresh, onRefresh }) {
             {jobs.map((j) => (
               <div key={j._id}
                 onClick={() => setSelectedJob(j)}
-                className="flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] rounded-xl hover:bg-indigo-50 transition cursor-pointer">
+                className="flex items-center justify-between px-4 py-3 bg-[var(--bg-surface-2)] rounded-xl hover:bg-[var(--accent-light)] transition cursor-pointer">
                 <div>
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium text-[var(--text-primary)]">{j.title}</p>
@@ -522,11 +522,11 @@ function JobListings({ refresh, onRefresh }) {
                   )}
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${j.isActive ? "bg-green-50 text-green-600" : "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${j.isActive ? "bg-[var(--success-bg)] text-[var(--success-text)]" : "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>
                     {j.isActive ? "Active" : "Closed"}
                   </span>
                   <button onClick={(e) => handleToggle(j._id, e)}
-                    className={`text-xs font-medium transition ${j.isActive ? "text-yellow-500 hover:text-yellow-700" : "text-green-500 hover:text-green-700"}`}>
+                    className={`text-xs font-medium transition ${j.isActive ? "text-yellow-500 hover:text-[var(--warning-text)]" : "text-green-500 hover:text-green-700"}`}>
                     {j.isActive ? "Pause" : "Resume"}
                   </button>
                   <button onClick={(e) => handleDelete(j._id, e)}
@@ -549,7 +549,7 @@ function DashboardOverview({ refresh, onRefresh }) {
   return (
     <div className="space-y-6">
       {!user?.isApproved && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 text-sm text-yellow-700">
+        <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-2xl p-4 text-sm text-[var(--warning-text)]">
           ⏳ Your account is pending admin approval. You cannot post jobs yet.
         </div>
       )}
