@@ -156,7 +156,7 @@ export default function SignupPage() {
               onChange={handleChange}
               placeholder="Your name"
               required
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
 
@@ -170,7 +170,7 @@ export default function SignupPage() {
               placeholder="you@example.com"
               required
               autoComplete="email"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
             {/* Show hint if recruiter is selected */}
             {form.role === "recruiter" && (
@@ -191,7 +191,7 @@ export default function SignupPage() {
               required
               minLength={6}
               autoComplete="new-password"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
 

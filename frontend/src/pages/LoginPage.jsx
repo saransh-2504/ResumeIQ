@@ -80,7 +80,7 @@ export default function LoginPage() {
               required
               // autocomplete="email" helps browser suggest previously used email
               autoComplete="email"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
               placeholder="••••••••"
               required
               autoComplete="current-password"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
             <div className="text-right mt-1">
               <Link to="/forgot-password" className="text-xs text-indigo-500 hover:underline">
@@ -123,7 +123,7 @@ export default function LoginPage() {
         <div className="space-y-3">
           <button
             onClick={() => window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`}
-            className="w-full flex items-center justify-center gap-3 border border-[var(--border)] rounded-xl py-2.5 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--bg-surface-2)] transition"
+            className="w-full flex items-center justify-center gap-3 border border-[var(--border)] bg-[var(--bg-surface-2)] rounded-xl py-2.5 text-sm font-medium text-[var(--text-primary)] hover:bg-[var(--border)] transition"
           >
             <img src="https://www.google.com/favicon.ico" className="w-4 h-4" alt="Google" />
             Continue with Google

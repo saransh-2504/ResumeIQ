@@ -75,7 +75,7 @@ export default function ResetPasswordPage() {
               placeholder="Min 6 characters"
               required
               autoComplete="new-password"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
           <div>
@@ -87,7 +87,7 @@ export default function ResetPasswordPage() {
               placeholder="Repeat password"
               required
               autoComplete="new-password"
-              className="w-full border border-[var(--border)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-4 py-2.5 text-sm outline-none focus:border-indigo-400 transition"
             />
           </div>
           <button
