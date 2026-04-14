@@ -57,7 +57,7 @@ function TopBar() {
 }
 
 function TypeBadge({ type }) {
-  const colors = { "Full-time": "bg-green-100 text-green-700", Internship: "bg-blue-100 text-blue-700", "Part-time": "bg-yellow-100 text-yellow-700" };
+  const colors = { "Full-time": "bg-[var(--success-bg)] text-[var(--success-text)]", Internship: "bg-[var(--accent-light)] text-[var(--accent-text)]", "Part-time": "bg-[var(--warning-bg)] text-[var(--warning-text)]" };
   return <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colors[type] || "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"}`}>{type}</span>;
 }
 
@@ -71,7 +71,7 @@ function ScoreCircle({ score }) {
     <div className="relative w-20 h-20">
       <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
         <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e5e7eb" strokeWidth="3" />
-        <circle cx="18" cy="18" r="15.9" fill="none" stroke="#6366f1" strokeWidth="3" strokeDasharray={`${score} 100`} strokeLinecap="round" />
+        <circle cx="18" cy="18" r="15.9" fill="none" stroke="var(--accent)" strokeWidth="3" strokeDasharray={`${score} 100`} strokeLinecap="round" />
       </svg>
       <span className="absolute inset-0 flex items-center justify-center text-base font-bold text-[var(--text-primary)]">{score}</span>
     </div>
@@ -130,7 +130,7 @@ function ContactVerification({ parsedEmail, accountEmail, onVerified }) {
   // Emails don't match — show error, no OTP option
   if (parsedEmail && !emailsMatch) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-xl p-4 mt-3">
+      <div className="bg-[var(--error-bg)] border border-[var(--error-border)] rounded-xl p-4 mt-3">
         <p className="text-sm font-semibold text-red-600 mb-1">⚠️ Email mismatch</p>
         <p className="text-xs text-red-500 mb-1">
           Resume email: <span className="font-medium">{parsedEmail}</span>
@@ -148,7 +148,7 @@ function ContactVerification({ parsedEmail, accountEmail, onVerified }) {
   // No email in resume
   if (!parsedEmail) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mt-3">
+      <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-xl p-4 mt-3">
         <p className="text-sm font-semibold text-yellow-700 mb-1">⚠️ Email not detected in resume</p>
         <p className="text-xs text-yellow-600 mb-1">Your resume likely uses icon-based contact info (symbols like ✉ or #).</p>
         <p className="text-xs text-yellow-500">Please add your email as plain text in your resume and re-upload.</p>
@@ -157,7 +157,7 @@ function ContactVerification({ parsedEmail, accountEmail, onVerified }) {
   }
 
   return (
-    <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mt-3">
+    <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-xl p-4 mt-3">
       <p className="text-sm font-semibold text-yellow-700 mb-1">🔐 Verify your contact</p>
       <p className="text-xs text-yellow-600 mb-1">
         Resume email matches your account: <span className="font-medium">{accountEmail}</span>
@@ -218,7 +218,7 @@ function ParsedDataCard({ parsedData, onReparse }) {
 
   if (!parsedData) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mt-3">
+      <div className="bg-[var(--warning-bg)] border border-[var(--warning-border)] rounded-xl p-4 mt-3">
         <p className="text-xs font-semibold text-yellow-700 mb-1">⚠️ Resume not parsed yet</p>
         <p className="text-xs text-yellow-600 mb-2">Parsing may have failed. Click below to retry.</p>
         {reparseMsg && <p className="text-xs text-green-600 mb-2">{reparseMsg}</p>}
@@ -401,7 +401,7 @@ function JobAnalysisPanel({ job, onClose }) {
       {/* Job header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">{job.company[0]}</div>
+          <div className="w-10 h-10 rounded-xl bg-[var(--accent-light)] flex items-center justify-center text-lg font-bold text-[var(--accent-text)]">{job.company[0]}</div>
           <div>
             <p className="font-semibold text-[var(--text-primary)]">{job.title}</p>
             <p className="text-xs text-[var(--text-muted)]">{job.company} · {job.location}</p>
@@ -435,7 +435,7 @@ function JobAnalysisPanel({ job, onClose }) {
         <div className={`text-xs px-4 py-2 rounded-xl mb-3 ${alreadyApplied ? "bg-[var(--success-bg)] text-[var(--success-text)]" : "bg-[var(--error-bg)] text-[var(--error-text)]"}`}>{applyMsg}</div>
       )}
       {alreadyApplied && !applyMsg && (
-        <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-3 text-xs text-green-700 font-medium">✅ You have already applied to this job.</div>
+        <div className="bg-[var(--success-bg)] border border-[var(--success-border)] rounded-xl px-4 py-3 mb-3 text-xs text-green-700 font-medium">✅ You have already applied to this job.</div>
       )}
 
       {resumeLoading ? (
@@ -451,17 +451,17 @@ function JobAnalysisPanel({ job, onClose }) {
 
           {/* Score card */}
           <div className={`rounded-2xl p-5 border ${
-            result.score >= 80 ? "bg-green-50 border-green-200" :
-            result.score >= 60 ? "bg-yellow-50 border-yellow-200" :
-            "bg-red-50 border-red-200"
+            result.score >= 80 ? "bg-[var(--success-bg)] border-[var(--success-border)]" :
+            result.score >= 60 ? "bg-[var(--warning-bg)] border-[var(--warning-border)]" :
+            "bg-[var(--error-bg)] border-[var(--error-border)]"
           }`}>
             <div className="flex items-center gap-4">
               <ScoreCircle score={result.score} />
               <div>
                 <p className="text-base font-bold text-[var(--text-primary)]">{result.score}% Match</p>
                 <p className={`text-xs font-medium mt-0.5 ${
-                  result.score >= 80 ? "text-green-600" :
-                  result.score >= 60 ? "text-yellow-600" : "text-red-500"
+                  result.score >= 80 ? "text-[var(--success-text)]" :
+                  result.score >= 60 ? "text-[var(--warning-text)]" : "text-[var(--error-text)]"
                 }`}>
                   {result.score >= 80 ? "🎉 Strong match — apply with confidence" :
                    result.score >= 60 ? "👍 Good match — a few gaps to address" :
@@ -543,16 +543,16 @@ function JobAnalysisPanel({ job, onClose }) {
             </button>
           </div>
           {applyMsg && (
-            <p className={`text-xs text-center ${alreadyApplied ? "text-green-600" : "text-red-500"}`}>{applyMsg}</p>
+            <p className={`text-xs text-center ${alreadyApplied ? "text-[var(--success-text)]" : "text-[var(--error-text)]"}`}>{applyMsg}</p>
           )}
         </div>
       ) : existingResume && !replacing ? (
         /* Resume on file */
         <div>
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+          <div className="bg-[var(--success-bg)] border border-[var(--success-border)] rounded-xl p-4">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-green-600">📄</span>
-              <p className="text-sm font-semibold text-green-700">Resume on file</p>
+              <span className="text-[var(--success-text)]">📄</span>
+              <p className="text-sm font-semibold text-[var(--success-text)]">Resume on file</p>
               {isVerified && <span className="text-xs bg-green-200 text-green-700 px-2 py-0.5 rounded-full">✓ Verified</span>}
             </div>
             <p className="text-xs text-green-600 mb-1 truncate">{existingResume.fileName}</p>
@@ -888,7 +888,7 @@ function JobsFeed({ onSelect, selectedId }) {
           value={titleQuery}
           onChange={(e) => setTitleQuery(e.target.value)}
           placeholder="🔍 Search by job title or company..."
-          className="w-full border border-[var(--border)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+          className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
         />
 
         <div className="flex gap-2">
@@ -899,7 +899,7 @@ function JobsFeed({ onSelect, selectedId }) {
               value={locationQuery}
               onChange={(e) => handleLocationChange(e.target.value)}
               placeholder="📍 City (e.g. Bangalore)"
-              className="w-full border border-[var(--border)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
             />
             {citySuggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-20 overflow-hidden">
@@ -922,7 +922,7 @@ function JobsFeed({ onSelect, selectedId }) {
               onChange={(e) => handleSkillChange(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter" && skillQuery.trim()) addSkill(skillQuery.trim()); }}
               placeholder="🛠 Add skill filter..."
-              className="w-full border border-[var(--border)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
+              className="w-full border border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] rounded-xl px-3 py-2 text-sm outline-none focus:border-indigo-400 transition"
             />
             {skillSuggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl shadow-lg z-20 overflow-hidden">
@@ -982,7 +982,7 @@ function JobsFeed({ onSelect, selectedId }) {
           <div key={job._id} onClick={() => onSelect(job)}
             className={`bg-[var(--bg-surface)] border rounded-2xl p-4 cursor-pointer transition hover:shadow-md ${selectedId === job._id ? "border-indigo-400 shadow-sm" : "border-[var(--border)]"}`}>
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">{job.company[0]}</div>
+              <div className="w-9 h-9 rounded-xl bg-[var(--accent-light)] flex items-center justify-center text-lg font-bold text-[var(--accent-text)]">{job.company[0]}</div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-[var(--text-primary)]">{job.title}</p>
                 <p className="text-xs text-[var(--text-muted)]">{job.company} · {job.location}</p>
@@ -991,8 +991,8 @@ function JobsFeed({ onSelect, selectedId }) {
                 <TypeBadge type={job.type} />
                 {score > 0 && (
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                    score >= 70 ? "bg-green-100 text-green-700" :
-                    score >= 40 ? "bg-yellow-100 text-yellow-700" :
+                    score >= 70 ? "bg-[var(--success-bg)] text-[var(--success-text)]" :
+                    score >= 40 ? "bg-[var(--warning-bg)] text-[var(--warning-text)]" :
                     "bg-[var(--bg-surface-2)] text-[var(--text-muted)]"
                   }`}>
                     {score}% match
@@ -1050,7 +1050,7 @@ function MyApplications() {
         <div key={app._id} className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center text-lg font-bold text-indigo-600">{app.jobId?.company?.[0] || "?"}</div>
+              <div className="w-9 h-9 rounded-xl bg-[var(--accent-light)] flex items-center justify-center text-lg font-bold text-[var(--accent-text)]">{app.jobId?.company?.[0] || "?"}</div>
               <div>
                 <p className="text-sm font-semibold text-[var(--text-primary)]">{app.jobId?.title || "Job removed"}</p>
                 <p className="text-xs text-[var(--text-muted)]">{app.jobId?.company} · {app.jobId?.location}</p>
@@ -1108,9 +1108,9 @@ function ResumeAnalysis() {
   const { completenessScore, sections, skills, experience, education, contact, suggestions } = data;
 
   // Color helpers
-  const scoreColor = completenessScore >= 80 ? "text-green-600" : completenessScore >= 60 ? "text-yellow-600" : "text-red-500";
-  const scoreBg = completenessScore >= 80 ? "bg-green-50 border-green-200" : completenessScore >= 60 ? "bg-yellow-50 border-yellow-200" : "bg-red-50 border-red-200";
-  const suggestionColors = { success: "bg-[var(--success-bg)] text-[var(--success-text)] border-green-200", info: "bg-blue-50 text-blue-700 border-blue-200", warning: "bg-[var(--warning-bg)] text-[var(--warning-text)] border-yellow-200", error: "bg-[var(--error-bg)] text-[var(--error-text)] border-red-200" };
+  const scoreColor = completenessScore >= 80 ? "text-[var(--success-text)]" : completenessScore >= 60 ? "text-[var(--warning-text)]" : "text-[var(--error-text)]";
+  const scoreBg = completenessScore >= 80 ? "bg-[var(--success-bg)] border-[var(--success-border)]" : completenessScore >= 60 ? "bg-[var(--warning-bg)] border-[var(--warning-border)]" : "bg-[var(--error-bg)] border-[var(--error-border)]";
+  const suggestionColors = { success: "bg-[var(--success-bg)] text-[var(--success-text)] border-green-200", info: "bg-[var(--accent-light)] text-[var(--accent-text)] border-[var(--border)]", warning: "bg-[var(--warning-bg)] text-[var(--warning-text)] border-yellow-200", error: "bg-[var(--error-bg)] text-[var(--error-text)] border-red-200" };
   const suggestionIcons = { success: "✅", info: "💡", warning: "⚠️", error: "❌" };
 
   const categoryColors = {
@@ -1194,9 +1194,9 @@ function ResumeAnalysis() {
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-[var(--text-primary)]">🛠 Skills ({skills.total})</p>
           <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-            skills.total >= 10 ? "bg-green-100 text-green-700" :
-            skills.total >= 5 ? "bg-yellow-100 text-yellow-700" :
-            "bg-red-100 text-red-600"
+            skills.total >= 10 ? "bg-[var(--success-bg)] text-[var(--success-text)]" :
+            skills.total >= 5 ? "bg-[var(--warning-bg)] text-[var(--warning-text)]" :
+            "bg-[var(--error-bg)] text-[var(--error-text)]"
           }`}>
             {skills.total >= 10 ? "Strong" : skills.total >= 5 ? "Average" : "Weak"}
           </span>
