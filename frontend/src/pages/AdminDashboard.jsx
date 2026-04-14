@@ -277,7 +277,7 @@ export default function AdminDashboard() {
           <ThemeToggle />
           <NotificationBell />
           <span className="text-sm text-[var(--text-muted)]">{user?.name}</span>
-          <button onClick={async () => { await logoutUser(); navigate("/login"); }}
+          <button onClick={async () => { await logoutUser(); }}
             className="text-sm text-red-400 hover:text-red-500 transition">
             Logout
           </button>

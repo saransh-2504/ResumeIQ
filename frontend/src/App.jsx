@@ -20,8 +20,8 @@ import NotFound from "./pages/NotFound";
 export default function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
+      <BrowserRouter>
+        <AuthProvider>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={<LandingPage />} />
@@ -82,8 +82,8 @@ export default function App() {
 
           <Route path="*" element={<NotFound />} />
         </Routes>
+      </AuthProvider>
       </BrowserRouter>
-    </AuthProvider>
     </ThemeProvider>
   );
 }
