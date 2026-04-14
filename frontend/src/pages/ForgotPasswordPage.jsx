@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
         <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md text-center">
           <div className="text-4xl mb-4">📧</div>
           <h2 className="text-lg font-bold text-[var(--text-primary)] mb-2">Check your email</h2>
@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md">
         <div className="text-center mb-6">
           <span className="text-2xl font-bold text-indigo-600">

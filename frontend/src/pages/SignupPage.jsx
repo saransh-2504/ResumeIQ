@@ -108,7 +108,7 @@ export default function SignupPage() {
   // If signup succeeded, show success message instead of form
   if (success) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
+      <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
         <div className="bg-[var(--bg-surface)] rounded-2xl shadow-sm border border-[var(--border)] p-8 w-full max-w-md text-center">
           <div className="text-4xl mb-4">📧</div>
           <h2 className="text-lg font-bold text-[var(--text-primary)] mb-2">Check your email</h2>
@@ -126,7 +126,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--bg-base)] flex items-center justify-center px-4">
       {/* Back button — top left */}
       <button onClick={() => navigate(-1)}
         className="fixed top-4 left-4 flex items-center gap-1.5 text-sm text-[var(--text-muted)] hover:text-indigo-600 transition bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl px-3 py-2 shadow-sm">
