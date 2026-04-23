@@ -3,12 +3,12 @@ import Resume from "../models/Resume.js";
 import Job from "../models/Job.js";
 import cloudinary from "../config/cloudinary.js";
 
-// Generate a signed URL for a resume (15 min expiry)
+// Generate a public URL for a resume
 function generateSignedUrl(cloudinaryId) {
-  return cloudinary.utils.private_download_url(cloudinaryId, "", {
+  return cloudinary.url(cloudinaryId, {
     resource_type: "raw",
-    type: "authenticated",
-    expires_at: Math.floor(Date.now() / 1000) + 15 * 60,
+    type: "upload",
+    secure: true,
   });
 }
 
@@ -134,7 +134,6 @@ export async function getResumeUrl(req, res) {
     const application = await Application.findById(req.params.id).populate("jobId");
     if (!application) return res.status(404).json({ message: "Application not found." });
 
-    // Recruiter must own the job
     if (
       req.user.role === "recruiter" &&
       application.jobId.postedBy.toString() !== req.user._id.toString()
@@ -149,7 +148,7 @@ export async function getResumeUrl(req, res) {
   }
 }
 
-// ---- STREAM RESUME (recruiter/admin) — proxies Cloudinary file inline ----
+// ---- STREAM RESUME (recruiter/admin) — returns public URL directly ----
 // GET /api/v1/applications/:id/resume-view
 export async function streamResume(req, res) {
   try {
@@ -163,41 +162,12 @@ export async function streamResume(req, res) {
       return res.status(403).json({ message: "Not authorized." });
     }
 
-    const fileName = application.resumeFileName || "resume";
-    const isPdf = fileName.toLowerCase().endsWith(".pdf");
-    const format = isPdf ? "pdf" : "docx";
-
-    const signedUrl = cloudinary.utils.private_download_url(
-      application.resumeCloudinaryId,
-      format,
-      {
-        resource_type: "raw",
-        type: "authenticated",
-        expires_at: Math.floor(Date.now() / 1000) + 15 * 60,
-      }
-    );
-
-    const axios = (await import("axios")).default;
-    // responseType: "arraybuffer" — get raw bytes, axios handles decompression automatically
-    const response = await axios.get(signedUrl, {
-      responseType: "arraybuffer",
-      timeout: 15000,
-      headers: { "Accept-Encoding": "identity" }, // disable compression — get raw file
-    });
-
-    res.setHeader(
-      "Content-Type",
-      isPdf
-        ? "application/pdf"
-        : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    );
-    res.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
-    res.setHeader("Content-Length", response.data.byteLength);
-
-    res.send(Buffer.from(response.data));
+    const url = generateSignedUrl(application.resumeCloudinaryId);
+    // Redirect directly to public Cloudinary URL
+    res.redirect(url);
   } catch (err) {
-    console.error("Stream resume error:", err.message);
-    res.status(500).json({ message: "Failed to stream resume." });
+    console.error("Resume view error:", err.message);
+    res.status(500).json({ message: "Failed to load resume." });
   }
 }
 // PATCH /api/v1/applications/:id/status

@@ -172,7 +172,7 @@ export async function approveAccountDeletion(req, res) {
       const cloudinary = (await import("../config/cloudinary.js")).default;
       const resume = await Resume.findOne({ userId: user._id });
       if (resume?.cloudinaryId) {
-        await cloudinary.uploader.destroy(resume.cloudinaryId, { resource_type: "raw", type: "authenticated" });
+        await cloudinary.uploader.destroy(resume.cloudinaryId, { resource_type: "raw", type: "upload" });
         await resume.deleteOne();
       }
     } catch (e) { console.warn("Resume cleanup failed:", e.message); }
