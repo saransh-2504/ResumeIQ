@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../api/axios";
 
-// ---- Resend Verification Email ----
+//  Resend Verification Email 
 function ResendVerification({ email }) {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,7 +30,7 @@ function ResendVerification({ email }) {
   );
 }
 
-// ---- Inline Terms Modal ----
+//  Inline Terms Modal 
 function TermsModal({ onAccept, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"

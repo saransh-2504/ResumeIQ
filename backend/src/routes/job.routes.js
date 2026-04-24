@@ -19,14 +19,14 @@ import { recruiterApprovalMiddleware } from "../middlewares/recruiterApproval.mi
 
 const router = Router();
 
-// ---- Public ----
+// Public 
 router.get("/", getJobs);
 
-// ---- Recruiter: specific routes BEFORE /:id to avoid conflict ----
+// Recruiter: specific routes BEFORE /:id to avoid conflict 
 router.get("/recruiter/my-jobs", authMiddleware, roleMiddleware("recruiter"), getMyJobs);
 router.post("/", authMiddleware, roleMiddleware("recruiter"), recruiterApprovalMiddleware, createJob);
 
-// ---- Dynamic :id routes ----
+//  Dynamic :id routes 
 router.get("/:id", getJobById);
 router.put("/:id", authMiddleware, roleMiddleware("recruiter"), editJob);
 router.delete("/:id", authMiddleware, roleMiddleware("recruiter"), deleteJob);

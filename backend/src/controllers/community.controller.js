@@ -4,7 +4,7 @@ import Notification from "../models/Notification.js";
 import Application from "../models/Application.js";
 import User from "../models/User.js";
 
-// ── GET /api/v1/community/:id ─────────────────────────────────────────────────
+// GET /api/v1/community/:id
 export async function getCommunityById(req, res) {
   try {
     const { id } = req.params;
@@ -29,7 +29,7 @@ export async function getCommunityById(req, res) {
   }
 }
 
-// ── GET /api/v1/community/:id/members ────────────────────────────────────────
+// GET /api/v1/community/:id/members 
 export async function getCommunityMembers(req, res) {
   try {
     const { id } = req.params;
@@ -48,7 +48,7 @@ export async function getCommunityMembers(req, res) {
   }
 }
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+// helpers 
 
 function isMember(community, userId) {
   return community.members.some((m) => m.userId.toString() === userId.toString());
@@ -62,8 +62,8 @@ async function bumpUnread(communityId, excludeUserId) {
   );
 }
 
-// ── GET /api/v1/community/discover ───────────────────────────────────────────
-// Returns: { joined: [...], suggested: [...] }
+// GET /api/v1/community/discover 
+// // Returns: { joined: [...], suggested: [...] }
 export async function discoverCommunities(req, res) {
   try {
     const userId = req.user._id;
@@ -108,7 +108,7 @@ export async function discoverCommunities(req, res) {
   }
 }
 
-// ── POST /api/v1/community/:id/join ──────────────────────────────────────────
+// POST /api/v1/community/:id/join 
 export async function joinCommunity(req, res) {
   try {
     const { id } = req.params;
@@ -136,7 +136,7 @@ export async function joinCommunity(req, res) {
   }
 }
 
-// ── GET /api/v1/community/:id/messages ───────────────────────────────────────
+//  GET /api/v1/community/:id/messages 
 // Supports ?before=<ts>&limit=30  (pagination — older messages)
 // Supports ?after=<ts>            (polling — new messages only)
 export async function getMessages(req, res) {
@@ -182,7 +182,7 @@ export async function getMessages(req, res) {
   }
 }
 
-// ── POST /api/v1/community/:id/messages ──────────────────────────────────────
+//  POST /api/v1/community/:id/messages 
 export async function sendMessage(req, res) {
   try {
     const { id } = req.params;
@@ -227,7 +227,7 @@ export async function sendMessage(req, res) {
   }
 }
 
-// ── DELETE /api/v1/community/:id/messages/:msgId ─────────────────────────────
+// DELETE /api/v1/community/:id/messages/:msgId 
 // Only sender or admin can delete
 export async function deleteMessage(req, res) {
   try {
@@ -249,7 +249,7 @@ export async function deleteMessage(req, res) {
   }
 }
 
-// ── POST /api/v1/community/:id/messages/:msgId/react ─────────────────────────
+//  POST /api/v1/community/:id/messages/:msgId/react 
 export async function reactToMessage(req, res) {
   try {
     const { id, msgId } = req.params;

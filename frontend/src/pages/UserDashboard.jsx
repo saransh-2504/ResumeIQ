@@ -78,7 +78,7 @@ function ScoreCircle({ score }) {
   );
 }
 
-// ---- Contact Verification Widget ----
+//  Contact Verification Widget 
 // Auto-matches resume email with account email — no manual input
 function ContactVerification({ parsedEmail, accountEmail, onVerified }) {
   const [otp, setOtp] = useState("");
@@ -197,7 +197,7 @@ function ContactVerification({ parsedEmail, accountEmail, onVerified }) {
   );
 }
 
-// ---- Parsed Resume Info Card ----
+//  Parsed Resume Info Card 
 function ParsedDataCard({ parsedData, onReparse }) {
   const [expanded, setExpanded] = useState(false);
   const [reparsing, setReparsing] = useState(false);
@@ -305,7 +305,7 @@ function ParsedDataCard({ parsedData, onReparse }) {
   );
 }
 
-// ---- Job Analysis + Apply Panel ----
+//  Job Analysis + Apply Panel 
 function JobAnalysisPanel({ job, onClose }) {
   const { user } = useAuth();
   const [file, setFile] = useState(null);
@@ -441,7 +441,7 @@ function JobAnalysisPanel({ job, onClose }) {
       {resumeLoading ? (
         <div className="text-xs text-[var(--text-muted)] text-center py-2">Checking resume...</div>
       ) : result ? (
-        /* ---- ATS Result Panel ---- */
+        /*  ATS Result Panel  */
         <div className="space-y-3">
           {/* Back button */}
           <button onClick={() => setResult(null)}
@@ -639,7 +639,7 @@ function JobAnalysisPanel({ job, onClose }) {
   );
 }
 
-// ---- Indian cities with aliases (bengaluru/bangalore etc.) ----
+//  Indian cities with aliases (bengaluru/bangalore etc.) 
 const INDIAN_CITIES = [
   { name: "Mumbai", aliases: ["bombay"] },
   { name: "Delhi", aliases: ["new delhi", "nd"] },
@@ -724,7 +724,7 @@ function cityMatches(city, query) {
   return city.aliases.some((a) => a.includes(q) || q.includes(a));
 }
 
-// ---- Jobs Feed ----
+//  Jobs Feed 
 function JobsFeed({ onSelect, selectedId }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -811,7 +811,7 @@ function JobsFeed({ onSelect, selectedId }) {
     return [...expanded];
   })();
 
-  // ---- Match score (same weights as ATS backend) ----
+  //  Match score (same weights as ATS backend) 
   function matchScore(job) {
     if (!job.skillsRequired?.length) return 0;
     const jobSkills = job.skillsRequired.map((s) => s.toLowerCase());
@@ -826,7 +826,7 @@ function JobsFeed({ onSelect, selectedId }) {
     return Math.min(100, skillScore + expScore + eduScore);
   }
 
-  // ---- Smart filter logic ----
+  //  Smart filter logic 
   const filteredJobs = jobs.filter((job) => {
     // Title filter — fuzzy: any word in query matches title or company
     if (titleQuery.trim()) {
@@ -880,7 +880,7 @@ function JobsFeed({ onSelect, selectedId }) {
 
   return (
     <div className="space-y-3">
-      {/* ---- Search & Filter Bar ---- */}
+      {/*  Search & Filter Bar  */}
       <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 space-y-3">
         {/* Title search */}
         <input
@@ -1016,7 +1016,7 @@ function JobsFeed({ onSelect, selectedId }) {
   );
 }
 
-// ---- My Applications Tab ----
+//  My Applications Tab 
 function MyApplications() {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1070,7 +1070,7 @@ function MyApplications() {
   );
 }
 
-// ---- Resume Analysis Tab ----
+//  Resume Analysis Tab 
 function ResumeAnalysis() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1127,7 +1127,7 @@ function ResumeAnalysis() {
     <div className="space-y-4 max-w-3xl">
       <p className="text-xs font-semibold text-indigo-500 uppercase tracking-wide">Resume Health Report</p>
 
-      {/* ---- Completeness Score ---- */}
+      {/*  Completeness Score  */}
       <div className={`rounded-2xl border p-5 ${scoreBg}`}>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -1163,7 +1163,7 @@ function ResumeAnalysis() {
         </div>
       </div>
 
-      {/* ---- Contact Info ---- */}
+      {/*  Contact Info  */}
       <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
         <p className="text-sm font-semibold text-[var(--text-primary)] mb-3">👤 Contact Information</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1189,7 +1189,7 @@ function ResumeAnalysis() {
         </div>
       </div>
 
-      {/* ---- Skills Breakdown ---- */}
+      {/*  Skills Breakdown  */}
       <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-[var(--text-primary)]">🛠 Skills ({skills.total})</p>
@@ -1222,7 +1222,7 @@ function ResumeAnalysis() {
         )}
       </div>
 
-      {/* ---- Experience ---- */}
+      {/*  Experience  */}
       <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-[var(--text-primary)]">💼 Work Experience</p>
@@ -1250,7 +1250,7 @@ function ResumeAnalysis() {
         )}
       </div>
 
-      {/* ---- Education ---- */}
+      {/*  Education  */}
       <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
         <p className="text-sm font-semibold text-[var(--text-primary)] mb-3">🎓 Education</p>
         {education.count === 0 ? (
@@ -1271,7 +1271,7 @@ function ResumeAnalysis() {
         )}
       </div>
 
-      {/* ---- Suggestions ---- */}
+      {/*  Suggestions  */}
       {suggestions.length > 0 && (
         <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
           <p className="text-sm font-semibold text-[var(--text-primary)] mb-3">📋 Improvement Suggestions</p>

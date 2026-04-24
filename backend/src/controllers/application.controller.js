@@ -12,7 +12,7 @@ function generateSignedUrl(cloudinaryId) {
   });
 }
 
-// ---- APPLY TO A JOB ----
+//  APPLY TO A JOB 
 // POST /api/v1/jobs/:id/apply
 // Uses the resume already stored in DB — no re-upload needed
 export async function applyToJob(req, res) {
@@ -76,7 +76,7 @@ export async function applyToJob(req, res) {
   }
 }
 
-// ---- GET MY APPLICATIONS (candidate) ----
+// GET MY APPLICATIONS (candidate) 
 // GET /api/v1/applications/my
 export async function getMyApplications(req, res) {
   try {
@@ -91,7 +91,7 @@ export async function getMyApplications(req, res) {
   }
 }
 
-// ---- GET APPLICANTS FOR A JOB (recruiter) ----
+// GET APPLICANTS FOR A JOB (recruiter) 
 // GET /api/v1/jobs/:id/applications
 export async function getJobApplicants(req, res) {
   try {
@@ -127,7 +127,7 @@ export async function getJobApplicants(req, res) {
   }
 }
 
-// ---- GET FRESH RESUME URL (recruiter/admin) ----
+// GET FRESH RESUME URL (recruiter/admin)
 // GET /api/v1/applications/:id/resume-url
 export async function getResumeUrl(req, res) {
   try {
@@ -148,7 +148,7 @@ export async function getResumeUrl(req, res) {
   }
 }
 
-// ---- STREAM RESUME (recruiter/admin) — returns public URL directly ----
+// STREAM RESUME (recruiter/admin) — returns public URL directly
 // GET /api/v1/applications/:id/resume-view
 export async function streamResume(req, res) {
   try {

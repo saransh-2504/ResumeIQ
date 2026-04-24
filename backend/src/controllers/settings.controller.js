@@ -12,7 +12,7 @@ async function sendMail({ to, subject, html }) {
   );
 }
 
-// ---- GET MY PROFILE ----
+//  GET MY PROFILE 
 export async function getMyProfile(req, res) {
   try {
     const user = await User.findById(req.user._id)
@@ -23,7 +23,7 @@ export async function getMyProfile(req, res) {
   }
 }
 
-// ---- UPDATE NAME + PHONE ----
+//  UPDATE NAME + PHONE 
 export async function updateBasicInfo(req, res) {
   try {
     const { name, phone } = req.body;
@@ -37,7 +37,7 @@ export async function updateBasicInfo(req, res) {
   }
 }
 
-// ---- CHANGE PASSWORD ----
+//  CHANGE PASSWORD 
 export async function changePassword(req, res) {
   try {
     const { currentPassword, newPassword } = req.body;
@@ -62,7 +62,7 @@ export async function changePassword(req, res) {
   }
 }
 
-// ---- REQUEST EMAIL CHANGE (candidate only) ----
+//  REQUEST EMAIL CHANGE (candidate only) 
 export async function requestEmailChange(req, res) {
   try {
     const { newEmail } = req.body;
@@ -96,7 +96,7 @@ export async function requestEmailChange(req, res) {
   }
 }
 
-// ---- CONFIRM EMAIL CHANGE ----
+// CONFIRM EMAIL CHANGE
 export async function confirmEmailChange(req, res) {
   try {
     const { token } = req.query;
@@ -117,7 +117,7 @@ export async function confirmEmailChange(req, res) {
   }
 }
 
-// ---- UPDATE RECRUITER COMPANY PROFILE ----
+// UPDATE RECRUITER COMPANY PROFILE 
 // Direct update — no admin approval needed
 export async function updateRecruiterProfile(req, res) {
   try {
@@ -153,7 +153,7 @@ export async function updateRecruiterProfile(req, res) {
   }
 }
 
-// ---- DELETE ACCOUNT (candidate — direct) ----
+//  DELETE ACCOUNT (candidate — direct) 
 export async function deleteAccount(req, res) {
   try {
     const user = await User.findById(req.user._id);
@@ -181,7 +181,7 @@ export async function deleteAccount(req, res) {
   }
 }
 
-// ---- REQUEST ACCOUNT DELETION (recruiter) ----
+// REQUEST ACCOUNT DELETION (recruiter)
 export async function requestAccountDeletion(req, res) {
   try {
     const user = await User.findById(req.user._id);

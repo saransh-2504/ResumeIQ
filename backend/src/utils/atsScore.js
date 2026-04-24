@@ -34,7 +34,7 @@ export function calculateATS(parsedData, job) {
   const resumeSkills = expandSkills(parsedData.skills || []);
   const jobSkills = (job.skillsRequired || []).map((s) => s.toLowerCase().trim());
 
-  // ---- Skill matching ----
+  //  Skill matching 
   const matched = jobSkills.filter((s) => resumeSkills.includes(s));
   const missing = jobSkills.filter((s) => !resumeSkills.includes(s));
 
@@ -46,7 +46,7 @@ export function calculateATS(parsedData, job) {
   );
   const trulyMissing = missing.filter((s) => !partialMatched.includes(s));
 
-  // ---- Score calculation ----
+  //  Score calculation 
   // Skills: 60% weight
   const skillScore =
     jobSkills.length === 0
@@ -63,7 +63,7 @@ export function calculateATS(parsedData, job) {
 
   const totalScore = Math.min(100, skillScore + expScore + eduScore);
 
-  // ---- Suggestions ----
+  // Suggestions 
   const suggestions = [];
   if (trulyMissing.length > 0) {
     suggestions.push(`Add these missing skills: ${trulyMissing.slice(0, 3).join(", ")}`);

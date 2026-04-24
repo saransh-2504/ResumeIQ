@@ -1,7 +1,7 @@
 import axios from "axios";
 import { env } from "../config/env.js";
 
-// ---- Brevo API — pure HTTP, no SDK needed ----
+// Brevo API — pure HTTP, no SDK needed 
 // Works on all platforms including Render free tier
 async function sendMail({ to, subject, html }) {
   await axios.post(
@@ -21,7 +21,7 @@ async function sendMail({ to, subject, html }) {
   );
 }
 
-// ---- Verification email ----
+//  Verification email 
 export async function sendVerificationEmail(toEmail, token) {
   const verifyUrl = `${env.CLIENT_URL}/verify-email?token=${token}`;
   await sendMail({
@@ -41,7 +41,7 @@ export async function sendVerificationEmail(toEmail, token) {
   });
 }
 
-// ---- Password reset email ----
+//  Password reset email 
 export async function sendPasswordResetEmail(toEmail, token) {
   const resetUrl = `${env.CLIENT_URL}/reset-password?token=${token}`;
   await sendMail({
@@ -61,7 +61,7 @@ export async function sendPasswordResetEmail(toEmail, token) {
   });
 }
 
-// ---- Recruiter approval email ----
+// Recruiter approval email
 export async function sendRecruiterApprovalEmail(toEmail, recruiterName, dashboardUrl) {
   await sendMail({
     to: toEmail,

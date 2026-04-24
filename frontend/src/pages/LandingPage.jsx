@@ -4,7 +4,7 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import ThemeToggle from "../components/common/ThemeToggle";
 
-// ---- Indian cities with common aliases ----
+//  Indian cities with common aliases 
 const INDIAN_CITIES = [
   { name: "Mumbai", aliases: ["bombay"] },
   { name: "Delhi", aliases: ["new delhi", "nd"] },
@@ -72,7 +72,7 @@ function normalizeLocation(query) {
   return match ? match.name.toLowerCase() : q;
 }
 
-// ---- Job type badge ----
+//  Job type badge ]
 function TypeBadge({ type }) {
   const colors = {
     "Full-time": "bg-green-100 text-green-700",
@@ -86,7 +86,7 @@ function TypeBadge({ type }) {
   );
 }
 
-// ---- Single Job Card ----
+//  Single Job Card 
 function JobCard({ job, onClick, highlightSkills = [] }) {
   return (
     <div onClick={() => onClick(job)}
@@ -127,7 +127,7 @@ function JobCard({ job, onClick, highlightSkills = [] }) {
   );
 }
 
-// ---- Skeleton loader ----
+//  Skeleton loader 
 function JobSkeleton() {
   return (
     <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 animate-pulse">
@@ -147,7 +147,7 @@ function JobSkeleton() {
   );
 }
 
-// ---- Job Detail Modal ----
+//  Job Detail Modal 
 function JobModal({ job, onClose }) {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -198,7 +198,7 @@ function JobModal({ job, onClose }) {
   );
 }
 
-// ---- Navbar ----
+//  Navbar 
 function Navbar() {
   const navigate = useNavigate();
   const { user, logoutUser } = useAuth();
@@ -233,7 +233,7 @@ function Navbar() {
   );
 }
 
-// ---- Jobs Section (with full search + filter) ----
+//  Jobs Section (with full search + filter) 
 function JobsSection({ onJobClick }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -450,7 +450,7 @@ function JobsSection({ onJobClick }) {
   );
 }
 
-// ---- Hero ----
+//  Hero 
 function Hero() {
   return (
     <section className="px-6 md:px-16 py-16 text-center bg-[var(--bg-base)]">
@@ -475,7 +475,7 @@ function Hero() {
   );
 }
 
-// ---- How It Works ----
+//  How It Works 
 function HowItWorks() {
   const steps = [
     { icon: "🔍", num: "01", title: "Browse Jobs", desc: "Explore curated listings from top companies" },
@@ -500,7 +500,7 @@ function HowItWorks() {
   );
 }
 
-// ---- Recruiter CTA ----
+//  Recruiter CTA 
 function RecruiterCTA() {
   const navigate = useNavigate();
   return (
@@ -515,7 +515,7 @@ function RecruiterCTA() {
   );
 }
 
-// ---- Terms & Conditions Modal ----
+// Terms & Conditions Modal 
 function TermsModal({ onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -612,7 +612,7 @@ function Footer({ onTermsClick }) {
   );
 }
 
-// ---- Main Landing Page ----
+//  Main Landing Page 
 export default function LandingPage() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [showTerms, setShowTerms] = useState(false);

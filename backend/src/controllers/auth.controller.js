@@ -4,7 +4,7 @@ import { generateToken } from "../utils/jwt.js";
 import { sendVerificationEmail, sendPasswordResetEmail } from "../utils/sendEmail.js";
 import { cookieOptions } from "../utils/cookieOptions.js";
 
-// ---- SIGNUP ----
+// SIGNUP 
 export async function signup(req, res) {
   try {
     const { name, email, password, role } = req.body;
@@ -67,7 +67,7 @@ export async function signup(req, res) {
   }
 }
 
-// ---- VERIFY EMAIL ----
+// VERIFY EMAIL 
 export async function verifyEmail(req, res) {
   try {
     const { token } = req.query;
@@ -110,7 +110,7 @@ export async function verifyEmail(req, res) {
   }
 }
 
-// ---- LOGIN ----
+// LOGIN 
 export async function login(req, res) {
   try {
     const { email, password } = req.body;
@@ -166,14 +166,14 @@ export async function login(req, res) {
   }
 }
 
-// ---- LOGOUT ----
+// LOGOUT
 export async function logout(req, res) {
   // Clear the cookie — don't pass maxAge when clearing
   res.clearCookie("token", { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: process.env.NODE_ENV === "production" ? "none" : "lax" });
   res.status(200).json({ message: "Logged out successfully." });
 }
 
-// ---- GET CURRENT USER (me) ----
+// GET CURRENT USER (me) 
 export async function getMe(req, res) {
   res.status(200).json({
     user: {
@@ -188,7 +188,7 @@ export async function getMe(req, res) {
   });
 }
 
-// ---- FORGOT PASSWORD ----
+// FORGOT PASSWORD 
 // User submits their email — we send a reset link
 export async function forgotPassword(req, res) {
   try {
@@ -220,7 +220,7 @@ export async function forgotPassword(req, res) {
   }
 }
 
-// ---- RESET PASSWORD ----
+// RESET PASSWORD 
 // User clicks link in email, submits new password
 export async function resetPassword(req, res) {
   try {
@@ -260,7 +260,7 @@ export async function resetPassword(req, res) {
   }
 }
 
-// ---- RESEND VERIFICATION EMAIL ----
+// RESEND VERIFICATION EMAIL 
 export async function resendVerification(req, res) {
   try {
     const { email } = req.body;

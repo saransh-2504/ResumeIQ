@@ -8,7 +8,7 @@ const pdfParse = require("pdf-parse");
 // pdfjs-dist legacy build — works in Node without worker
 const pdfjsLib = require("pdfjs-dist/legacy/build/pdf.js");
 
-// ---- Download file from Cloudinary signed URL ----
+//  Download file from Cloudinary signed URL
 async function downloadFile(url) {
   const response = await axios.get(url, {
     responseType: "arraybuffer",
@@ -26,7 +26,7 @@ async function downloadFile(url) {
   return { buffer, contentType };
 }
 
-// ---- Extract raw text from PDF or DOCX ----
+//  Extract raw text from PDF or DOCX 
 async function extractText(buffer, contentType, fileName = "") {
   const name = fileName.toLowerCase();
   const isPdf = contentType.includes("pdf") || name.endsWith(".pdf") ||
@@ -64,7 +64,7 @@ async function extractText(buffer, contentType, fileName = "") {
   }
 }
 
-// ---- Tier 2: pdfjs annotation extractor (teacher's approach) ----
+// Tier 2: pdfjs annotation extractor (teacher's approach) 
 // Extracts mailto: and tel: hyperlinks from PDF annotations
 // Works on buffer — no file system needed
 async function extractAnnotationLinks(buffer) {
@@ -110,7 +110,7 @@ async function extractAnnotationLinks(buffer) {
   }
 }
 
-// ---- Regex extractors ----
+// Regex extractors 
 function extractEmailFromText(text) {
   const cleaned = text.replace(/mailto:/gi, "");
   const match = cleaned.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/);
@@ -132,7 +132,7 @@ function extractLinksFromText(text) {
   };
 }
 
-// ---- Sanitize Groq output ----
+// Sanitize Groq output 
 function sanitizeField(val) {
   if (!val || typeof val !== "string") return null;
   const trimmed = val.trim();
@@ -199,7 +199,7 @@ ${text.slice(0, 6000)}
   return parsed;
 }
 
-// ---- MAIN EXPORT ----
+// MAIN EXPORT 
 export async function parseResumeFromUrl(fileUrl, fileName = "") {
   if (!process.env.GROQ_API_KEY) {
     console.warn("GROQ_API_KEY not set — skipping parse.");

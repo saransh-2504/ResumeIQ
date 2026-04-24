@@ -4,7 +4,7 @@ import { sendRecruiterApprovalEmail } from "../utils/sendEmail.js";
 import { env } from "../config/env.js";
 import { autoJoinOrCreateCommunity } from "../utils/communityAutoCreate.js";
 
-// ---- GET ALL PENDING RECRUITERS ----
+// GET ALL PENDING RECRUITERS
 export async function getPendingRecruiters(req, res) {
   try {
     const recruiters = await User.find({
@@ -19,7 +19,7 @@ export async function getPendingRecruiters(req, res) {
   }
 }
 
-// ---- GET ALL RECRUITERS ----
+// GET ALL RECRUITERS
 export async function getAllRecruiters(req, res) {
   try {
     const recruiters = await User.find({ role: "recruiter" }).select("-password");
@@ -29,7 +29,7 @@ export async function getAllRecruiters(req, res) {
   }
 }
 
-// ---- APPROVE RECRUITER ----
+// APPROVE RECRUITER
 export async function approveRecruiter(req, res) {
   try {
     const user = await User.findById(req.params.id);
@@ -59,7 +59,7 @@ export async function approveRecruiter(req, res) {
   }
 }
 
-// ---- REJECT / DELETE RECRUITER ----
+// REJECT / DELETE RECRUITER 
 export async function rejectRecruiter(req, res) {
   try {
     const user = await User.findById(req.params.id);
@@ -76,7 +76,7 @@ export async function rejectRecruiter(req, res) {
   }
 }
 
-// ---- GET ALL USERS ----
+// GET ALL USERS 
 export async function getAllUsers(req, res) {
   try {
     const users = await User.find({ role: "candidate" }).select("-password");
@@ -86,7 +86,7 @@ export async function getAllUsers(req, res) {
   }
 }
 
-// ---- GET ALL JOBS ----
+// GET ALL JOBS 
 export async function getAllJobs(req, res) {
   try {
     const jobs = await Job.find().populate("postedBy", "name email");
@@ -96,7 +96,7 @@ export async function getAllJobs(req, res) {
   }
 }
 
-// ---- GET RECRUITERS WITH PENDING PROFILE CHANGES ----
+// GET RECRUITERS WITH PENDING PROFILE CHANGES 
 export async function getPendingProfileChanges(req, res) {
   try {
     const recruiters = await User.find({
@@ -109,7 +109,7 @@ export async function getPendingProfileChanges(req, res) {
   }
 }
 
-// ---- APPROVE RECRUITER PROFILE CHANGE ----
+// APPROVE RECRUITER PROFILE CHANGE 
 export async function approveProfileChange(req, res) {
   try {
     const user = await User.findById(req.params.id);
@@ -135,7 +135,7 @@ export async function approveProfileChange(req, res) {
   }
 }
 
-// ---- REJECT RECRUITER PROFILE CHANGE ----
+// REJECT RECRUITER PROFILE CHANGE 
 export async function rejectProfileChange(req, res) {
   try {
     const user = await User.findById(req.params.id);
@@ -150,7 +150,7 @@ export async function rejectProfileChange(req, res) {
   }
 }
 
-// ---- GET RECRUITERS WITH PENDING DELETE REQUESTS ----
+// GET RECRUITERS WITH PENDING DELETE REQUESTS
 export async function getPendingDeleteRequests(req, res) {
   try {
     const recruiters = await User.find({ role: "recruiter", deleteRequested: true }).select("-password");
@@ -160,7 +160,7 @@ export async function getPendingDeleteRequests(req, res) {
   }
 }
 
-// ---- APPROVE RECRUITER ACCOUNT DELETION ----
+// APPROVE RECRUITER ACCOUNT DELETION
 export async function approveAccountDeletion(req, res) {
   try {
     const user = await User.findById(req.params.id);
@@ -184,7 +184,7 @@ export async function approveAccountDeletion(req, res) {
   }
 }
 
-// ---- REJECT RECRUITER ACCOUNT DELETION ----
+// REJECT RECRUITER ACCOUNT DELETION 
 export async function rejectAccountDeletion(req, res) {
   try {
     const user = await User.findById(req.params.id);

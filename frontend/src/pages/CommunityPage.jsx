@@ -4,7 +4,7 @@ import { communityApi } from "../api/community";
 import { useAuth } from "../context/AuthContext";
 import NotificationBell from "../components/common/NotificationBell";
 
-// ── helpers ──────────────────────────────────────────────────────────────────
+// helpers 
 
 function formatTime(ts) {
   return new Date(ts).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
@@ -40,7 +40,7 @@ function RoleBadge({ role }) {
   );
 }
 
-// ── Reaction bar ─────────────────────────────────────────────────────────────
+//  Reaction bar 
 
 const EMOJI_LIST = ["👍", "❤️", "😂", "😮", "🎉", "🙏"];
 
@@ -92,7 +92,7 @@ function ReactionBar({ communityId, msgId, reactions, currentUserId, onUpdate })
   );
 }
 
-// ── Single message bubble ─────────────────────────────────────────────────────
+// Single message bubble
 
 function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onReactionUpdate, onDelete }) {
   const isOwn = msg.senderId?._id === currentUserId || msg.senderId === currentUserId;
@@ -154,7 +154,7 @@ function MessageBubble({ msg, communityId, currentUserId, currentUserRole, onRea
   );
 }
 
-// ── Date separator ────────────────────────────────────────────────────────────
+//  Date separator 
 
 function DateSeparator({ date }) {
   return (
@@ -166,7 +166,7 @@ function DateSeparator({ date }) {
   );
 }
 
-// ── Main CommunityPage ────────────────────────────────────────────────────────
+//  Main CommunityPage 
 
 export default function CommunityPage() {
   const { id } = useParams();
@@ -189,14 +189,14 @@ export default function CommunityPage() {
 
   const canSend = user?.role === "admin" || user?.role === "recruiter";
 
-  // ── Load community info ───────────────────────────────────────────────────
+  //  Load community info 
   useEffect(() => {
     communityApi.getById(id)
       .then((res) => setCommunity(res.data.community))
       .catch(() => navigate("/community"));
   }, [id, navigate]);
 
-  // ── Mark seen + get first unread ─────────────────────────────────────────
+  //  Mark seen + get first unread 
   useEffect(() => {
     communityApi.markSeen(id).catch(() => {});
     communityApi.getFirstUnread(id)
@@ -204,7 +204,7 @@ export default function CommunityPage() {
       .catch(() => {});
   }, [id]);
 
-  // ── Initial load: latest 30 messages ─────────────────────────────────────
+  //  Initial load: latest 30 messages 
   useEffect(() => {
     communityApi.getMessages(id, { limit: 30 })
       .then((res) => {
@@ -218,14 +218,14 @@ export default function CommunityPage() {
       .catch(() => setError("Failed to load messages."));
   }, [id]);
 
-  // ── Scroll to bottom on initial load ─────────────────────────────────────
+  //  Scroll to bottom on initial load 
   useEffect(() => {
     if (messages.length > 0 && !jumpedToUnread) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages.length > 0]); // eslint-disable-line
 
-  // ── Polling: every 10s fetch new messages ────────────────────────────────
+  //  Polling: every 10s fetch new messages 
   useEffect(() => {
     const poll = setInterval(async () => {
       if (!latestTsRef.current) return;
@@ -253,7 +253,7 @@ export default function CommunityPage() {
     return () => clearInterval(poll);
   }, [id]);
 
-  // ── Load older messages ───────────────────────────────────────────────────
+  //  Load older messages 
   async function loadMore() {
     if (!messages.length || loadingMore) return;
     setLoadingMore(true);
@@ -267,7 +267,7 @@ export default function CommunityPage() {
     finally { setLoadingMore(false); }
   }
 
-  // ── Send message ──────────────────────────────────────────────────────────
+  //  Send message 
   async function handleSend(e) {
     e.preventDefault();
     if (!text.trim() || sending) return;
@@ -290,12 +290,12 @@ export default function CommunityPage() {
     }
   }
 
-  // ── Reaction update ───────────────────────────────────────────────────────
+  //  Reaction update 
   const handleReactionUpdate = useCallback((msgId, reactions) => {
     setMessages((prev) => prev.map((m) => m._id === msgId ? { ...m, reactions } : m));
   }, []);
 
-  // ── Delete message ────────────────────────────────────────────────────────
+  //  Delete message 
   const handleDelete = useCallback(async (msgId) => {
     try {
       await communityApi.deleteMessage(id, msgId);
@@ -305,7 +305,7 @@ export default function CommunityPage() {
     }
   }, [id]);
 
-  // ── Jump to first unread ──────────────────────────────────────────────────
+  //  Jump to first unread 
   function jumpToFirstUnread() {
     if (firstUnreadRef.current) {
       firstUnreadRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -313,7 +313,7 @@ export default function CommunityPage() {
     }
   }
 
-  // ── Render ────────────────────────────────────────────────────────────────
+  // Render 
   return (
     <div className="flex flex-col h-screen bg-[var(--bg-base)]">
       {/* Header */}

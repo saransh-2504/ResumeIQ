@@ -6,7 +6,7 @@ import SettingsPage from "./SettingsPage";
 import NotificationBell from "../components/common/NotificationBell";
 import ThemeToggle from "../components/common/ThemeToggle";
 
-// ---- Sidebar nav links ----
+//  Sidebar nav links 
 const navLinks = [
   { icon: "🏠", label: "Dashboard", id: "dashboard" },
   { icon: "➕", label: "Post Job", id: "post" },
@@ -57,7 +57,7 @@ function TopBar() {
   );
 }
 
-// ---- View Resume Button — opens public Cloudinary URL directly ----
+//  View Resume Button — opens public Cloudinary URL directly 
 function ViewResumeButton({ appId, fileName }) {
   const [loading, setLoading] = useState(false);
 
@@ -81,7 +81,7 @@ function ViewResumeButton({ appId, fileName }) {
   );
 }
 
-// ---- Applicants list inside job modal ----
+//  Applicants list inside job modal 
 function ApplicantsList({ jobId }) {
   const [applicants, setApplicants] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -180,7 +180,7 @@ function ApplicantsList({ jobId }) {
   );
 }
 
-// ---- Job Detail + Edit Modal ----
+//  Job Detail + Edit Modal 
 function JobModal({ job, onClose, onUpdated }) {
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState("details"); // "details" | "applicants"
@@ -358,7 +358,7 @@ function JobModal({ job, onClose, onUpdated }) {
   );
 }
 
-// ---- Post Job Form ----
+//  Post Job Form 
 function PostJob({ onJobPosted, onGoToSettings }) {
   const { user } = useAuth();
   const [form, setForm] = useState({ title: "", description: "", skillsRequired: "", type: "Full-time", company: "", location: "" });
@@ -443,7 +443,7 @@ function PostJob({ onJobPosted, onGoToSettings }) {
   );
 }
 
-// ---- My Job Listings ----
+//  My Job Listings 
 function JobListings({ refresh, onRefresh }) {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -534,7 +534,7 @@ function JobListings({ refresh, onRefresh }) {
   );
 }
 
-// ---- Dashboard overview ----
+//  Dashboard overview 
 function DashboardOverview({ refresh, onRefresh }) {
   const { user } = useAuth();
   return (

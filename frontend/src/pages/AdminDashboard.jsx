@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import NotificationBell from "../components/common/NotificationBell";
 import ThemeToggle from "../components/common/ThemeToggle";
 
-// ---- Job Detail + Suggest Changes Modal (Admin) ----
+//  Job Detail + Suggest Changes Modal (Admin)
 function AdminJobModal({ job, onClose, onSuggested }) {
   const [suggesting, setSuggesting] = useState(false);
   const [form, setForm] = useState({
@@ -137,7 +137,7 @@ function AdminJobModal({ job, onClose, onSuggested }) {
   );
 }
 
-// ---- Recruiter Card ----
+// Recruiter Card 
 function RecruiterCard({ recruiter, onApprove, onReject, showActions }) {
   return (
     <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] px-5 py-4 flex items-center justify-between">
@@ -166,7 +166,7 @@ function RecruiterCard({ recruiter, onApprove, onReject, showActions }) {
   );
 }
 
-// ---- Main Admin Dashboard ----
+// Main Admin Dashboard 
 function CommunityRedirect({ navigate }) {
   useEffect(() => { navigate("/community"); }, [navigate]);
   return null;

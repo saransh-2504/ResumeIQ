@@ -2,7 +2,7 @@ import Job from "../models/Job.js";
 import Resume from "../models/Resume.js";
 import { calculateATS } from "../utils/atsScore.js";
 
-// ---- GET ALL JOBS (public) ----
+// GET ALL JOBS (public) 
 // Supports filters: type, location, skills (comma-separated)
 export async function getJobs(req, res) {
   try {
@@ -30,7 +30,7 @@ export async function getJobs(req, res) {
   }
 }
 
-// ---- GET SINGLE JOB ----
+// GET SINGLE JOB 
 export async function getJobById(req, res) {
   try {
     const job = await Job.findById(req.params.id).populate("postedBy", "name email");
@@ -46,7 +46,7 @@ export async function getJobById(req, res) {
   }
 }
 
-// ---- CREATE JOB (recruiter only) ----
+// CREATE JOB (recruiter only)
 export async function createJob(req, res) {
   try {
     const { title, company, location, type, description, skillsRequired } = req.body;
@@ -83,7 +83,7 @@ export async function createJob(req, res) {
   }
 }
 
-// ---- GET RECRUITER'S OWN JOBS ----
+// GET RECRUITER'S OWN JOBS 
 export async function getMyJobs(req, res) {
   try {
     const jobs = await Job.find({ postedBy: req.user._id }).sort({ createdAt: -1 });
@@ -94,7 +94,7 @@ export async function getMyJobs(req, res) {
   }
 }
 
-// ---- DELETE JOB (recruiter who posted it) ----
+//  DELETE JOB (recruiter who posted it) 
 export async function deleteJob(req, res) {
   try {
     const job = await Job.findById(req.params.id);
@@ -116,7 +116,7 @@ export async function deleteJob(req, res) {
   }
 }
 
-// ---- EDIT JOB (recruiter who posted it) ----
+// EDIT JOB (recruiter who posted it) 
 export async function editJob(req, res) {
   try {
     const job = await Job.findById(req.params.id);
@@ -149,7 +149,7 @@ export async function editJob(req, res) {
   }
 }
 
-// ---- ADMIN: SUGGEST CHANGES TO A JOB ----
+// ADMIN: SUGGEST CHANGES TO A JOB 
 export async function adminSuggestChanges(req, res) {
   try {
     const job = await Job.findById(req.params.id);
@@ -181,7 +181,7 @@ export async function adminSuggestChanges(req, res) {
   }
 }
 
-// ---- RECRUITER: APPROVE ADMIN SUGGESTION ----
+// RECRUITER: APPROVE ADMIN SUGGESTION
 export async function approveAdminSuggestion(req, res) {
   try {
     const job = await Job.findById(req.params.id);
@@ -213,7 +213,7 @@ export async function approveAdminSuggestion(req, res) {
   }
 }
 
-// ---- RECRUITER: REJECT ADMIN SUGGESTION ----
+// RECRUITER: REJECT ADMIN SUGGESTION 
 export async function rejectAdminSuggestion(req, res) {
   try {
     const job = await Job.findById(req.params.id);
@@ -236,7 +236,7 @@ export async function rejectAdminSuggestion(req, res) {
   }
 }
 
-// ---- CANDIDATE: GET ATS SCORE FOR A JOB ----
+// CANDIDATE: GET ATS SCORE FOR A JOB 
 // GET /api/v1/jobs/:id/ats-score
 export async function getATSScore(req, res) {
   try {
@@ -260,7 +260,7 @@ export async function getATSScore(req, res) {
   }
 }
 
-// ---- RECRUITER: TOGGLE JOB ACTIVE/INACTIVE ----
+// RECRUITER: TOGGLE JOB ACTIVE/INACTIVE 
 // PATCH /api/v1/jobs/:id/toggle
 export async function toggleJobStatus(req, res) {
   try {

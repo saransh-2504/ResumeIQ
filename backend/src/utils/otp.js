@@ -43,7 +43,7 @@ const otpKey = (target) => `otp:${target}`;
 const attemptsKey = (target) => `otp_attempts:${target}`;
 const cooldownKey = (target) => `otp_cooldown:${target}`;
 
-// ---- SEND OTP ----
+//  SEND OTP 
 // target = email address
 // Returns { sent: true } or throws
 export async function sendOTP(target, userName = "") {
@@ -72,7 +72,7 @@ export async function sendOTP(target, userName = "") {
   return { sent: true };
 }
 
-// ---- VERIFY OTP ----
+//  VERIFY OTP 
 // Returns { verified: true } or throws with reason
 export async function verifyOTP(target, inputOtp) {
   const stored = await redis.get(otpKey(target));

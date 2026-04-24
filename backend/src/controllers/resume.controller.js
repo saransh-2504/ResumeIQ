@@ -3,7 +3,7 @@ import Resume from "../models/Resume.js";
 import { parseResumeFromUrl } from "../utils/parseResume.js";
 import { sendOTP, verifyOTP } from "../utils/otp.js";
 
-// ---- Upload buffer to Cloudinary (private/authenticated) ----
+// Upload buffer to Cloudinary (private/authenticated) 
 function uploadToCloudinary(buffer, filename) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -23,7 +23,7 @@ function uploadToCloudinary(buffer, filename) {
   });
 }
 
-// ---- Generate public URL for resume viewing ----
+//  Generate public URL for resume viewing 
 export function generateSignedUrl(cloudinaryId) {
   return cloudinary.url(cloudinaryId, {
     resource_type: "raw",
@@ -32,7 +32,7 @@ export function generateSignedUrl(cloudinaryId) {
   });
 }
 
-// ---- Generate URL for parser to fetch the file ----
+// Generate URL for parser to fetch the file
 function generateParseUrl(cloudinaryId) {
   return cloudinary.url(cloudinaryId, {
     resource_type: "raw",
@@ -41,9 +41,8 @@ function generateParseUrl(cloudinaryId) {
   });
 }
 
-// ============================================================
 // POST /api/v1/resume — Upload + parse synchronously
-// ============================================================
+
 export async function uploadResume(req, res) {
   try {
     if (!req.file) {
@@ -105,10 +104,9 @@ export async function uploadResume(req, res) {
   }
 }
 
-// ============================================================
 // GET /api/v1/resume
 // Returns resume info + parsed data + fresh signed URL
-// ============================================================
+
 export async function getMyResume(req, res) {
   try {
     const resume = await Resume.findOne({ userId: req.user._id });
@@ -135,9 +133,8 @@ export async function getMyResume(req, res) {
   }
 }
 
-// ============================================================
 // DELETE /api/v1/resume
-// ============================================================
+
 export async function deleteResume(req, res) {
   try {
     const resume = await Resume.findOne({ userId: req.user._id });
@@ -158,10 +155,9 @@ export async function deleteResume(req, res) {
   }
 }
 
-// ============================================================
 // POST /api/v1/resume/reparse
 // Re-triggers parsing for the current resume (useful if parse failed)
-// ============================================================
+
 export async function reparseResume(req, res) {
   try {
     const resume = await Resume.findOne({ userId: req.user._id });
@@ -194,12 +190,11 @@ export async function reparseResume(req, res) {
   }
 }
 
-// ============================================================
 // POST /api/v1/resume/send-otp
 // Auto-matches resume email with logged-in user email
 // If they match → send OTP automatically
 // If they don't match → return error (no manual input allowed)
-// ============================================================
+
 export async function sendContactOTP(req, res) {
   try {
     const resume = await Resume.findOne({ userId: req.user._id });
@@ -245,10 +240,9 @@ export async function sendContactOTP(req, res) {
   }
 }
 
-// ============================================================
 // POST /api/v1/resume/verify-otp
 // Body: { otp } — contact is taken from logged-in user's email (no manual input)
-// ============================================================
+
 export async function verifyContactOTP(req, res) {
   try {
     const { otp } = req.body;
@@ -281,10 +275,9 @@ export async function verifyContactOTP(req, res) {
   }
 }
 
-// ============================================================
 // GET /api/v1/resume/analysis
 // Returns a detailed resume health report — no job comparison needed
-// ============================================================
+
 export async function getResumeAnalysis(req, res) {
   try {
     const resume = await Resume.findOne({ userId: req.user._id });
@@ -311,7 +304,7 @@ export async function getResumeAnalysis(req, res) {
       (sum, s) => sum + (s.present ? s.weight : 0), 0
     );
 
-    // ---- Skill categorization ----
+    //  Skill categorization 
     const techCategories = {
       "Frontend":   ["react","react.js","next.js","vue","vue.js","angular","html","css","tailwind","bootstrap","javascript","typescript","sass"],
       "Backend":    ["node","node.js","express","express.js","python","django","flask","fastapi","java","spring","php","laravel","ruby","go","rust","c#",".net"],
@@ -340,7 +333,7 @@ export async function getResumeAnalysis(req, res) {
     const otherSkills = skills.filter((s) => !categorizedSkills.has(s));
     if (otherSkills.length > 0) categorized["Other"] = otherSkills;
 
-    // ---- Experience analysis ----
+    // Experience analysis 
     const totalExpYears = experience.reduce((sum, exp) => {
       // Try to parse years from dates
       const start = parseInt(exp.startDate);
@@ -351,7 +344,7 @@ export async function getResumeAnalysis(req, res) {
       return sum + 1; // default 1 year if can't parse
     }, 0);
 
-    // ---- Suggestions ----
+    //  Suggestions 
     const suggestions = [];
     if (!p.email) suggestions.push({ type: "error", text: "Add your email address — recruiters need it to contact you." });
     if (!p.phone) suggestions.push({ type: "warning", text: "Add a phone number for faster recruiter outreach." });

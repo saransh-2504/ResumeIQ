@@ -2,7 +2,7 @@ import Notification from "../models/Notification.js";
 import Community from "../models/Community.js";
 import Message from "../models/Message.js";
 
-// ── GET /api/v1/notifications/unread-count ───────────────────────────────────
+// GET /api/v1/notifications/unread-count 
 // Returns total unread + per-community breakdown
 export async function getUnreadCount(req, res) {
   try {
@@ -33,7 +33,7 @@ export async function getUnreadCount(req, res) {
   }
 }
 
-// ── POST /api/v1/notifications/:communityId/seen ─────────────────────────────
+//  POST /api/v1/notifications/:communityId/seen 
 // Resets unread count to 0 and updates lastSeenAt
 export async function markSeen(req, res) {
   try {
@@ -61,7 +61,7 @@ export async function markSeen(req, res) {
   }
 }
 
-// ── GET /api/v1/notifications/:communityId/first-unread ──────────────────────
+// GET /api/v1/notifications/:communityId/first-unread 
 // Returns the timestamp of the first unread message (for "Jump to first unread")
 export async function getFirstUnread(req, res) {
   try {

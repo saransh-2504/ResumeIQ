@@ -6,7 +6,7 @@ import { env } from "../config/env.js";
 
 const router = Router();
 
-// ---- GOOGLE ----
+// GOOGLE
 // Step 1: redirect user to Google login
 router.get(
   "/google",

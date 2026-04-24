@@ -21,7 +21,7 @@ const app = express();
 
 app.set("trust proxy", 1);
 
-// ── Rate limiting ─────────────────────────────────────────────────────────────
+//  Rate limiting 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 20,
@@ -42,7 +42,7 @@ app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-// ── Sanitize MongoDB queries (prevent injection) ──────────────────────────────
+// Sanitize MongoDB queries (prevent injection) 
 app.use(mongoSanitize());
 
 app.use(passport.initialize());
